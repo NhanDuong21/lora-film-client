@@ -21,7 +21,7 @@ export default function Footer() {
           </p>
           <div className="flex items-center gap-3 mt-4">
             <a
-              href="https://facebook.com"
+              href="https://www.facebook.com/nyanprofile/"
               target="_blank"
               rel="noopener noreferrer"
               className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white hover:border-brand-coral hover:bg-brand-coral/10 transition-all duration-300"
@@ -30,7 +30,7 @@ export default function Footer() {
               <Facebook className="w-4 h-4" />
             </a>
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/nhannnduong1211/"
               target="_blank"
               rel="noopener noreferrer"
               className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white hover:border-brand-coral hover:bg-brand-coral/10 transition-all duration-300"
@@ -39,7 +39,7 @@ export default function Footer() {
               <Instagram className="w-4 h-4" />
             </a>
             <a
-              href="https://youtube.com"
+              href="https://www.youtube.com/@22.nhanduong51"
               target="_blank"
               rel="noopener noreferrer"
               className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white hover:border-brand-coral hover:bg-brand-coral/10 transition-all duration-300"
@@ -48,7 +48,7 @@ export default function Footer() {
               <Youtube className="w-4 h-4" />
             </a>
             <a
-              href="https://video.com"
+              href="https://nyanmovie.site/"
               target="_blank"
               rel="noopener noreferrer"
               className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white hover:border-brand-coral hover:bg-brand-coral/10 transition-all duration-300"
@@ -148,7 +148,7 @@ export default function Footer() {
             © 2026 LoraFilm. Movie Tickets, Your Way. All rights reserved.
           </span>
           <span className="text-[10px] text-zinc-600 font-medium">
-            Cơ sở hoạt động: Higher Education Campus System - FPT Education.
+            Cơ sở hoạt động: FPT University - Campus CanTho.
           </span>
         </div>
       </div>
