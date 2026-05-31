@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import MovieGrid from './components/MovieGrid';
@@ -21,17 +21,112 @@ function AppInner() {
   const [movieFilterTab, setMovieFilterTab] = useState('NOW_SHOWING');
   const { userRole, isAuthenticated } = useAuth();
 
+  // Pure Client-Side URL Synchronization & History Listener Engine
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash || '#/';
+
+      if (hash === '#/' || hash === '#/home' || hash === '') {
+        setCurrentView({ name: 'home', data: null });
+      } else if (hash === '#/discovery') {
+        setCurrentView({ name: 'discovery', data: null });
+      } else if (hash === '#/actors') {
+        setCurrentView({ name: 'actors', data: null });
+      } else if (hash.startsWith('#/actor/')) {
+        const actorName = decodeURIComponent(hash.substring(8));
+        setCurrentView({ name: 'actor-detail', data: { actorName } });
+      } else if (hash === '#/profile') {
+        setCurrentView({ name: 'profile', data: null });
+      } else if (hash === '#/admin') {
+        setCurrentView({ name: 'admin', data: null });
+      } else if (hash === '#/employee') {
+        setCurrentView({ name: 'employee', data: null });
+      } else if (hash === '#/login') {
+        setCurrentView({ name: 'login', data: null });
+      } else if (hash === '#/register') {
+        setCurrentView({ name: 'register', data: null });
+      } else if (hash === '#/seats') {
+        if (!isAuthenticated) {
+          window.location.hash = '#/login';
+          return;
+        }
+        const stored = localStorage.getItem('lora_pending_booking');
+        let bookingData = null;
+        try {
+          bookingData = stored ? JSON.parse(stored) : null;
+        } catch (e) {
+          console.error(e);
+        }
+        setCurrentView({ name: 'seats', data: bookingData });
+      } else {
+        // Fallback default
+        setCurrentView({ name: 'home', data: null });
+      }
+    };
+
+    // Initialize from current URL hash on mount
+    handleHashChange();
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [isAuthenticated]);
+
   // Scroll to top on view changes
   const handleViewChange = (newView) => {
     if (newView.name === 'seats' && !isAuthenticated) {
       setPendingBooking({ bookingData: newView.data });
       localStorage.setItem('lora_pending_booking', JSON.stringify(newView.data));
-      setCurrentView({ name: 'login', data: null });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.location.hash = '#/login';
       return;
     }
-    
-    setCurrentView(newView);
+
+    // Set matching URL token in the address bar
+    let targetHash;
+    switch (newView.name) {
+      case 'home':
+        targetHash = '#/';
+        break;
+      case 'discovery':
+        targetHash = '#/discovery';
+        break;
+      case 'actors':
+        targetHash = '#/actors';
+        break;
+      case 'actor-detail':
+        targetHash = `#/actor/${encodeURIComponent(newView.data?.actorName || '')}`;
+        break;
+      case 'profile':
+        targetHash = '#/profile';
+        break;
+      case 'admin':
+        targetHash = '#/admin';
+        break;
+      case 'employee':
+        targetHash = '#/employee';
+        break;
+      case 'login':
+        targetHash = '#/login';
+        break;
+      case 'register':
+        targetHash = '#/register';
+        break;
+      case 'seats':
+        targetHash = '#/seats';
+        break;
+      default:
+        targetHash = '#/';
+    }
+
+    if (newView.name === 'seats' && newView.data) {
+      localStorage.setItem('lora_pending_booking', JSON.stringify(newView.data));
+    }
+
+    if (window.location.hash !== targetHash) {
+      window.location.hash = targetHash;
+    } else {
+      // If hash is already the target, update state manually
+      setCurrentView(newView);
+    }
     
     if (newView.name === 'home') {
       if (newView.data && newView.data.activeTab) {
