@@ -32,8 +32,12 @@ function AppInner() {
 
       if (hash === '#/' || hash === '#/home' || hash === '') {
         setCurrentView({ name: 'home', data: null });
-      } else if (hash === '#/discovery') {
-        setCurrentView({ name: 'discovery', data: null });
+      } else if (hash.startsWith('#/discovery')) {
+        let initialTab = 'ALL';
+        if (hash.includes('?tab=')) {
+          initialTab = hash.split('?tab=')[1];
+        }
+        setCurrentView({ name: 'discovery', data: { initialTab } });
       } else if (hash === '#/actors') {
         setCurrentView({ name: 'actors', data: null });
       } else if (hash.startsWith('#/actor/')) {
@@ -109,7 +113,7 @@ function AppInner() {
         targetHash = '#/';
         break;
       case 'discovery':
-        targetHash = '#/discovery';
+        targetHash = newView.data?.initialTab ? `#/discovery?tab=${newView.data.initialTab}` : '#/discovery';
         break;
       case 'actors':
         targetHash = '#/actors';
@@ -248,6 +252,7 @@ function AppInner() {
               onChangeActiveTab={setMovieFilterTab}
               onSelectMovie={(movieId) => handleViewChange({ name: 'detail', data: { movieId } })}
               onBuyTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
+              onNavigate={(viewName, viewData = null) => handleViewChange({ name: viewName, data: viewData })}
             />
 
             {/* Horizontal Booking Workflow steps */}
@@ -323,6 +328,8 @@ function AppInner() {
 
         {currentView.name === 'discovery' && (
           <MovieDiscoveryView 
+            key={currentView.data?.initialTab || 'ALL'}
+            initialTab={currentView.data?.initialTab || 'ALL'}
             onBackHome={() => handleViewChange({ name: 'home', data: null })}
             onBuyTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
           />

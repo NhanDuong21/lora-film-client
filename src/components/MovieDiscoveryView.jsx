@@ -40,12 +40,12 @@ const getMovieYear = (movie) => {
   return '2024';
 };
 
-export default function MovieDiscoveryView({ onBackHome, onBuyTicket }) {
+export default function MovieDiscoveryView({ onBackHome, onBuyTicket, initialTab = 'ALL' }) {
   // Upper horizontal bar filter states
   const [selectedGenre, setSelectedGenre] = useState('ALL');
   const [selectedCountry, setSelectedCountry] = useState('ALL');
   const [selectedYear, setSelectedYear] = useState('ALL');
-  const [selectedStatus, setSelectedStatus] = useState('ALL');
+  const [selectedStatus, setSelectedStatus] = useState(initialTab);
   const [selectedSort, setSelectedSort] = useState('VIEWS'); // 'VIEWS' | 'RATING'
 
   // Like toggles state
