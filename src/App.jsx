@@ -219,7 +219,10 @@ function AppInner() {
         {currentView.name === 'home' && (
           <>
             {/* Cinematic Hero Banner */}
-            <Hero />
+            <Hero 
+              onBookTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
+              onNavigate={(viewName, viewData = null) => handleViewChange({ name: viewName, data: viewData })}
+            />
 
             {/* Featured Films Grid */}
             <MovieGrid
