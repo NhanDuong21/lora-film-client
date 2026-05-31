@@ -12,7 +12,7 @@ export default function CustomerProfileView({ onBackHome, initialTab = 'info' })
   const [activeTab, setActiveTab] = useState(initialTab);
 
   // Load user data fields (Name, Birthday, Gender are strictly read-only disabled)
-  const fullName = user?.fullName || 'Nguyễn Khách Hàng';
+  const fullName = user?.fullName || 'Dương Thiện Nhân';
   const birthday = user?.birthday || '1998-05-15';
   const gender = user?.gender || 'Nam';
   

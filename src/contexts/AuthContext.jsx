@@ -19,7 +19,7 @@ const PRE_SEEDED_USERS = [
   {
     email: 'member@gmail.com',
     password: '123456',
-    fullName: 'Nguyễn Khách Hàng',
+    fullName: 'Dương Thiện Nhân',
     role: 'CUSTOMER'
   }
 ];
