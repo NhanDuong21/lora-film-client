@@ -103,8 +103,19 @@ function AppInner() {
     if (newView.name === 'seats' && !isAuthenticated) {
       setPendingBooking({ bookingData: newView.data });
       localStorage.setItem('lora_pending_booking', JSON.stringify(newView.data));
+      sessionStorage.setItem('lora_pending_booking', JSON.stringify(newView.data));
+      sessionStorage.setItem('lora_booking_interrupted', 'true');
       window.location.hash = '#/login';
       return;
+    }
+
+    if (newView.name === 'login') {
+      if (newView.data?.voluntary) {
+        sessionStorage.removeItem('lora_booking_interrupted');
+        sessionStorage.removeItem('lora_pending_booking');
+        localStorage.removeItem('lora_pending_booking');
+        setPendingBooking(null);
+      }
     }
 
     // Set matching URL token in the address bar
@@ -203,26 +214,46 @@ function AppInner() {
 
   // Login Success Callback handler
   const handleLoginSuccess = (loggedInUser) => {
-    const stored = localStorage.getItem('lora_pending_booking');
-    let targetBooking = pendingBooking;
-    if (!targetBooking && stored) {
-      try {
-        targetBooking = { bookingData: JSON.parse(stored) };
-      } catch (e) {
-        console.error(e);
-      }
-    }
+    const isInterrupted = sessionStorage.getItem('lora_booking_interrupted') === 'true';
 
-    if (targetBooking) {
-      setPendingBooking(null);
+    if (isInterrupted) {
+      // Scenario A: Dynamic Mid-Funnel Authentication
+      const stored = sessionStorage.getItem('lora_pending_booking') || localStorage.getItem('lora_pending_booking');
+      let targetBooking = pendingBooking;
+      if (!targetBooking && stored) {
+        try {
+          targetBooking = { bookingData: JSON.parse(stored) };
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // Clear all active/stale context states
+      sessionStorage.removeItem('lora_booking_interrupted');
+      sessionStorage.removeItem('lora_pending_booking');
       localStorage.removeItem('lora_pending_booking');
-      handleViewChange({ name: 'seats', data: targetBooking.bookingData });
-    } else if (loggedInUser.role === 'ADMIN') {
-      handleViewChange({ name: 'admin', data: null });
-    } else if (loggedInUser.role === 'EMPLOYEE') {
-      handleViewChange({ name: 'employee', data: null });
+      setPendingBooking(null);
+
+      if (targetBooking) {
+        handleViewChange({ name: 'seats', data: targetBooking.bookingData });
+      } else {
+        handleViewChange({ name: 'home', data: null });
+      }
     } else {
-      handleViewChange({ name: 'home', data: null });
+      // Scenario B: Static/Generic Authentication (Fixing the Defect)
+      // Wipe any stale local cache objects to prevent leaks
+      sessionStorage.removeItem('lora_booking_interrupted');
+      sessionStorage.removeItem('lora_pending_booking');
+      localStorage.removeItem('lora_pending_booking');
+      setPendingBooking(null);
+
+      if (loggedInUser.role === 'ADMIN') {
+        handleViewChange({ name: 'admin', data: null });
+      } else if (loggedInUser.role === 'EMPLOYEE') {
+        handleViewChange({ name: 'employee', data: null });
+      } else {
+        handleViewChange({ name: 'home', data: null });
+      }
     }
   };
 
@@ -308,8 +339,8 @@ function AppInner() {
         {currentView.name === 'register' && (
           <RegisterView
             onBack={() => handleViewChange({ name: 'home', data: null })}
-            onLoginLink={() => handleViewChange({ name: 'login', data: null })}
-            onSuccessRedirect={() => handleViewChange({ name: 'login', data: null })}
+            onLoginLink={() => handleViewChange({ name: 'login', data: { voluntary: true } })}
+            onSuccessRedirect={() => handleViewChange({ name: 'login', data: { voluntary: true } })}
           />
         )}
 

@@ -63,6 +63,7 @@ export default function Hero({ onBookTicket, onNavigate }) {
     if (!isAuthenticated) {
       sessionStorage.setItem('lora_pending_booking', JSON.stringify(bookingPayload));
       localStorage.setItem('lora_pending_booking', JSON.stringify(bookingPayload));
+      sessionStorage.setItem('lora_booking_interrupted', 'true');
       onNavigate('login', null);
     } else {
       onBookTicket(bookingPayload);

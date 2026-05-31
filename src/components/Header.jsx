@@ -476,7 +476,7 @@ export default function Header({ onNavigate }) {
           </div>
         ) : (
           <button
-            onClick={() => onNavigate('login', null)}
+            onClick={() => onNavigate('login', { voluntary: true })}
             className="bg-orange-500 hover:bg-orange-600 text-white text-xs font-black py-2.5 px-5 rounded-full transition-all duration-300 shadow-lg shadow-orange-500/10 uppercase tracking-wider focus:outline-none"
           >
             Đăng Nhập
