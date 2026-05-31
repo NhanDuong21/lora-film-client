@@ -13,6 +13,7 @@ import EmployeeDashboardView from './components/EmployeeDashboardView';
 import CustomerProfileView from './components/CustomerProfileView';
 import MovieDiscoveryView from './components/MovieDiscoveryView';
 import ActorRegistryView from './components/ActorRegistryView';
+import DirectorRegistryView from './components/DirectorRegistryView';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 function AppInner() {
@@ -35,6 +36,11 @@ function AppInner() {
       } else if (hash.startsWith('#/actor/')) {
         const actorName = decodeURIComponent(hash.substring(8));
         setCurrentView({ name: 'actor-detail', data: { actorName } });
+      } else if (hash === '#/directors') {
+        setCurrentView({ name: 'directors', data: null });
+      } else if (hash.startsWith('#/director/')) {
+        const directorName = decodeURIComponent(hash.substring(11));
+        setCurrentView({ name: 'director-detail', data: { directorName } });
       } else if (hash === '#/profile') {
         setCurrentView({ name: 'profile', data: null });
       } else if (hash === '#/admin') {
@@ -94,6 +100,12 @@ function AppInner() {
         break;
       case 'actor-detail':
         targetHash = `#/actor/${encodeURIComponent(newView.data?.actorName || '')}`;
+        break;
+      case 'directors':
+        targetHash = '#/directors';
+        break;
+      case 'director-detail':
+        targetHash = `#/director/${encodeURIComponent(newView.data?.directorName || '')}`;
         break;
       case 'profile':
         targetHash = '#/profile';
@@ -293,6 +305,23 @@ function AppInner() {
         {currentView.name === 'actor-detail' && (
           <ActorRegistryView 
             actorName={currentView.data?.actorName}
+            onBackHome={() => handleViewChange({ name: 'home', data: null })}
+            onBookTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
+            onNavigate={(viewName, viewData = null) => handleViewChange({ name: viewName, data: viewData })}
+          />
+        )}
+
+        {currentView.name === 'directors' && (
+          <DirectorRegistryView 
+            onBackHome={() => handleViewChange({ name: 'home', data: null })}
+            onBookTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
+            onNavigate={(viewName, viewData = null) => handleViewChange({ name: viewName, data: viewData })}
+          />
+        )}
+
+        {currentView.name === 'director-detail' && (
+          <DirectorRegistryView 
+            directorName={currentView.data?.directorName}
             onBackHome={() => handleViewChange({ name: 'home', data: null })}
             onBookTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
             onNavigate={(viewName, viewData = null) => handleViewChange({ name: viewName, data: viewData })}

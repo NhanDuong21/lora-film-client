@@ -57,6 +57,8 @@ export default function Header({ onNavigate }) {
       onNavigate('discovery', null);
     } else if (optionName === 'Diễn viên') {
       onNavigate('actors', null);
+    } else if (optionName === 'Đạo diễn') {
+      onNavigate('directors', null);
     } else {
       setInfoModalContent(optionName);
     }

@@ -15,7 +15,13 @@ export const MOVIES = [
     cast: [
       { name: "Kaity Nguyễn", role: "Nhà Phương", avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" },
       { name: "Trấn Thành", role: "Ông Sơn", avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" }
-    ]
+    ],
+    director: {
+      name: "Trấn Thành",
+      avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80",
+      bioSummary: "Đạo diễn kiêm nhà sản xuất phim xuất sắc của điện ảnh Việt Nam với doanh thu nghìn tỷ.",
+      metrics: { birth: "05/02/1987", height: "1m70", nationality: "Việt Nam", tags: ["Đa Tài", "Kỷ Lục", "Truyền Cảm Hứng"] }
+    }
   },
   {
     id: 2,
@@ -33,7 +39,13 @@ export const MOVIES = [
     cast: [
       { name: "Ana de Armas", role: "Eve Macarro", avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=80" },
       { name: "Keanu Reeves", role: "John Wick", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" }
-    ]
+    ],
+    director: {
+      name: "Chad Stahelski",
+      avatarUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&auto=format&fit=crop&q=80",
+      bioSummary: "Đạo diễn hành động Hollywood nổi tiếng đứng sau loạt bom tấn John Wick hoành tráng.",
+      metrics: { birth: "20/09/1968", height: "1m85", nationality: "Mỹ", tags: ["John Wick", "Hành Động", "Võ Thuật"] }
+    }
   },
   {
     id: 3,
@@ -51,7 +63,13 @@ export const MOVIES = [
     cast: [
       { name: "Florence Pugh", role: "Yelena Belova", avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&auto=format&fit=crop&q=80" },
       { name: "Sebastian Stan", role: "Bucky Barnes", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" }
-    ]
+    ],
+    director: {
+      name: "Jake Schreier",
+      avatarUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&auto=format&fit=crop&q=80",
+      bioSummary: "Nhà làm phim trẻ tài năng nổi tiếng với lối kể chuyện hiện đại và các tác phẩm Marvel.",
+      metrics: { birth: "29/09/1981", height: "1m80", nationality: "Mỹ", tags: ["Marvel", "Hiện Đại", "Cảm Xúc"] }
+    }
   },
   {
     id: 4,
@@ -69,7 +87,13 @@ export const MOVIES = [
     cast: [
       { name: "Kiều Minh Tuấn", role: "Dế Mèn (Lồng tiếng)", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" },
       { name: "Kaity Nguyễn", role: "Nhà Béo (Lồng tiếng)", avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" }
-    ]
+    ],
+    director: {
+      name: "Phùng Đình Dũng",
+      avatarUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&auto=format&fit=crop&q=80",
+      bioSummary: "Đạo diễn phim hoạt hình hàng đầu Việt Nam mang nét vẽ dân gian hội nhập thế giới.",
+      metrics: { birth: "12/03/1980", height: "1m72", nationality: "Việt Nam", tags: ["Hoạt Hình", "Dân Gian", "Tỉ Mỉ"] }
+    }
   },
   {
     id: 5,
@@ -87,7 +111,13 @@ export const MOVIES = [
     cast: [
       { name: "Kiều Minh Tuấn", role: "Pháp Sư Pháp", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" },
       { name: "Trấn Thành", role: "Thầy Cúng Cường", avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" }
-    ]
+    ],
+    director: {
+      name: "Charlie Nguyễn",
+      avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80",
+      bioSummary: "Đạo diễn kỳ cựu đi đầu trong thể loại hài hành động và tâm lý sâu sắc của Việt Nam.",
+      metrics: { birth: "25/09/1968", height: "1m73", nationality: "Mỹ / Việt Nam", tags: ["Hài Hước", "Hành Động", "Kinh Nghiệm"] }
+    }
   },
   {
     id: 6,
@@ -105,7 +135,13 @@ export const MOVIES = [
     cast: [
       { name: "Kaity Nguyễn", role: "Linh", avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" },
       { name: "Kiều Minh Tuấn", role: "Thầy giáo Bình", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" }
-    ]
+    ],
+    director: {
+      name: "Nguyễn Hữu Hoàng",
+      avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80",
+      bioSummary: "Đạo diễn tài năng trẻ tiên phong trong dòng phim trinh thám học đường ly kỳ bí ẩn.",
+      metrics: { birth: "08/11/1991", height: "1m76", nationality: "Việt Nam", tags: ["Trinh Thám", "Học Đường", "Góc Quay Đẹp"] }
+    }
   },
   {
     id: 7,
@@ -123,7 +159,13 @@ export const MOVIES = [
     cast: [
       { name: "Trấn Thành", role: "Thám tử Kiên", avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" },
       { name: "Kiều Minh Tuấn", role: "Trưởng giả Thuận", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" }
-    ]
+    ],
+    director: {
+      name: "Victor Vũ",
+      avatarUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=300&auto=format&fit=crop&q=80",
+      bioSummary: "Ông hoàng phim giật gân, tâm linh và chuyển thể văn học của Việt Nam với các góc quay đỉnh cao.",
+      metrics: { birth: "25/11/1975", height: "1m75", nationality: "Việt Nam / Mỹ", tags: ["Kinh Dị", "Giật Gân", "Chuyển Thể"] }
+    }
   },
   {
     id: 8,
@@ -140,7 +182,13 @@ export const MOVIES = [
     status: 'NOW_SHOWING',
     cast: [
       { name: "Kiều Minh Tuấn", role: "Hai (Con cả)", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" }
-    ]
+    ],
+    director: {
+      name: "Lý Hải",
+      avatarUrl: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=300&auto=format&fit=crop&q=80",
+      bioSummary: "Đạo diễn chuỗi phim ăn khách Lật Mặt, bậc thầy phim gia đình hài hước tràn đầy cảm xúc.",
+      metrics: { birth: "28/09/1968", height: "1m69", nationality: "Việt Nam", tags: ["Lật Mặt", "Gia Đình", "Mộc Mạc"] }
+    }
   },
   {
     id: 9,
@@ -158,7 +206,13 @@ export const MOVIES = [
     cast: [
       { name: "Anthony Mackie", role: "Sam Wilson / Captain America", avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" },
       { name: "Sebastian Stan", role: "Bucky Barnes / Winter Soldier", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" }
-    ]
+    ],
+    director: {
+      name: "Julius Onah",
+      avatarUrl: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=300&auto=format&fit=crop&q=80",
+      bioSummary: "Đạo diễn và nhà biên kịch người Mỹ gốc Nigeria chịu trách nhiệm về tương lai MCU.",
+      metrics: { birth: "10/02/1983", height: "1m78", nationality: "Mỹ / Nigeria", tags: ["Sci-Fi", "Marvel", "Chính Trị"] }
+    }
   },
   {
     id: 10,
@@ -176,7 +230,13 @@ export const MOVIES = [
     cast: [
       { name: "Jack Black", role: "Steve", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" },
       { name: "Jason Momoa", role: "Garrett Garrison", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" }
-    ]
+    ],
+    director: {
+      name: "Jared Hess",
+      avatarUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&auto=format&fit=crop&q=80",
+      bioSummary: "Đạo diễn phim hài độc lập nổi tiếng với những nhân vật kỳ quặc đáng yêu và thế giới game.",
+      metrics: { birth: "20/06/1979", height: "1m82", nationality: "Mỹ", tags: ["Minecraft", "Hài Hước", "Độc Đáo"] }
+    }
   },
   {
     id: 11,
@@ -194,7 +254,13 @@ export const MOVIES = [
     cast: [
       { name: "David Corenswet", role: "Clark Kent / Superman", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" },
       { name: "Rachel Brosnahan", role: "Lois Lane", avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=80" }
-    ]
+    ],
+    director: {
+      name: "James Gunn",
+      avatarUrl: "https://images.unsplash.com/photo-1489980508314-941910ded1f4?w=300&auto=format&fit=crop&q=80",
+      bioSummary: "Tổng công trình sư mới của vũ trụ siêu anh hùng, nổi tiếng với sự sáng tạo vô biên.",
+      metrics: { birth: "05/08/1966", height: "1m83", nationality: "Mỹ", tags: ["Superman", "Sáng Tạo", "Vũ Trụ"] }
+    }
   },
   {
     id: 12,
@@ -211,7 +277,13 @@ export const MOVIES = [
     status: 'COMING_SOON',
     cast: [
       { name: "Minami Takayama", role: "Edogawa Conan (Lồng tiếng)", avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" }
-    ]
+    ],
+    director: {
+      name: "Yuzuru Tachikawa",
+      avatarUrl: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=300&auto=format&fit=crop&q=80",
+      bioSummary: "Đạo diễn Anime kỳ cựu Nhật Bản chịu trách nhiệm chuyển thể các đại án Conan.",
+      metrics: { birth: "02/12/1981", height: "1m70", nationality: "Nhật Bản", tags: ["Anime", "Conan", "Kịch Tính"] }
+    }
   },
   {
     id: 13,
@@ -228,7 +300,13 @@ export const MOVIES = [
     status: 'COMING_SOON',
     cast: [
       { name: "Florence Pugh", role: "Yelena", avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&auto=format&fit=crop&q=80" }
-    ]
+    ],
+    director: {
+      name: "Jake Schreier",
+      avatarUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&auto=format&fit=crop&q=80",
+      bioSummary: "Nhà làm phim trẻ tài năng nổi tiếng với lối kể chuyện hiện đại và các tác phẩm Marvel.",
+      metrics: { birth: "29/09/1981", height: "1m80", nationality: "Mỹ", tags: ["Marvel", "Hiện Đại", "Cảm Xúc"] }
+    }
   },
   {
     id: 14,
@@ -245,7 +323,13 @@ export const MOVIES = [
     status: 'COMING_SOON',
     cast: [
       { name: "Kiều Minh Tuấn", role: "Tướng quân Phong", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" }
-    ]
+    ],
+    director: {
+      name: "Lý Hải",
+      avatarUrl: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=300&auto=format&fit=crop&q=80",
+      bioSummary: "Đạo diễn chuỗi phim ăn khách Lật Mặt, bậc thầy phim gia đình hài hước tràn đầy cảm xúc.",
+      metrics: { birth: "28/09/1968", height: "1m69", nationality: "Việt Nam", tags: ["Lật Mặt", "Gia Đình", "Mộc Mạc"] }
+    }
   }
 ];
 
