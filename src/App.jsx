@@ -5,6 +5,7 @@ import MovieGrid from './components/MovieGrid';
 import PromoShowcase from './components/PromoShowcase';
 import BookingSteps from './components/BookingSteps';
 import Footer from './components/Footer';
+import BrandOverview from './components/BrandOverview';
 import MovieDetailView from './components/MovieDetailView';
 import SeatSelectionView from './components/SeatSelectionView';
 import LoginView from './components/LoginView';
@@ -294,6 +295,9 @@ function AppInner() {
 
             {/* Horizontal Booking Workflow steps */}
             <BookingSteps />
+
+            {/* Progressive Cinematic SEO Text Panel */}
+            <BrandOverview />
           </>
         )}
 
