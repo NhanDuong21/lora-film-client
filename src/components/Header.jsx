@@ -55,6 +55,8 @@ export default function Header({ onNavigate }) {
     setMobileMenuOpen(false);
     if (optionName === 'Thể loại phim') {
       onNavigate('discovery', null);
+    } else if (optionName === 'Diễn viên') {
+      onNavigate('actors', null);
     } else {
       setInfoModalContent(optionName);
     }

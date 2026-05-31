@@ -12,6 +12,7 @@ import AdminDashboardView from './components/AdminDashboardView';
 import EmployeeDashboardView from './components/EmployeeDashboardView';
 import CustomerProfileView from './components/CustomerProfileView';
 import MovieDiscoveryView from './components/MovieDiscoveryView';
+import ActorRegistryView from './components/ActorRegistryView';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 function AppInner() {
@@ -183,6 +184,13 @@ function AppInner() {
           <MovieDiscoveryView 
             onBackHome={() => handleViewChange({ name: 'home', data: null })}
             onBuyTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
+          />
+        )}
+
+        {currentView.name === 'actors' && (
+          <ActorRegistryView 
+            onBackHome={() => handleViewChange({ name: 'home', data: null })}
+            onBookTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
           />
         )}
       </main>

@@ -556,7 +556,7 @@ export default function MovieDiscoveryView({ onBackHome, onBuyTicket }) {
             <div className="bg-zinc-900 border border-zinc-850 rounded-2xl p-5 space-y-4 shadow-2xl">
               
               <div className="border-b border-zinc-800 pb-2 flex justify-between items-center">
-                <span className="text-white text-[10px] font-black uppercase tracking-wider">Phim Nổi Bật</span>
+                <span className="text-white text-[10px] font-black uppercase tracking-wider">Phim Đang Chiếu</span>
                 <span className="text-[8px] font-black uppercase tracking-widest text-brand-yellow animate-pulse">Hot Now</span>
               </div>
 

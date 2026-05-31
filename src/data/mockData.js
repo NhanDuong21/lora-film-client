@@ -11,7 +11,11 @@ export const MOVIES = [
     posterUrl: 'https://images.unsplash.com/photo-1524712245354-2c4e5e7124c5?w=600&auto=format&fit=crop&q=80',
     image: 'https://images.unsplash.com/photo-1524712245354-2c4e5e7124c5?w=600&auto=format&fit=crop&q=80',
     trailerId: 'eHp3MbsQgzk',
-    status: 'NOW_SHOWING'
+    status: 'NOW_SHOWING',
+    cast: [
+      { name: "Kaity Nguyễn", role: "Nhà Phương", avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" },
+      { name: "Trấn Thành", role: "Ông Sơn", avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" }
+    ]
   },
   {
     id: 2,
@@ -25,7 +29,11 @@ export const MOVIES = [
     posterUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=80',
     image: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=80',
     trailerId: 'yJ9w2zD244U',
-    status: 'NOW_SHOWING'
+    status: 'NOW_SHOWING',
+    cast: [
+      { name: "Ana de Armas", role: "Eve Macarro", avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=80" },
+      { name: "Keanu Reeves", role: "John Wick", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" }
+    ]
   },
   {
     id: 3,
@@ -39,7 +47,11 @@ export const MOVIES = [
     posterUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
     image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
     trailerId: 'vB8VvA88d6I',
-    status: 'NOW_SHOWING'
+    status: 'NOW_SHOWING',
+    cast: [
+      { name: "Florence Pugh", role: "Yelena Belova", avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&auto=format&fit=crop&q=80" },
+      { name: "Sebastian Stan", role: "Bucky Barnes", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" }
+    ]
   },
   {
     id: 4,
@@ -53,7 +65,11 @@ export const MOVIES = [
     posterUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
     image: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
     trailerId: 'fS_f0n-dF3Y',
-    status: 'NOW_SHOWING'
+    status: 'NOW_SHOWING',
+    cast: [
+      { name: "Kiều Minh Tuấn", role: "Dế Mèn (Lồng tiếng)", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" },
+      { name: "Kaity Nguyễn", role: "Nhà Béo (Lồng tiếng)", avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" }
+    ]
   },
   {
     id: 5,
@@ -67,7 +83,11 @@ export const MOVIES = [
     posterUrl: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80',
     image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80',
     trailerId: 'R-v3W0Yp3dE',
-    status: 'NOW_SHOWING'
+    status: 'NOW_SHOWING',
+    cast: [
+      { name: "Kiều Minh Tuấn", role: "Pháp Sư Pháp", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" },
+      { name: "Trấn Thành", role: "Thầy Cúng Cường", avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" }
+    ]
   },
   {
     id: 6,
@@ -81,7 +101,11 @@ export const MOVIES = [
     posterUrl: 'https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=600&auto=format&fit=crop&q=80',
     image: 'https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=600&auto=format&fit=crop&q=80',
     trailerId: '3Z8vX90i-bU',
-    status: 'NOW_SHOWING'
+    status: 'NOW_SHOWING',
+    cast: [
+      { name: "Kaity Nguyễn", role: "Linh", avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" },
+      { name: "Kiều Minh Tuấn", role: "Thầy giáo Bình", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" }
+    ]
   },
   {
     id: 7,
@@ -95,7 +119,11 @@ export const MOVIES = [
     posterUrl: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=600&auto=format&fit=crop&q=80',
     image: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=600&auto=format&fit=crop&q=80',
     trailerId: '1Z_v7Gq7948',
-    status: 'NOW_SHOWING'
+    status: 'NOW_SHOWING',
+    cast: [
+      { name: "Trấn Thành", role: "Thám tử Kiên", avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" },
+      { name: "Kiều Minh Tuấn", role: "Trưởng giả Thuận", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" }
+    ]
   },
   {
     id: 8,
@@ -109,7 +137,10 @@ export const MOVIES = [
     posterUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600&auto=format&fit=crop&q=80',
     image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600&auto=format&fit=crop&q=80',
     trailerId: '2b4S_iVsp1E',
-    status: 'NOW_SHOWING'
+    status: 'NOW_SHOWING',
+    cast: [
+      { name: "Kiều Minh Tuấn", role: "Hai (Con cả)", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" }
+    ]
   },
   {
     id: 9,
@@ -123,7 +154,11 @@ export const MOVIES = [
     posterUrl: 'https://images.unsplash.com/photo-1478720143022-9057235c7443?w=600&auto=format&fit=crop&q=80',
     image: 'https://images.unsplash.com/photo-1478720143022-9057235c7443?w=600&auto=format&fit=crop&q=80',
     trailerId: 'lh8Lal1N14A',
-    status: 'COMING_SOON'
+    status: 'COMING_SOON',
+    cast: [
+      { name: "Anthony Mackie", role: "Sam Wilson / Captain America", avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" },
+      { name: "Sebastian Stan", role: "Bucky Barnes / Winter Soldier", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" }
+    ]
   },
   {
     id: 10,
@@ -137,7 +172,11 @@ export const MOVIES = [
     posterUrl: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600&auto=format&fit=crop&q=80',
     image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600&auto=format&fit=crop&q=80',
     trailerId: 'w543_lR5_00',
-    status: 'COMING_SOON'
+    status: 'COMING_SOON',
+    cast: [
+      { name: "Jack Black", role: "Steve", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" },
+      { name: "Jason Momoa", role: "Garrett Garrison", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" }
+    ]
   },
   {
     id: 11,
@@ -151,7 +190,11 @@ export const MOVIES = [
     posterUrl: 'https://images.unsplash.com/photo-1568832359672-e36cf5d74f54?w=600&auto=format&fit=crop&q=80',
     image: 'https://images.unsplash.com/photo-1568832359672-e36cf5d74f54?w=600&auto=format&fit=crop&q=80',
     trailerId: 'V9D-fS4WvP4',
-    status: 'COMING_SOON'
+    status: 'COMING_SOON',
+    cast: [
+      { name: "David Corenswet", role: "Clark Kent / Superman", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" },
+      { name: "Rachel Brosnahan", role: "Lois Lane", avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=80" }
+    ]
   },
   {
     id: 12,
@@ -165,7 +208,10 @@ export const MOVIES = [
     posterUrl: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
     image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
     trailerId: 'wO2F1H-zC1M',
-    status: 'COMING_SOON'
+    status: 'COMING_SOON',
+    cast: [
+      { name: "Minami Takayama", role: "Edogawa Conan (Lồng tiếng)", avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" }
+    ]
   },
   {
     id: 13,
@@ -179,7 +225,10 @@ export const MOVIES = [
     posterUrl: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&auto=format&fit=crop&q=80',
     image: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&auto=format&fit=crop&q=80',
     trailerId: 'lq5y2hZq-hM',
-    status: 'COMING_SOON'
+    status: 'COMING_SOON',
+    cast: [
+      { name: "Florence Pugh", role: "Yelena", avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&auto=format&fit=crop&q=80" }
+    ]
   },
   {
     id: 14,
@@ -193,7 +242,10 @@ export const MOVIES = [
     posterUrl: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=600&auto=format&fit=crop&q=80',
     image: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=600&auto=format&fit=crop&q=80',
     trailerId: 'pP_o66qZt8g',
-    status: 'COMING_SOON'
+    status: 'COMING_SOON',
+    cast: [
+      { name: "Kiều Minh Tuấn", role: "Tướng quân Phong", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" }
+    ]
   }
 ];
 
