@@ -82,19 +82,9 @@ export default function Header({ onNavigate }) {
     onNavigate('home', null);
   };
 
-  // Mua Ve ticket button click action (routes to seats with default movie payload)
+  // Mua Ve ticket button click action (routes to booking funnel)
   const handleQuickTicketClick = () => {
-    const defaultBookingData = {
-      movieId: 1,
-      movieTitle: 'Tu Vu Tru John Wick: Ballerina',
-      cinema: 'Lora Nguyen Du',
-      time: '19:30',
-      format: '2D DIGITAL',
-      date: new Date().toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }),
-      fullDate: new Date().toLocaleDateString('vi-VN'),
-      selectedSeats: []
-    };
-    onNavigate('seats', defaultBookingData);
+    onNavigate('booking-funnel', null);
   };
 
   // Dropdown option handlers

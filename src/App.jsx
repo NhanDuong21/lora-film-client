@@ -16,6 +16,7 @@ import ActorRegistryView from './components/ActorRegistryView';
 import DirectorRegistryView from './components/DirectorRegistryView';
 import CinemaDetailView from './components/CinemaDetailView';
 import EventRegistryView from './components/EventRegistryView';
+import MasterBookingFunnel from './components/MasterBookingFunnel';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 function AppInner() {
@@ -54,6 +55,8 @@ function AppInner() {
       } else if (hash.startsWith('#/event/')) {
         const eventId = parseInt(hash.substring(8)) || 1;
         setCurrentView({ name: 'event-detail', data: { eventId } });
+      } else if (hash === '#/booking-funnel') {
+        setCurrentView({ name: 'booking-funnel', data: null });
       } else if (hash === '#/profile') {
         setCurrentView({ name: 'profile', data: null });
       } else if (hash === '#/admin') {
@@ -140,6 +143,9 @@ function AppInner() {
         break;
       case 'event-detail':
         targetHash = `#/event/${newView.data?.eventId || 1}`;
+        break;
+      case 'booking-funnel':
+        targetHash = '#/booking-funnel';
         break;
       case 'login':
         targetHash = '#/login';
@@ -377,6 +383,13 @@ function AppInner() {
             onBackHome={() => handleViewChange({ name: 'home', data: null })}
             onBookTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
             onNavigate={(viewName, viewData = null) => handleViewChange({ name: viewName, data: viewData })}
+          />
+        )}
+
+        {currentView.name === 'booking-funnel' && (
+          <MasterBookingFunnel 
+            onBackHome={() => handleViewChange({ name: 'home', data: null })}
+            onBookTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
           />
         )}
       </main>
