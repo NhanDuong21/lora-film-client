@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { 
   Film, ChevronDown, Menu, X, Bell, Star, Search, User, History, LogOut 
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { MOVIES } from '../data/mockData';
 
 export default function Header({ onNavigate }) {
   const { user, userRole, isAuthenticated, logout } = useAuth();
@@ -16,6 +17,59 @@ export default function Header({ onNavigate }) {
   
   // Cinema info modal state
   const [infoModalContent, setInfoModalContent] = useState(null);
+
+  // Centralized search query state
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Multi-Criteria Search Matching Logic (Client-Side)
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return { movies: [], stars: [] };
+    const query = searchQuery.toLowerCase().trim();
+
+    // 1. Phim (Movies Category Match)
+    const matchedMovies = MOVIES.filter(movie => 
+      movie.title.toLowerCase().includes(query) ||
+      (movie.genres && movie.genres.some(g => g.toLowerCase().includes(query)))
+    );
+
+    // 2. Diễn viên & Đạo diễn matching (Stars/Directors)
+    const matchedStarsMap = new Map();
+
+    MOVIES.forEach(movie => {
+      // Check cast array actors
+      if (movie.cast && Array.isArray(movie.cast)) {
+        movie.cast.forEach(actor => {
+          if (actor.name.toLowerCase().includes(query)) {
+            if (!matchedStarsMap.has(actor.name)) {
+              matchedStarsMap.set(actor.name, {
+                name: actor.name,
+                type: 'actor',
+                avatarUrl: actor.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'
+              });
+            }
+          }
+        });
+      }
+
+      // Check director object
+      if (movie.director && movie.director.name) {
+        if (movie.director.name.toLowerCase().includes(query)) {
+          if (!matchedStarsMap.has(movie.director.name)) {
+            matchedStarsMap.set(movie.director.name, {
+              name: movie.director.name,
+              type: 'director',
+              avatarUrl: movie.director.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80'
+            });
+          }
+        }
+      }
+    });
+
+    return {
+      movies: matchedMovies,
+      stars: Array.from(matchedStarsMap.values())
+    };
+  }, [searchQuery]);
 
   const handleLogoClick = (e) => {
     e.preventDefault();
@@ -243,13 +297,109 @@ export default function Header({ onNavigate }) {
 
       {/* RIGHT SECTION: Live Auth Session Status Dropdown */}
       <div className="flex items-center gap-4">
-        {/* Search Icon button */}
-        <button 
-          onClick={() => handleInfoOptionClick('Tìm kiếm phim')}
-          className="p-2 rounded-xl bg-zinc-900 border border-zinc-800/80 hover:bg-zinc-800 text-zinc-400 hover:text-white transition-all focus:outline-none"
-        >
-          <Search className="w-4 h-4" />
-        </button>
+        {/* Expanded Omni-Search Input Field UI */}
+        <div className="relative">
+          <div className="w-48 md:w-64 lg:w-72 h-10 relative flex items-center bg-zinc-900/80 border border-zinc-800 rounded-full pl-4 pr-10 focus-within:border-amber-500 focus-within:w-80 transition-all duration-300">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Tìm phim, diễn viên, đạo diễn..."
+              className="bg-transparent text-white text-xs w-full h-full focus:outline-none placeholder-zinc-500"
+            />
+            <Search className="w-4 h-4 text-zinc-450 absolute right-3 pointer-events-none" />
+          </div>
+
+          {/* Quick-Result Floating Dropdown Portal */}
+          {searchQuery.length > 0 && (
+            <div className="absolute top-12 right-0 w-80 max-h-96 overflow-y-auto bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl p-3 z-50 divide-y divide-zinc-800/50">
+              
+              {/* Movies Matches Section */}
+              {searchResults.movies.length > 0 && (
+                <div className="py-2 first:pt-0">
+                  <div className="text-[10px] font-black tracking-wider text-zinc-500 uppercase mb-2 px-1">
+                    PHIM
+                  </div>
+                  <div className="space-y-2">
+                    {searchResults.movies.map((phim) => (
+                      <div
+                        key={phim.id}
+                        onClick={() => {
+                          setSearchQuery('');
+                          onNavigate('detail', { movieId: phim.id });
+                        }}
+                        className="flex items-center gap-3 p-1.5 hover:bg-zinc-800/60 rounded-lg cursor-pointer transition-colors"
+                      >
+                        <img
+                          src={phim.posterUrl || phim.image}
+                          alt={phim.title}
+                          className="w-8 h-12 rounded object-cover border border-zinc-800"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-black text-white truncate">{phim.title}</p>
+                          <span className="inline-block mt-1 text-[8px] font-black uppercase bg-zinc-950 border border-zinc-850 text-orange-500 px-1 py-0.5 rounded">
+                            {phim.ageRating || 'T16'}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Stars & Directors Matches Section */}
+              {searchResults.stars.length > 0 && (
+                <div className="py-2">
+                  <div className="text-[10px] font-black tracking-wider text-zinc-550 uppercase mb-2 px-1">
+                    DIỄN VIÊN & ĐẠO DIỄN
+                  </div>
+                  <div className="space-y-2">
+                    {searchResults.stars.map((star, sIdx) => (
+                      <div
+                        key={sIdx}
+                        onClick={() => {
+                          setSearchQuery('');
+                          if (star.type === 'actor') {
+                            onNavigate('actor-detail', { actorName: star.name });
+                          } else {
+                            onNavigate('director-detail', { directorName: star.name });
+                          }
+                        }}
+                        className="flex items-center gap-3 p-1.5 hover:bg-zinc-800/60 rounded-lg cursor-pointer transition-colors"
+                      >
+                        <img
+                          src={star.avatarUrl}
+                          alt={star.name}
+                          className="w-8 h-8 rounded-full object-cover border border-zinc-800"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80';
+                          }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-black text-white truncate">{star.name}</p>
+                          <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest mt-0.5">
+                            {star.type === 'actor' ? 'Diễn viên' : 'Đạo diễn'}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Fallback Empty row */}
+              {searchResults.movies.length === 0 && searchResults.stars.length === 0 && (
+                <div className="py-6 text-center">
+                  <p className="text-xs font-bold text-zinc-500">
+                    Không tìm thấy kết quả phù hợp
+                  </p>
+                </div>
+              )}
+
+            </div>
+          )}
+        </div>
 
         {/* Auth adaptive controls */}
         {isAuthenticated ? (

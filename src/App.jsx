@@ -45,6 +45,9 @@ function AppInner() {
       } else if (hash.startsWith('#/cinema/')) {
         const cinemaId = parseInt(hash.substring(9)) || 1;
         setCurrentView({ name: 'cinema-detail', data: { cinemaId } });
+      } else if (hash.startsWith('#/movie/')) {
+        const movieId = parseInt(hash.substring(8)) || 1;
+        setCurrentView({ name: 'detail', data: { movieId } });
       } else if (hash === '#/profile') {
         setCurrentView({ name: 'profile', data: null });
       } else if (hash === '#/admin') {
@@ -113,6 +116,9 @@ function AppInner() {
         break;
       case 'cinema-detail':
         targetHash = `#/cinema/${newView.data?.cinemaId || 1}`;
+        break;
+      case 'detail':
+        targetHash = `#/movie/${newView.data?.movieId || 1}`;
         break;
       case 'profile':
         targetHash = '#/profile';
