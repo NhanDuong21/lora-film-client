@@ -7,7 +7,7 @@ export default function MovieGrid({ onSelectMovie, onBuyTicket, activeTab: propA
   const [localActiveTab, setLocalActiveTab] = useState('NOW_SHOWING');
   const activeTab = propActiveTab !== undefined ? propActiveTab : localActiveTab;
   const setActiveTab = onChangeActiveTab !== undefined ? onChangeActiveTab : setLocalActiveTab;
-  const [visibleCount, setVisibleCount] = useState(8);
+  const [visibleCount, setVisibleCount] = useState(12);
   const [activeTrailerId, setActiveTrailerId] = useState(null);
 
   // Filter movies by the active status tab
@@ -50,7 +50,7 @@ export default function MovieGrid({ onSelectMovie, onBuyTicket, activeTab: propA
           <button
             onClick={() => {
               setActiveTab('NOW_SHOWING');
-              setVisibleCount(8);
+              setVisibleCount(12);
             }}
             className={`text-lg md:text-xl font-black tracking-wider uppercase pb-2 transition-all duration-300 relative ${
               activeTab === 'NOW_SHOWING'
@@ -63,7 +63,7 @@ export default function MovieGrid({ onSelectMovie, onBuyTicket, activeTab: propA
           <button
             onClick={() => {
               setActiveTab('COMING_SOON');
-              setVisibleCount(8);
+              setVisibleCount(12);
             }}
             className={`text-lg md:text-xl font-black tracking-wider uppercase pb-2 transition-all duration-300 relative ${
               activeTab === 'COMING_SOON'
@@ -76,8 +76,8 @@ export default function MovieGrid({ onSelectMovie, onBuyTicket, activeTab: propA
         </div>
       </div>
 
-      {/* Grid System (Desktop 4 columns, matches strict 2x4 grid initially) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+      {/* Grid System (Desktop 5-6 columns, compact cinematic scale) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-5 md:gap-6">
         {displayedMovies.map((movie, index) => (
           <div
             key={movie.id}
@@ -164,7 +164,7 @@ export default function MovieGrid({ onSelectMovie, onBuyTicket, activeTab: propA
       {filteredMovies.length > visibleCount && (
         <div className="flex justify-center mt-12">
           <button
-            onClick={() => setVisibleCount((prev) => prev + 8)}
+            onClick={() => setVisibleCount((prev) => prev + 6)}
             className="bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 font-bold px-8 py-3.5 rounded-full transition-all duration-300 transform hover:scale-105 shadow-md uppercase tracking-wider text-xs"
           >
             Xem thêm
