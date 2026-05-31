@@ -53,7 +53,11 @@ export default function Header({ onNavigate }) {
   const handleInfoOptionClick = (optionName) => {
     setActiveDropdown(null);
     setMobileMenuOpen(false);
-    setInfoModalContent(optionName);
+    if (optionName === 'Thể loại phim') {
+      onNavigate('discovery', null);
+    } else {
+      setInfoModalContent(optionName);
+    }
   };
 
   return (
