@@ -1,76 +1,157 @@
-import { Film, Facebook, Instagram, Youtube } from 'lucide-react';
+import { Film, Facebook, Instagram, Youtube, Video } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="bg-black border-t border-white/10 py-10 px-6 md:px-12 flex flex-col gap-6 md:gap-0 md:flex-row justify-between items-center text-sm text-gray-500">
-      
-      {/* Left Section: Logo & Copyright */}
-      <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
-        <a href="/" className="flex items-center gap-2 group">
-          <div className="bg-brand-coral/10 p-1.5 rounded-lg">
-            <Film className="w-5 h-5 text-brand-coral" />
+    <footer className="bg-zinc-950">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 py-12 border-t border-zinc-900 text-zinc-400 text-sm">
+        
+        {/* Column 1: Brand Overview & Social Connect */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 select-none">
+            <div className="bg-brand-coral/10 p-1.5 rounded-lg">
+              <Film className="w-5 h-5 text-brand-coral" />
+            </div>
+            <span className="text-lg font-black tracking-tight">
+              <span className="text-brand-coral">Lora</span>
+              <span className="text-white">Film</span>
+            </span>
           </div>
-          <span className="text-lg font-black tracking-tight">
-            <span className="text-brand-coral">Lora</span>
-            <span className="text-white"> Film</span>
+          <p className="text-xs text-zinc-500 leading-relaxed">
+            Hệ thống rạp chiếu phim hiện đại mang đến trải nghiệm điện ảnh vượt chuẩn vượt giới hạn với công nghệ đỉnh cao.
+          </p>
+          <div className="flex items-center gap-3 mt-4">
+            <a
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white hover:border-brand-coral hover:bg-brand-coral/10 transition-all duration-300"
+              aria-label="Facebook"
+            >
+              <Facebook className="w-4 h-4" />
+            </a>
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white hover:border-brand-coral hover:bg-brand-coral/10 transition-all duration-300"
+              aria-label="Instagram"
+            >
+              <Instagram className="w-4 h-4" />
+            </a>
+            <a
+              href="https://youtube.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white hover:border-brand-coral hover:bg-brand-coral/10 transition-all duration-300"
+              aria-label="YouTube"
+            >
+              <Youtube className="w-4 h-4" />
+            </a>
+            <a
+              href="https://video.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white hover:border-brand-coral hover:bg-brand-coral/10 transition-all duration-300"
+              aria-label="Video"
+            >
+              <Video className="w-4 h-4" />
+            </a>
+          </div>
+        </div>
+
+        {/* Column 2: Terms & Compliance */}
+        <div className="space-y-4">
+          <h3 className="text-zinc-100 font-bold uppercase tracking-wider text-xs">
+            ĐIỀU KHOẢN SỬ DỤNG
+          </h3>
+          <ul className="space-y-2 text-xs">
+            <li>
+              <a href="#/" className="hover:text-zinc-100 transition-colors duration-200">
+                Điều Khoản Chung
+              </a>
+            </li>
+            <li>
+              <a href="#/" className="hover:text-zinc-100 transition-colors duration-200">
+                Chính Sách Thanh Toán
+              </a>
+            </li>
+            <li>
+              <a href="#/" className="hover:text-zinc-100 transition-colors duration-200">
+                Chính Sách Bảo Mật
+              </a>
+            </li>
+            <li>
+              <a href="#/" className="hover:text-zinc-100 transition-colors duration-200">
+                Quy Chế Hoạt Động
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {/* Column 3: Site Links */}
+        <div className="space-y-4">
+          <h3 className="text-zinc-100 font-bold uppercase tracking-wider text-xs">
+            DANH MỤC LORAFILM
+          </h3>
+          <ul className="space-y-2 text-xs">
+            <li>
+              <a href="#/discovery" className="hover:text-zinc-100 transition-colors duration-200">
+                Phim Đang Chiếu
+              </a>
+            </li>
+            <li>
+              <a href="#/discovery" className="hover:text-zinc-100 transition-colors duration-200">
+                Hệ Thống Rạp
+              </a>
+            </li>
+            <li>
+              <a href="#/events" className="hover:text-zinc-100 transition-colors duration-200">
+                Sự Kiện & Ưu Đãi
+              </a>
+            </li>
+            <li>
+              <a href="#/discovery?tab=ALL" className="hover:text-zinc-100 transition-colors duration-200">
+                Góc Điện Ảnh
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {/* Column 4: Customer Support & Verification */}
+        <div className="space-y-4">
+          <h3 className="text-zinc-100 font-bold uppercase tracking-wider text-xs">
+            CHĂM SÓC KHÁCH HÀNG
+          </h3>
+          <ul className="space-y-2 text-xs text-zinc-500">
+            <li className="text-zinc-400">
+              Hotline: <span className="text-zinc-300 font-medium">1900 LORA (10:00 - 22:00)</span>
+            </li>
+            <li className="text-zinc-400">
+              Email: <span className="text-zinc-300 font-medium">support@lorafilm.vn</span>
+            </li>
+          </ul>
+          
+          {/* "Đã Đăng Ký Bộ Công Thương" stamp badge */}
+          <div className="pt-2">
+            <div className="border border-red-500/25 bg-red-950/10 text-red-500 text-[10px] uppercase font-black tracking-widest px-3 py-1.5 rounded inline-flex items-center gap-1.5 select-none">
+              <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+              Đã Đăng Ký Bộ Công Thương
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Baseline Copyright Separation Banner */}
+      <div className="bg-zinc-950 border-t border-zinc-900/60">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-zinc-500 text-center md:text-left">
+          <span>
+            © 2026 LoraFilm. Movie Tickets, Your Way. All rights reserved.
           </span>
-        </a>
-        <span className="hidden md:inline text-gray-700">|</span>
-        <span className="text-xs md:text-sm text-gray-400">
-          2026 Lora Film. Movie Tickets, Your Way.
-        </span>
+          <span className="text-[10px] text-zinc-600 font-medium">
+            Cơ sở hoạt động: Higher Education Campus System - FPT Education.
+          </span>
+        </div>
       </div>
-
-      {/* Center Section: Social Media Icon Row */}
-      <div className="flex items-center gap-4">
-        <a
-          href="https://www.facebook.com/nyanprofile"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-brand-coral transition-all duration-300"
-          aria-label="Facebook"
-        >
-          <Facebook className="w-4 h-4" />
-        </a>
-        <a
-          href="https://www.instagram.com/nhannnduong1211/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-brand-coral transition-all duration-300"
-          aria-label="Instagram"
-        >
-          <Instagram className="w-4 h-4" />
-        </a>
-        <a
-          href="https://youtube.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-brand-coral transition-all duration-300"
-          aria-label="YouTube"
-        >
-          <Youtube className="w-4 h-4" />
-        </a>
-        {/* TikTok SVG Icon */}
-        <a
-          href="https://www.tiktok.com/@linggxuan"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-brand-coral transition-all duration-300"
-          aria-label="TikTok"
-        >
-          <svg
-            className="w-4 h-4 fill-current"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.89-.74-3.94-1.78-.22-.22-.41-.47-.59-.73v6.38c.01 4.15-2.9 8.16-7.07 8.35-4.14.27-8.12-2.54-8.8-6.61-.83-4.32 2.05-8.87 6.42-9.42 1.34-.18 2.74-.03 4 .43V4.85c-1.78-.66-3.79-.5-5.38.52-2.15 1.36-3.23 4.11-2.61 6.56.5 2.22 2.23 4.14 4.47 4.58 2.65.57 5.56-.93 6.16-3.57.12-.52.17-1.06.17-1.6V.02z" />
-          </svg>
-        </a>
-      </div>
-
-      {/* Right Section: Built-with Micro-badge */}
-     
-
     </footer>
   );
 }
