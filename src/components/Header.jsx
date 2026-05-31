@@ -113,6 +113,8 @@ export default function Header({ onNavigate }) {
       onNavigate('actors', null);
     } else if (optionName === 'Đạo diễn') {
       onNavigate('directors', null);
+    } else if (optionName === 'Khuyến mãi và Sự kiện') {
+      onNavigate('events', null);
     } else {
       setInfoModalContent(optionName);
     }

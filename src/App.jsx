@@ -15,6 +15,7 @@ import MovieDiscoveryView from './components/MovieDiscoveryView';
 import ActorRegistryView from './components/ActorRegistryView';
 import DirectorRegistryView from './components/DirectorRegistryView';
 import CinemaDetailView from './components/CinemaDetailView';
+import EventRegistryView from './components/EventRegistryView';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 function AppInner() {
@@ -48,6 +49,11 @@ function AppInner() {
       } else if (hash.startsWith('#/movie/')) {
         const movieId = parseInt(hash.substring(8)) || 1;
         setCurrentView({ name: 'detail', data: { movieId } });
+      } else if (hash === '#/events') {
+        setCurrentView({ name: 'events', data: null });
+      } else if (hash.startsWith('#/event/')) {
+        const eventId = parseInt(hash.substring(8)) || 1;
+        setCurrentView({ name: 'event-detail', data: { eventId } });
       } else if (hash === '#/profile') {
         setCurrentView({ name: 'profile', data: null });
       } else if (hash === '#/admin') {
@@ -128,6 +134,12 @@ function AppInner() {
         break;
       case 'employee':
         targetHash = '#/employee';
+        break;
+      case 'events':
+        targetHash = '#/events';
+        break;
+      case 'event-detail':
+        targetHash = `#/event/${newView.data?.eventId || 1}`;
         break;
       case 'login':
         targetHash = '#/login';
@@ -348,6 +360,23 @@ function AppInner() {
           <CinemaDetailView 
             cinemaId={currentView.data?.cinemaId}
             onBookTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
+          />
+        )}
+
+        {currentView.name === 'events' && (
+          <EventRegistryView 
+            onBackHome={() => handleViewChange({ name: 'home', data: null })}
+            onBookTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
+            onNavigate={(viewName, viewData = null) => handleViewChange({ name: viewName, data: viewData })}
+          />
+        )}
+
+        {currentView.name === 'event-detail' && (
+          <EventRegistryView 
+            eventId={currentView.data?.eventId}
+            onBackHome={() => handleViewChange({ name: 'home', data: null })}
+            onBookTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
+            onNavigate={(viewName, viewData = null) => handleViewChange({ name: viewName, data: viewData })}
           />
         )}
       </main>
