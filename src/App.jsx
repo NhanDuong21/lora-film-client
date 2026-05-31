@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import MovieGrid from './components/MovieGrid';
+import PromoShowcase from './components/PromoShowcase';
 import BookingSteps from './components/BookingSteps';
 import Footer from './components/Footer';
 import MovieDetailView from './components/MovieDetailView';
@@ -252,6 +253,11 @@ function AppInner() {
               onChangeActiveTab={setMovieFilterTab}
               onSelectMovie={(movieId) => handleViewChange({ name: 'detail', data: { movieId } })}
               onBuyTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
+              onNavigate={(viewName, viewData = null) => handleViewChange({ name: viewName, data: viewData })}
+            />
+
+            {/* Homepage Events & Promotions Showcase */}
+            <PromoShowcase 
               onNavigate={(viewName, viewData = null) => handleViewChange({ name: viewName, data: viewData })}
             />
 

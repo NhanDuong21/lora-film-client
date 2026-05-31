@@ -5,7 +5,7 @@ import { MOVIES, CINEMA_CLUSTERS } from '../data/mockData';
 const EVENTS = [
   {
     id: 1,
-    title: "Mua 2 Vé Lora Nguyễn Du - Tặng Ngay 1 Bắp Rang Bơ Phô Mai",
+    title: "Thứ Ba Vui Vẻ - Đồng Giá Vé 60K",
     category: "Khuyến mãi mới",
     image: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=80",
     dateUntil: "Áp dụng đến 31/12/2026",
@@ -29,7 +29,7 @@ const EVENTS = [
   },
   {
     id: 4,
-    title: "Đồng Giá 45k Cho Học Sinh Sinh Viên Mỗi Thứ Hai Đầu Tuần",
+    title: "Combo Bắp Nước Siêu Anh Hùng - Tặng Bình Nước Giới Hạn",
     category: "Khuyến mãi mới",
     image: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=800&auto=format&fit=crop&q=80",
     dateUntil: "Áp dụng đến 31/12/2026",
