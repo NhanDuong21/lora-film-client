@@ -91,10 +91,15 @@ export default function Hero({ onBookTicket, onNavigate }) {
 
         {/* Main Left Content Area */}
         <div className="relative z-20 max-w-4xl mt-auto mb-4 animate-in fade-in slide-in-from-bottom duration-1000">
-          <span className="bg-red-600 text-white text-xs px-3 py-1.5 rounded-full font-extrabold uppercase tracking-widest inline-flex items-center gap-1.5 mb-4 shadow-lg shadow-red-600/30">
-            <span className="w-2 h-2 rounded-full bg-white animate-ping"></span>
-            HOT | PHIM HOT TRONG THÁNG
-          </span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-950/40 backdrop-blur-md border border-red-500/30 rounded-full shadow-[0_0_15px_rgba(239,68,68,0.15)] mb-4 animate-fade-in">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+            </span>
+            <span className="text-red-400 text-xs font-bold uppercase tracking-widest">
+              TOP PICK | LỰA CHỌN CỦA BẠN HÔM NAY
+            </span>
+          </div>
 
           <h1 className="text-4xl md:text-7xl font-black text-white tracking-tight uppercase mb-2 leading-none">
             KHÁM PHÁ THẾ GIỚI <br />
