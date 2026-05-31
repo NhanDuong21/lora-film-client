@@ -191,6 +191,16 @@ function AppInner() {
           <ActorRegistryView 
             onBackHome={() => handleViewChange({ name: 'home', data: null })}
             onBookTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
+            onNavigate={(viewName, viewData = null) => handleViewChange({ name: viewName, data: viewData })}
+          />
+        )}
+
+        {currentView.name === 'actor-detail' && (
+          <ActorRegistryView 
+            actorName={currentView.data?.actorName}
+            onBackHome={() => handleViewChange({ name: 'home', data: null })}
+            onBookTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
+            onNavigate={(viewName, viewData = null) => handleViewChange({ name: viewName, data: viewData })}
           />
         )}
       </main>
