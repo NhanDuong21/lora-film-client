@@ -185,13 +185,51 @@ export default function Header({ onNavigate }) {
           Sự Kiện
         </button>
 
-        {/* Rạp/Giá Vé Link */}
-        <button
-          onClick={() => handleInfoOptionClick('Rạp và Giá vé')}
-          className="text-zinc-300 hover:text-orange-500 py-2 transition-colors duration-250 focus:outline-none"
+        {/* Rạp/Giá Vé Dropdown Menu */}
+        <div 
+          className="relative py-2"
+          onMouseEnter={() => setActiveDropdown('rap-gia-ve')}
+          onMouseLeave={() => setActiveDropdown(null)}
         >
-          Rạp/Giá Vé
-        </button>
+          <button 
+            type="button"
+            className="text-zinc-300 hover:text-orange-500 flex items-center gap-1 transition-colors duration-250 focus:outline-none"
+          >
+            <span>Rạp/Giá Vé</span>
+            <ChevronDown className="w-3 h-3 shrink-0 text-zinc-500" />
+          </button>
+          {activeDropdown === 'rap-gia-ve' && (
+            <div className="absolute left-0 mt-2 w-56 bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl z-50 py-2">
+              <button
+                onClick={() => {
+                  setActiveDropdown(null);
+                  onNavigate('cinema-detail', { cinemaId: 1 });
+                }}
+                className="w-full text-left px-4 py-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white font-bold transition-colors"
+              >
+                Lora Nguyễn Du
+              </button>
+              <button
+                onClick={() => {
+                  setActiveDropdown(null);
+                  onNavigate('cinema-detail', { cinemaId: 2 });
+                }}
+                className="w-full text-left px-4 py-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white font-bold transition-colors"
+              >
+                Lora Thảo Điền
+              </button>
+              <button
+                onClick={() => {
+                  setActiveDropdown(null);
+                  onNavigate('cinema-detail', { cinemaId: 3 });
+                }}
+                className="w-full text-left px-4 py-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white font-bold transition-colors"
+              >
+                Lora Royal City
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* Rạp Đặc Biệt Link */}
         <button

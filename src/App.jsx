@@ -14,6 +14,7 @@ import CustomerProfileView from './components/CustomerProfileView';
 import MovieDiscoveryView from './components/MovieDiscoveryView';
 import ActorRegistryView from './components/ActorRegistryView';
 import DirectorRegistryView from './components/DirectorRegistryView';
+import CinemaDetailView from './components/CinemaDetailView';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 function AppInner() {
@@ -41,6 +42,9 @@ function AppInner() {
       } else if (hash.startsWith('#/director/')) {
         const directorName = decodeURIComponent(hash.substring(11));
         setCurrentView({ name: 'director-detail', data: { directorName } });
+      } else if (hash.startsWith('#/cinema/')) {
+        const cinemaId = parseInt(hash.substring(9)) || 1;
+        setCurrentView({ name: 'cinema-detail', data: { cinemaId } });
       } else if (hash === '#/profile') {
         setCurrentView({ name: 'profile', data: null });
       } else if (hash === '#/admin') {
@@ -106,6 +110,9 @@ function AppInner() {
         break;
       case 'director-detail':
         targetHash = `#/director/${encodeURIComponent(newView.data?.directorName || '')}`;
+        break;
+      case 'cinema-detail':
+        targetHash = `#/cinema/${newView.data?.cinemaId || 1}`;
         break;
       case 'profile':
         targetHash = '#/profile';
@@ -325,6 +332,13 @@ function AppInner() {
             onBackHome={() => handleViewChange({ name: 'home', data: null })}
             onBookTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
             onNavigate={(viewName, viewData = null) => handleViewChange({ name: viewName, data: viewData })}
+          />
+        )}
+
+        {currentView.name === 'cinema-detail' && (
+          <CinemaDetailView 
+            cinemaId={currentView.data?.cinemaId}
+            onBookTicket={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
           />
         )}
       </main>
