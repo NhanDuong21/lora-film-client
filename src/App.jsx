@@ -67,6 +67,10 @@ function AppInner() {
         setCurrentView({ name: 'profile', data: null });
       } else if (hash === '#/admin') {
         setCurrentView({ name: 'admin', data: null });
+      } else if (hash === '#/admin-events' || hash === '#/admin/events') {
+        setCurrentView({ name: 'admin-events', data: null });
+      } else if (hash === '#/admin-movies' || hash === '#/admin/movies') {
+        setCurrentView({ name: 'admin-movies', data: null });
       } else if (hash === '#/employee') {
         setCurrentView({ name: 'employee', data: null });
       } else if (hash === '#/login') {
@@ -152,6 +156,12 @@ function AppInner() {
       case 'admin':
         targetHash = '#/admin';
         break;
+      case 'admin-events':
+        targetHash = '#/admin-events';
+        break;
+      case 'admin-movies':
+        targetHash = '#/admin-movies';
+        break;
       case 'employee':
         targetHash = '#/employee';
         break;
@@ -206,7 +216,7 @@ function AppInner() {
   };
 
   // Implicit Authorization Guard Checks
-  if (currentView.name === 'admin' && userRole !== 'ADMIN') {
+  if (['admin', 'admin-events', 'admin-movies'].includes(currentView.name) && userRole !== 'ADMIN') {
       return <div className="p-20 text-center text-red-500 font-bold">403 FORBIDDEN: Bạn không có quyền truy cập trang quản trị Admin!</div>;
   }
   if (currentView.name === 'employee' && userRole !== 'EMPLOYEE') {
@@ -258,7 +268,7 @@ function AppInner() {
     }
   };
 
-  const isDashboardView = ['admin', 'employee'].includes(currentView.name);
+  const isDashboardView = ['admin', 'employee', 'admin-events', 'admin-movies'].includes(currentView.name);
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col selection:bg-brand-coral selection:text-white">
@@ -348,8 +358,11 @@ function AppInner() {
           />
         )}
 
-        {currentView.name === 'admin' && (
-          <AdminDashboardView onBackHome={() => handleViewChange({ name: 'home', data: null })} />
+        {(currentView.name === 'admin' || currentView.name === 'admin-events' || currentView.name === 'admin-movies') && (
+          <AdminDashboardView 
+            initialTab={currentView.name === 'admin-events' ? 'events-promo' : (currentView.name === 'admin-movies' ? 'movies' : 'dashboard')}
+            onBackHome={() => handleViewChange({ name: 'home', data: null })} 
+          />
         )}
 
         {currentView.name === 'employee' && (
