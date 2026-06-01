@@ -251,12 +251,12 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 
                 {/* 1. DOANH THU TỔNG HỢP (emerald theme) */}
-                <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl">
+                <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300">
                   <div>
                     <span className="text-zinc-400 text-[10px] font-black uppercase tracking-wider block mb-1.5">
                       DOANH THU TỔNG HỢP
                     </span>
-                    <span className="text-2xl font-black text-zinc-50">
+                    <span className="text-2xl font-bold text-zinc-50">
                       {stats.todayRevenue.toLocaleString('vi-VN')} đ
                     </span>
                   </div>
@@ -266,12 +266,12 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
                 </div>
 
                 {/* 2. VÉ BÁN TẠI QUẦY (amber theme) */}
-                <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl">
+                <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300">
                   <div>
                     <span className="text-zinc-400 text-[10px] font-black uppercase tracking-wider block mb-1.5">
                       VÉ BÁN TẠI QUẦY
                     </span>
-                    <span className="text-2xl font-black text-zinc-50">
+                    <span className="text-2xl font-bold text-zinc-50">
                       {stats.ticketsCount} vé
                     </span>
                   </div>
@@ -281,12 +281,12 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
                 </div>
 
                 {/* 3. TỶ LỆ LẤP ĐẦY */}
-                <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl">
+                <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300">
                   <div>
                     <span className="text-zinc-400 text-[10px] font-black uppercase tracking-wider block mb-1.5">
                       TỶ LỆ LẤP ĐẦY
                     </span>
-                    <span className="text-2xl font-black text-zinc-50">
+                    <span className="text-2xl font-bold text-zinc-50">
                       {stats.occupancy}%
                     </span>
                   </div>
@@ -296,12 +296,12 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
                 </div>
 
                 {/* 4. SỰ CỐ KỸ THUẬT */}
-                <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl">
+                <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300">
                   <div>
                     <span className="text-zinc-400 text-[10px] font-black uppercase tracking-wider block mb-1.5">
                       SỰ CỐ KỸ THUẬT
                     </span>
-                    <span className="text-2xl font-black text-red-500">
+                    <span className="text-2xl font-bold text-red-500">
                       {stats.issues}
                     </span>
                   </div>
@@ -320,7 +320,7 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
                   </h3>
                 </div>
 
-                <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl shadow-xl overflow-hidden">
+                <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300 overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs text-zinc-400">
                       <thead className="bg-zinc-950/80 text-zinc-400 font-black uppercase tracking-wider border-b border-zinc-800">

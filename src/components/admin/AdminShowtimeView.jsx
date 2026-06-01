@@ -100,31 +100,33 @@ export default function AdminShowtimeView({
           return (
             <div 
               key={st.id} 
-              className="bg-zinc-900/40 backdrop-blur-md border border-zinc-900 rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-xl hover:border-zinc-800 transition-all"
+              className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300"
             >
               <div>
-                <div className="flex items-center justify-between gap-2 border-b border-zinc-900 pb-2 mb-3">
+                <div className="flex items-center justify-between gap-2 border-b border-zinc-800/60 pb-2 mb-3">
                   <span className="text-[10px] font-black tracking-widest text-amber-500 uppercase px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">
                     {formatUpper}
                   </span>
-                  <span className="text-[10px] font-bold text-zinc-500 uppercase">
+                  <span className="text-[10px] font-bold text-zinc-400 uppercase">
                     ID: #{st.id}
                   </span>
                 </div>
-                <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-wider">
+                <p className="text-[11px] text-zinc-350 font-bold uppercase tracking-wider">
                   {theater?.name || 'Rạp Chưa Xác Định'}
                 </p>
-                <p className="text-[10px] text-zinc-500 font-semibold uppercase mt-0.5">
+                <p className="text-[10px] text-zinc-400 font-semibold uppercase mt-0.5">
                   {hall?.name || 'Phòng Chưa Xác Định'}
                 </p>
-                <h4 className="font-black text-zinc-100 text-base mt-2 tracking-wide leading-snug">
+                <h4 className="font-bold text-zinc-50 text-base mt-2 tracking-wide leading-snug">
                   {movie?.title || 'Phim Chưa Xác Định'}
                 </h4>
               </div>
-              <div className="pt-3 border-t border-zinc-900/60 flex items-center justify-between gap-4">
-                <span className="text-zinc-400 text-xs font-semibold">
-                  Khung giờ: <span className="text-brand-coral font-bold">{st.time}</span> | Ngày: {st.date} | Giá: {displayPrice}đ
-                </span>
+              <div className="pt-3 border-t border-zinc-800/60 flex items-center justify-between gap-4">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
+                  <span className="text-zinc-400">Khung giờ: <span className="text-amber-400 font-bold bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/20">{st.time}</span></span>
+                  <span className="text-zinc-400">Ngày: <span className="text-zinc-100 font-medium">{st.date}</span></span>
+                  <span className="text-zinc-400">Giá: <span className="text-emerald-400 font-bold font-mono">{displayPrice} đ</span></span>
+                </div>
                 <button
                   onClick={() => handleDeleteShowtime(st.id)}
                   className="p-2 text-red-400 hover:text-red-300 bg-red-950/20 border border-red-900/40 rounded-xl transition-all shrink-0"
