@@ -47,37 +47,37 @@ export default function AdminSidebar({
     window.location.hash = hash;
   };
 
-  // Helper function to return styling for nested child sub-links
+  // Helper function to return styling for nested child sub-links (strictly left-aligned and single-line)
   const getSubLinkClass = (tabKey) => {
     const isActive = activeTab === tabKey;
     if (isActive) {
-      return "w-full flex items-center gap-3 pl-9 pr-4 py-2.5 text-sm font-semibold text-amber-400 bg-amber-500/10 rounded-xl border-l-4 border-amber-500 transition-all";
+      return "pl-9 pr-4 py-2.5 w-full flex items-center justify-start text-left gap-3 text-sm text-amber-400 bg-amber-500/10 border-l-4 border-amber-500 font-semibold rounded-xl transition-all whitespace-nowrap";
     }
-    return "w-full flex items-center gap-3 pl-9 pr-4 py-2.5 text-sm font-medium text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/40 rounded-xl transition-all";
+    return "pl-9 pr-4 py-2.5 w-full flex items-center justify-start text-left gap-3 text-sm text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/40 rounded-xl transition-all whitespace-nowrap";
   };
 
-  // Helper function to return styling for standalone top-level links (e.g. Dashboard)
+  // Helper function to return styling for standalone top-level links (strictly left-aligned and single-line)
   const getTopLinkClass = (tabKey) => {
     const isActive = activeTab === tabKey;
     if (isActive) {
-      return "w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-amber-400 bg-amber-500/10 rounded-xl border-l-4 border-amber-500 transition-all";
+      return "w-full flex items-center justify-start text-left gap-3 px-4 py-2.5 text-sm font-semibold text-amber-400 bg-amber-500/10 rounded-xl border-l-4 border-amber-500 transition-all whitespace-nowrap";
     }
-    return "w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/40 rounded-xl transition-all";
+    return "w-full flex items-center justify-start text-left gap-3 px-4 py-2.5 text-sm font-medium text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/40 rounded-xl transition-all whitespace-nowrap";
   };
 
   return (
-    <aside className="w-64 h-screen sticky top-0 bg-zinc-900 border-r border-zinc-800 flex flex-col justify-between shrink-0 z-30 select-none overflow-hidden">
+    <aside className="w-72 h-screen sticky top-0 bg-zinc-900 border-r border-zinc-800 flex flex-col justify-between shrink-0 z-30 select-none overflow-hidden">
       
       <div>
         {/* Brand Top Header */}
         <div className="p-6 border-b border-zinc-800 bg-zinc-950/40">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-amber-500 flex items-center justify-center font-black text-black text-base shadow-lg shadow-amber-500/20">
+          <div className="flex items-center justify-start text-left gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-amber-500 flex items-center justify-center font-black text-black text-base shadow-lg shadow-amber-500/20 shrink-0">
               L
             </div>
-            <div>
-              <span className="text-sm font-black text-zinc-50 uppercase tracking-widest block">LoraFilm</span>
-              <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">Trang Quản Trị</span>
+            <div className="truncate">
+              <span className="text-sm font-black text-zinc-50 uppercase tracking-wide block truncate">LoraFilm</span>
+              <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wide block truncate">Trang Quản Trị</span>
             </div>
           </div>
         </div>
@@ -100,9 +100,9 @@ export default function AdminSidebar({
           <div className="space-y-1">
             <button
               onClick={() => toggleSection('noiDung')}
-              className="w-full flex items-center justify-between px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-widest text-zinc-500 select-none font-mono hover:text-zinc-300 transition-colors"
+              className="w-full flex items-center justify-between px-4 py-3 text-sm font-bold uppercase tracking-wide text-zinc-300 hover:text-zinc-50 transition-colors select-none text-left whitespace-nowrap"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-start text-left gap-2">
                 <Film className="w-3.5 h-3.5 shrink-0" />
                 <span>QUẢN LÝ NỘI DUNG</span>
               </div>
@@ -142,9 +142,9 @@ export default function AdminSidebar({
           <div className="space-y-1">
             <button
               onClick={() => toggleSection('coSo')}
-              className="w-full flex items-center justify-between px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-widest text-zinc-500 select-none font-mono hover:text-zinc-300 transition-colors"
+              className="w-full flex items-center justify-between px-4 py-3 text-sm font-bold uppercase tracking-wide text-zinc-300 hover:text-zinc-50 transition-colors select-none text-left whitespace-nowrap"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-start text-left gap-2">
                 <Building className="w-3.5 h-3.5 shrink-0" />
                 <span>QUẢN LÝ CƠ SỞ</span>
               </div>
@@ -177,9 +177,9 @@ export default function AdminSidebar({
           <div className="space-y-1">
             <button
               onClick={() => toggleSection('vanHanh')}
-              className="w-full flex items-center justify-between px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-widest text-zinc-500 select-none font-mono hover:text-zinc-300 transition-colors"
+              className="w-full flex items-center justify-between px-4 py-3 text-sm font-bold uppercase tracking-wide text-zinc-300 hover:text-zinc-50 transition-colors select-none text-left whitespace-nowrap"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-start text-left gap-2">
                 <Coins className="w-3.5 h-3.5 shrink-0" />
                 <span>VẬN HÀNH KINH DOANH</span>
               </div>
@@ -212,9 +212,9 @@ export default function AdminSidebar({
           <div className="space-y-1">
             <button
               onClick={() => toggleSection('nhanSu')}
-              className="w-full flex items-center justify-between px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-widest text-zinc-500 select-none font-mono hover:text-zinc-300 transition-colors"
+              className="w-full flex items-center justify-between px-4 py-3 text-sm font-bold uppercase tracking-wide text-zinc-300 hover:text-zinc-50 transition-colors select-none text-left whitespace-nowrap"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-start text-left gap-2">
                 <Users className="w-3.5 h-3.5 shrink-0" />
                 <span>NHÂN SỰ & KHÁCH HÀNG</span>
               </div>
@@ -247,9 +247,9 @@ export default function AdminSidebar({
           <div className="space-y-1">
             <button
               onClick={() => toggleSection('cauHinh')}
-              className="w-full flex items-center justify-between px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-widest text-zinc-500 select-none font-mono hover:text-zinc-300 transition-colors"
+              className="w-full flex items-center justify-between px-4 py-3 text-sm font-bold uppercase tracking-wide text-zinc-300 hover:text-zinc-50 transition-colors select-none text-left whitespace-nowrap"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-start text-left gap-2">
                 <Shield className="w-3.5 h-3.5 shrink-0" />
                 <span>CẤU HÌNH & BẢO MẬT</span>
               </div>
@@ -284,13 +284,13 @@ export default function AdminSidebar({
       {/* Pinned Bottom User Profile Card */}
       <div className="p-4 border-t border-zinc-800 bg-zinc-950/80">
         <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex flex-col gap-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-zinc-200 text-xs">
+          <div className="flex items-center justify-start text-left gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-zinc-200 text-xs shrink-0">
               AD
             </div>
             <div className="truncate">
-              <span className="text-[10px] text-zinc-500 font-bold block uppercase tracking-wider">Quản Trị Viên</span>
-              <span className="text-xs text-zinc-250 font-black block truncate">
+              <span className="text-[10px] text-zinc-500 font-bold block uppercase tracking-wide truncate text-left">Quản Trị Viên</span>
+              <span className="text-xs text-zinc-250 font-black block truncate text-left">
                 {user?.fullName || 'Quản trị viên Lora'}
               </span>
             </div>
@@ -298,7 +298,7 @@ export default function AdminSidebar({
           <div className="flex items-center justify-between border-t border-zinc-800 pt-2.5">
             <button 
               onClick={onBackHome}
-              className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-amber-500 transition-colors"
+              className="flex items-center justify-start text-left gap-1.5 text-xs text-zinc-400 hover:text-amber-500 transition-colors whitespace-nowrap"
               title="Quay lại trang chủ khách hàng"
             >
               <Home className="w-4 h-4" />
@@ -306,7 +306,7 @@ export default function AdminSidebar({
             </button>
             <button 
               onClick={handleLogout}
-              className="flex items-center gap-1 text-xs text-red-400 hover:text-red-300 font-bold transition-colors"
+              className="flex items-center justify-start text-left gap-1 text-xs text-red-400 hover:text-red-300 font-bold transition-colors whitespace-nowrap"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Đăng xuất</span>
