@@ -13,7 +13,10 @@ import {
   Home, 
   LogOut, 
   ChevronDown,
-  TrendingUp
+  TrendingUp,
+  Building,
+  Coins,
+  Shield
 } from 'lucide-react';
 
 export default function AdminSidebar({ 
@@ -63,7 +66,7 @@ export default function AdminSidebar({
   };
 
   return (
-    <aside className="w-64 h-full bg-zinc-900 border-r border-zinc-800 flex flex-col justify-between shrink-0 z-30 select-none">
+    <aside className="w-64 h-screen sticky top-0 bg-zinc-900 border-r border-zinc-800 flex flex-col justify-between shrink-0 z-30 select-none overflow-hidden">
       
       <div>
         {/* Brand Top Header */}
@@ -82,14 +85,14 @@ export default function AdminSidebar({
         {/* Scrollable Navigation List */}
         <nav className="p-4 space-y-4 overflow-y-auto max-h-[calc(100vh-210px)] scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
           
-          {/* Section 1: Dashboard */}
+          {/* Section 1: Bảng điều khiển */}
           <div>
             <button
               onClick={() => handleTabClick('dashboard', '#/admin')}
               className={getTopLinkClass('dashboard')}
             >
               <LayoutDashboard className="w-4 h-4 shrink-0" />
-              <span>DASHBOARD</span>
+              <span>BẢNG ĐIỀU KHIỂN (TỔNG QUAN)</span>
             </button>
           </div>
 
@@ -97,9 +100,12 @@ export default function AdminSidebar({
           <div className="space-y-1">
             <button
               onClick={() => toggleSection('noiDung')}
-              className="w-full flex items-center justify-between px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-widest text-zinc-500 select-none font-mono"
+              className="w-full flex items-center justify-between px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-widest text-zinc-500 select-none font-mono hover:text-zinc-300 transition-colors"
             >
-              <span>➋ QUẢN LÝ NỘI DUNG</span>
+              <div className="flex items-center gap-2">
+                <Film className="w-3.5 h-3.5 shrink-0" />
+                <span>QUẢN LÝ NỘI DUNG</span>
+              </div>
               <ChevronDown className={`w-3.5 h-3.5 text-zinc-500 transition-transform duration-200 ${
                 !collapsedSections.noiDung ? 'rotate-180' : ''
               }`} />
@@ -119,14 +125,7 @@ export default function AdminSidebar({
                   className={getSubLinkClass('actors')}
                 >
                   <Users className="w-4 h-4 shrink-0" />
-                  <span>Quản lý diễn viên</span>
-                </button>
-                <button
-                  onClick={() => handleTabClick('showtimes', '#/admin/showtimes')}
-                  className={getSubLinkClass('showtimes')}
-                >
-                  <Calendar className="w-4 h-4 shrink-0" />
-                  <span>Quản lý suất chiếu</span>
+                  <span>Diễn viên</span>
                 </button>
                 <button
                   onClick={() => handleTabClick('events-promo', '#/admin/events')}
@@ -143,9 +142,12 @@ export default function AdminSidebar({
           <div className="space-y-1">
             <button
               onClick={() => toggleSection('coSo')}
-              className="w-full flex items-center justify-between px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-widest text-zinc-500 select-none font-mono"
+              className="w-full flex items-center justify-between px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-widest text-zinc-500 select-none font-mono hover:text-zinc-300 transition-colors"
             >
-              <span>➌ QUẢN LÝ CƠ SỞ</span>
+              <div className="flex items-center gap-2">
+                <Building className="w-3.5 h-3.5 shrink-0" />
+                <span>QUẢN LÝ CƠ SỞ</span>
+              </div>
               <ChevronDown className={`w-3.5 h-3.5 text-zinc-500 transition-transform duration-200 ${
                 !collapsedSections.coSo ? 'rotate-180' : ''
               }`} />
@@ -160,6 +162,13 @@ export default function AdminSidebar({
                   <Database className="w-4 h-4 shrink-0" />
                   <span>Cụm rạp & Phòng chiếu</span>
                 </button>
+                <button
+                  onClick={() => handleTabClick('showtimes', '#/admin/showtimes')}
+                  className={getSubLinkClass('showtimes')}
+                >
+                  <Calendar className="w-4 h-4 shrink-0" />
+                  <span>Quản lý suất chiếu</span>
+                </button>
               </div>
             )}
           </div>
@@ -168,9 +177,12 @@ export default function AdminSidebar({
           <div className="space-y-1">
             <button
               onClick={() => toggleSection('vanHanh')}
-              className="w-full flex items-center justify-between px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-widest text-zinc-500 select-none font-mono"
+              className="w-full flex items-center justify-between px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-widest text-zinc-500 select-none font-mono hover:text-zinc-300 transition-colors"
             >
-              <span>➍ VẬN HÀNH KINH DOANH</span>
+              <div className="flex items-center gap-2">
+                <Coins className="w-3.5 h-3.5 shrink-0" />
+                <span>VẬN HÀNH KINH DOANH</span>
+              </div>
               <ChevronDown className={`w-3.5 h-3.5 text-zinc-500 transition-transform duration-200 ${
                 !collapsedSections.vanHanh ? 'rotate-180' : ''
               }`} />
@@ -200,9 +212,12 @@ export default function AdminSidebar({
           <div className="space-y-1">
             <button
               onClick={() => toggleSection('nhanSu')}
-              className="w-full flex items-center justify-between px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-widest text-zinc-500 select-none font-mono"
+              className="w-full flex items-center justify-between px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-widest text-zinc-500 select-none font-mono hover:text-zinc-300 transition-colors"
             >
-              <span>➎ NHÂN SỰ & KHÁCH HÀNG</span>
+              <div className="flex items-center gap-2">
+                <Users className="w-3.5 h-3.5 shrink-0" />
+                <span>NHÂN SỰ & KHÁCH HÀNG</span>
+              </div>
               <ChevronDown className={`w-3.5 h-3.5 text-zinc-500 transition-transform duration-200 ${
                 !collapsedSections.nhanSu ? 'rotate-180' : ''
               }`} />
@@ -232,9 +247,12 @@ export default function AdminSidebar({
           <div className="space-y-1">
             <button
               onClick={() => toggleSection('cauHinh')}
-              className="w-full flex items-center justify-between px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-widest text-zinc-500 select-none font-mono"
+              className="w-full flex items-center justify-between px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-widest text-zinc-500 select-none font-mono hover:text-zinc-300 transition-colors"
             >
-              <span>➏ CẤU HÌNH & BẢO MẬT</span>
+              <div className="flex items-center gap-2">
+                <Shield className="w-3.5 h-3.5 shrink-0" />
+                <span>CẤU HÌNH & BẢO MẬT</span>
+              </div>
               <ChevronDown className={`w-3.5 h-3.5 text-zinc-500 transition-transform duration-200 ${
                 !collapsedSections.cauHinh ? 'rotate-180' : ''
               }`} />
