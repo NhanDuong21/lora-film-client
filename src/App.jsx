@@ -20,6 +20,7 @@ import CinemaDetailView from './views/CinemaDetailView';
 import EventRegistryView from './views/EventRegistryView';
 import MasterBookingFunnel from './views/MasterBookingFunnel';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { DataProvider } from './contexts/DataContext';
 
 function AppInner() {
   const [currentView, setCurrentView] = useState({ name: 'home', data: null });
@@ -51,15 +52,15 @@ function AppInner() {
         const directorName = decodeURIComponent(hash.substring(11));
         setCurrentView({ name: 'director-detail', data: { directorName } });
       } else if (hash.startsWith('#/cinema/')) {
-        const cinemaId = parseInt(hash.substring(9)) || 1;
+        const cinemaId = hash.substring(9) || 'c1';
         setCurrentView({ name: 'cinema-detail', data: { cinemaId } });
       } else if (hash.startsWith('#/movie/')) {
-        const movieId = parseInt(hash.substring(8)) || 1;
+        const movieId = hash.substring(8) || 'm1';
         setCurrentView({ name: 'detail', data: { movieId } });
       } else if (hash === '#/events') {
         setCurrentView({ name: 'events', data: null });
       } else if (hash.startsWith('#/event/')) {
-        const eventId = parseInt(hash.substring(8)) || 1;
+        const eventId = hash.substring(8) || 'e1';
         setCurrentView({ name: 'event-detail', data: { eventId } });
       } else if (hash === '#/booking-funnel') {
         setCurrentView({ name: 'booking-funnel', data: null });
@@ -475,7 +476,9 @@ function AppInner() {
 export default function App() {
   return (
     <AuthProvider>
-      <AppInner />
+      <DataProvider>
+        <AppInner />
+      </DataProvider>
     </AuthProvider>
   );
 }

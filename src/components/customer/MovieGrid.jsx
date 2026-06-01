@@ -1,17 +1,26 @@
 import { useState, useMemo } from 'react';
 import { Ticket, Play, X } from 'lucide-react';
-import { MOVIES } from '../../data/mockData';
+import { useData } from '../../contexts/DataContext';
 
 export default function MovieGrid({ onSelectMovie, onNavigate, activeTab: propActiveTab, onChangeActiveTab, onBuyTicket }) {
   const [localActiveTab, setLocalActiveTab] = useState('NOW_SHOWING');
   const activeTab = propActiveTab !== undefined ? propActiveTab : localActiveTab;
   const setActiveTab = onChangeActiveTab !== undefined ? onChangeActiveTab : setLocalActiveTab;
   const [activeTrailerUrl, setActiveTrailerUrl] = useState(null);
+  const { movies } = useData();
 
   // Filter movies by the active status tab
   const filteredMovies = useMemo(() => {
-    return MOVIES.filter((movie) => movie.status === activeTab);
-  }, [activeTab]);
+    return movies.filter((movie) => {
+      if (activeTab === 'NOW_SHOWING') {
+        return movie.status === 'NOW_SHOWING' || movie.status === 'DANG_CHIEU';
+      }
+      if (activeTab === 'COMING_SOON') {
+        return movie.status === 'COMING_SOON' || movie.status === 'SAP_CHIEU';
+      }
+      return movie.status === activeTab;
+    });
+  }, [movies, activeTab]);
 
   // Paginated/Sliced subset - strictly display the first 8 movie items on the homepage
   const activeMovies = useMemo(() => {

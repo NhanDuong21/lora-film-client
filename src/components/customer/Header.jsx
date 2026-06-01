@@ -3,10 +3,11 @@ import {
   Film, ChevronDown, Menu, X, Bell, Star, Search, User, History, LogOut 
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { MOVIES } from '../../data/mockData';
+import { useData } from '../../contexts/DataContext';
 
 export default function Header({ onNavigate }) {
   const { user, userRole, isAuthenticated, logout } = useAuth();
+  const { movies } = useData();
   
   // Mobile drawer state
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -17,25 +18,25 @@ export default function Header({ onNavigate }) {
   
   // Cinema info modal state
   const [infoModalContent, setInfoModalContent] = useState(null);
-
+ 
   // Centralized search query state
   const [searchQuery, setSearchQuery] = useState('');
-
+ 
   // Multi-Criteria Search Matching Logic (Client-Side)
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return { movies: [], stars: [] };
     const query = searchQuery.toLowerCase().trim();
-
+ 
     // 1. Phim (Movies Category Match)
-    const matchedMovies = MOVIES.filter(movie => 
+    const matchedMovies = movies.filter(movie => 
       movie.title.toLowerCase().includes(query) ||
       (movie.genres && movie.genres.some(g => g.toLowerCase().includes(query)))
     );
-
+ 
     // 2. Diễn viên & Đạo diễn matching (Stars/Directors)
     const matchedStarsMap = new Map();
-
-    MOVIES.forEach(movie => {
+ 
+    movies.forEach(movie => {
       // Check cast array actors
       if (movie.cast && Array.isArray(movie.cast)) {
         movie.cast.forEach(actor => {

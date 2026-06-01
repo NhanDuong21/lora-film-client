@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
 import { Search, Film, Award, Star, Heart, Calendar, MapPin, Ruler } from 'lucide-react';
-import { MOVIES, CINEMA_CLUSTERS } from '../data/mockData';
+import { useData } from '../contexts/DataContext';
 
 export default function DirectorRegistryView({ directorName, onBackHome, onBookTicket, onNavigate }) {
+  const { movies, cinemas } = useData();
   const [searchQuery, setSearchQuery] = useState('');
   
   // Country & Sort list filter states
@@ -65,7 +66,7 @@ export default function DirectorRegistryView({ directorName, onBackHome, onBookT
       "Lý Hải": "Hiện tượng đặc biệt của điện ảnh nước nhà khi đi từ ca sĩ chuyển hướng làm đạo diễn thành công chuỗi bom tấn Lật Mặt vang danh.\n\nAnh chinh phục hàng triệu con tim nhờ lối kể chuyện mộc mạc, bình dị chứa chan tình mẫu tử gia đình chân thành nhất.",
       "Julius Onah": "Đạo diễn người Mỹ gốc Phi sở hữu tư duy khoa học viễn tưởng sắc sảo kết hợp các vấn đề xã hội thời đại vào trong dòng phim siêu anh hùng.\n\nAnh mang lại các trận giao đấu kịch tính cùng thế giới chính trị đầy bí ẩn hứa hẹn bùng nổ màn ảnh rộng.",
       "Jared Hess": "Đạo diễn kỳ cựu chuyên trị những bộ phim hài độc lạ xoay quanh những nhân vật phản anh hùng cá tính đáng yêu.\n\nSự nhào nặn tài tình thế giới trò chơi khối vuông Minecraft của anh thành phim live-action mang lại tiếng cười giòn giã cho trẻ em.",
-      "James Gunn": "Vị đạo diễn tài ba bậc nhất Hollywood hiện tại, người có công tái sinh cả một vũ trụ siêu anh hùng vĩ đại.\n\nTư duy hài hước độc đáo kết hợp âm nhạc thập niên kinh điển biến mỗi bộ phim của anh thành lễ hội điện ảnh rực rỡ sắc màu.",
+      "James Gunn": "Vị đạo diễn tài ba bậc nhất Hollywood hiện tại, người có công tái sinh cả một vũ trụ siêu anh hùng vĩ đại.\n\nTư duy hài hước độc đáo kết hợp âm nhạc thập niên kinh niên biến mỗi bộ phim của anh thành lễ hội điện ảnh rực rỡ sắc màu.",
       "Yuzuru Tachikawa": "Đạo diễn Anime thiên tài người Nhật Bản nổi tiếng với việc chỉ đạo các pha rượt đuổi, phá án kỹ xảo hành động vô cùng hoành tráng.\n\nTác phẩm trinh thám Conan dưới sự nhào nặn của anh luôn đạt doanh thu phòng vé khổng lồ trên toàn thế giới."
     };
 
@@ -86,7 +87,7 @@ export default function DirectorRegistryView({ directorName, onBackHome, onBookT
   const consolidatedDirectors = useMemo(() => {
     const registry = {};
 
-    MOVIES.forEach(movie => {
+    movies.forEach(movie => {
       if (movie.director && movie.director.name) {
         const name = movie.director.name;
         if (!registry[name]) {
@@ -109,7 +110,7 @@ export default function DirectorRegistryView({ directorName, onBackHome, onBookT
     });
 
     return Object.values(registry);
-  }, []);
+  }, [movies]);
 
   // 2. Filter & Sort directors for the List view
   const processedDirectorsList = useMemo(() => {
@@ -182,12 +183,16 @@ export default function DirectorRegistryView({ directorName, onBackHome, onBookT
     onBookTicket(bookingPayload);
   };
 
+  const cinemaClusters = useMemo(() => {
+    return cinemas.map(c => c.name);
+  }, [cinemas]);
+
   // Submit quick booking sidebar widget
   const handleQuickBookingSubmit = (e) => {
     e.preventDefault();
     if (!quickMovieId || !quickCinema || !quickDate) return;
 
-    const matchedMovie = MOVIES.find(m => m.id === parseInt(quickMovieId));
+    const matchedMovie = movies.find(m => String(m.id) === String(quickMovieId));
     if (!matchedMovie) return;
 
     const bookingPayload = {
@@ -337,7 +342,7 @@ export default function DirectorRegistryView({ directorName, onBackHome, onBookT
                                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider transition-all duration-200 border focus:outline-none ${
                                       eng.liked 
                                         ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/15'
-                                        : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800'
+                                        : 'bg-zinc-950 border-zinc-800 text-zinc-450 hover:text-white hover:bg-zinc-800'
                                     }`}
                                   >
                                     <Heart className={`w-3 h-3 ${eng.liked ? 'fill-current' : ''}`} />
@@ -495,11 +500,11 @@ export default function DirectorRegistryView({ directorName, onBackHome, onBookT
                                 </p>
                                 <div className="flex items-center gap-1.5">
                                   <span className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${
-                                    work.status === 'NOW_SHOWING' 
+                                    work.status === 'NOW_SHOWING' || work.status === 'DANG_CHIEU'
                                       ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-500/10' 
                                       : 'bg-blue-950/80 text-blue-400 border border-blue-500/10'
                                   }`}>
-                                    {work.status === 'NOW_SHOWING' ? 'Đang chiếu' : 'Sắp chiếu'}
+                                    {work.status === 'NOW_SHOWING' || work.status === 'DANG_CHIEU' ? 'Đang chiếu' : 'Sắp chiếu'}
                                   </span>
                                   <div className="flex items-center gap-0.5 text-brand-yellow">
                                     <Star className="w-2.5 h-2.5 fill-brand-yellow text-brand-yellow" />
@@ -510,7 +515,7 @@ export default function DirectorRegistryView({ directorName, onBackHome, onBookT
                             </div>
 
                             {/* Direct Booking CTA */}
-                            {work.status === 'NOW_SHOWING' ? (
+                            {work.status === 'NOW_SHOWING' || work.status === 'DANG_CHIEU' ? (
                               <button
                                 onClick={() => handleDirectBook(work)}
                                 className="bg-amber-500 hover:bg-amber-600 text-black text-[10px] font-black uppercase py-2 px-3 rounded-xl transition-colors shrink-0 shadow-lg shadow-amber-500/10 focus:outline-none"
@@ -582,7 +587,7 @@ export default function DirectorRegistryView({ directorName, onBackHome, onBookT
                     className="w-full bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs font-semibold rounded-xl py-3 px-3.5 focus:border-blue-600 focus:outline-none transition-colors"
                   >
                     <option value="">-- Chọn Phim --</option>
-                    {MOVIES.filter(m => m.status === 'NOW_SHOWING').map(m => (
+                    {movies.filter(m => m.status === 'NOW_SHOWING' || m.status === 'DANG_CHIEU').map(m => (
                       <option key={m.id} value={m.id}>{m.title}</option>
                     ))}
                   </select>
@@ -605,7 +610,7 @@ export default function DirectorRegistryView({ directorName, onBackHome, onBookT
                     }`}
                   >
                     <option value="">-- Chọn Rạp --</option>
-                    {CINEMA_CLUSTERS.map(c => (
+                    {cinemaClusters.map(c => (
                       <option key={c} value={c}>{c}</option>
                     ))}
                   </select>
@@ -657,7 +662,7 @@ export default function DirectorRegistryView({ directorName, onBackHome, onBookT
 
               {/* Stack list */}
               <div className="space-y-4">
-                {MOVIES.slice(0, 3).map((movie) => (
+                {movies.slice(0, 3).map((movie) => (
                   <div 
                     key={movie.id}
                     onClick={() => handleDirectBook(movie)}

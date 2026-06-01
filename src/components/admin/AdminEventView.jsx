@@ -3,31 +3,28 @@ import { Trophy, Tag, Ticket, PlusCircle, Eye, Edit3, Trash2, X, Search, Calenda
 
 const DEFAULT_EVENTS = [
   {
-    id: 'E1',
+    id: 'e1',
     title: 'Thứ Ba Vui Vẻ - Đồng Giá Vé 60K',
-    type: 'Khuyến mãi',
-    startDate: '2026-05-01',
-    endDate: '2026-12-31',
-    reward: 'Đồng giá vé 60K + Giảm 10% Combo Bắp Nước',
-    description: 'Chương trình đồng giá vé xem phim dành cho mọi khách hàng vào ngày Thứ Ba hàng tuần.'
+    type: 'PROMOTION',
+    status: 'DANG_DIEN_RA',
+    dateRange: '2026-05-01 - 2026-12-31',
+    rewardDetails: 'Đồng giá vé 60K + Giảm 10% Combo Bắp Nước'
   },
   {
-    id: 'E2',
+    id: 'e2',
     title: 'Thành Viên Vàng LoraFilm - Nhân Đôi Điểm Tích Lũy Suốt Tháng 6',
-    type: 'Ưu đãi thành viên',
-    startDate: '2026-06-01',
-    endDate: '2026-06-30',
-    reward: 'x2 điểm tích lũy thành viên khi đặt vé thành công',
-    description: 'Nhân đôi điểm tích lũy suốt tháng 6 dành cho hội viên nâng cấp Vàng của LoraFilm.'
+    type: 'MEMBER_DISCOUNT',
+    status: 'DANG_DIEN_RA',
+    dateRange: '2026-06-01 - 2026-06-30',
+    rewardDetails: 'x2 điểm tích lũy thành viên khi đặt vé thành công'
   },
   {
-    id: 'E3',
+    id: 'e3',
     title: 'Đặc Quyền Họp Báo Ra Mắt Phim John Wick: Ballerina',
-    type: 'Sự kiện',
-    startDate: '2026-07-01',
-    endDate: '2026-07-15',
-    reward: '50 vé mời tham gia thảm đỏ và giao lưu trực tiếp',
-    description: 'Họp báo ra mắt độc quyền bom tấn John Wick: Ballerina với sự tham gia của dàn khách mời danh tiếng.'
+    type: 'EVENT',
+    status: 'SAP_DIEN_RA',
+    dateRange: '2026-07-01 - 2026-07-15',
+    rewardDetails: '50 vé mời tham gia thảm đỏ và giao lưu trực tiếp'
   }
 ];
 
@@ -43,11 +40,10 @@ export default function AdminEventView({
 
   // Form states
   const [formTitle, setFormTitle] = useState('');
-  const [formType, setFormType] = useState('Khuyến mãi');
+  const [formType, setFormType] = useState('PROMOTION');
   const [formStartDate, setFormStartDate] = useState('');
   const [formEndDate, setFormEndDate] = useState('');
   const [formReward, setFormReward] = useState('');
-  const [formDescription, setFormDescription] = useState('');
 
   const getStatus = (startDate, endDate) => {
     const now = new Date();
@@ -59,16 +55,16 @@ export default function AdminEventView({
     end.setHours(0, 0, 0, 0);
     
     if (now > end) {
-      return 'EXPIRED'; // Đã kết thúc
+      return 'DA_KET_THUC';
     } else if (now < start) {
-      return 'UPCOMING'; // Sắp diễn ra
+      return 'SAP_DIEN_RA';
     } else {
-      return 'ACTIVE'; // Đang diễn ra
+      return 'DANG_DIEN_RA';
     }
   };
 
   const activeEventsList = useMemo(() => {
-    const list = events.length > 0 ? events : DEFAULT_EVENTS;
+    const list = events && events.length > 0 ? events : DEFAULT_EVENTS;
     return list;
   }, [events]);
 
@@ -76,20 +72,20 @@ export default function AdminEventView({
     return activeEventsList.filter(e => 
       e.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       e.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      e.reward.toLowerCase().includes(searchQuery.toLowerCase())
+      (e.rewardDetails && e.rewardDetails.toLowerCase().includes(searchQuery.toLowerCase()))
     );
   }, [activeEventsList, searchQuery]);
 
   const metrics = useMemo(() => {
     let active = 0;
     activeEventsList.forEach(e => {
-      if (getStatus(e.startDate, e.endDate) === 'ACTIVE') {
+      if (e.status === 'DANG_DIEN_RA') {
         active++;
       }
     });
     return {
       activeEvents: active,
-      totalPromos: activeEventsList.filter(e => e.type === 'Khuyến mãi').length + 12,
+      totalPromos: activeEventsList.filter(e => e.type === 'PROMOTION').length,
       redeemedOffers: 2100
     };
   }, [activeEventsList]);
@@ -97,11 +93,10 @@ export default function AdminEventView({
   const handleOpenAdd = () => {
     setSelectedEvent(null);
     setFormTitle('');
-    setFormType('Khuyến mãi');
+    setFormType('PROMOTION');
     setFormStartDate(new Date().toISOString().split('T')[0]);
     setFormEndDate(new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0]);
     setFormReward('');
-    setFormDescription('');
     setIsModalOpen(true);
   };
 
@@ -109,10 +104,12 @@ export default function AdminEventView({
     setSelectedEvent(event);
     setFormTitle(event.title);
     setFormType(event.type);
-    setFormStartDate(event.startDate);
-    setFormEndDate(event.endDate);
-    setFormReward(event.reward);
-    setFormDescription(event.description || '');
+    
+    const dates = event.dateRange ? event.dateRange.split(' - ') : [];
+    setFormStartDate(dates[0] || new Date().toISOString().split('T')[0]);
+    setFormEndDate(dates[1] || new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0]);
+    
+    setFormReward(event.rewardDetails || '');
     setIsModalOpen(true);
   };
 
@@ -123,13 +120,14 @@ export default function AdminEventView({
       return;
     }
 
+    const calculatedStatus = getStatus(formStartDate, formEndDate);
+
     const eventPayload = {
       title: formTitle,
       type: formType,
-      startDate: formStartDate,
-      endDate: formEndDate,
-      reward: formReward,
-      description: formDescription
+      dateRange: `${formStartDate} - ${formEndDate}`,
+      rewardDetails: formReward,
+      status: calculatedStatus
     };
 
     if (selectedEvent) {
@@ -141,7 +139,7 @@ export default function AdminEventView({
       }
       triggerToast('Cập nhật sự kiện thành công!');
     } else {
-      const newId = 'E' + (activeEventsList.length ? Math.max(...activeEventsList.map(ev => parseInt(ev.id.replace('E', '')) || 0)) + 1 : 1);
+      const newId = 'e_' + Date.now();
       const updated = [...activeEventsList, { ...eventPayload, id: newId }];
       if (updateEventsState) {
         updateEventsState(updated);
@@ -163,6 +161,13 @@ export default function AdminEventView({
       }
       triggerToast('Đã xóa sự kiện thành công!');
     }
+  };
+
+  const getTypeLabel = (type) => {
+    if (type === 'PROMOTION') return 'Khuyến mãi';
+    if (type === 'EVENT') return 'Sự kiện';
+    if (type === 'MEMBER_DISCOUNT') return 'Ưu đãi thành viên';
+    return type;
   };
 
   return (
@@ -254,37 +259,36 @@ export default function AdminEventView({
                 </tr>
               ) : (
                 filteredEvents.map((event) => {
-                  const status = getStatus(event.startDate, event.endDate);
                   return (
                     <tr key={event.id} className="hover:bg-zinc-900/20 transition-colors">
                       <td className="py-4 px-6 text-center text-zinc-400 font-mono font-medium">{event.id}</td>
                       <td className="py-4 px-6 font-bold text-zinc-100">{event.title}</td>
                       <td className="py-4 px-6">
                         <span className="text-zinc-300 bg-zinc-950/60 px-2.5 py-1 rounded-xl font-bold border border-zinc-900">
-                          {event.type}
+                          {getTypeLabel(event.type)}
                         </span>
                       </td>
                       <td className="py-4 px-6">
-                        {status === 'ACTIVE' && (
+                        {event.status === 'DANG_DIEN_RA' && (
                           <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-black px-2.5 py-0.5 rounded-full inline-block">
                             Đang diễn ra
                           </span>
                         )}
-                        {status === 'UPCOMING' && (
+                        {event.status === 'SAP_DIEN_RA' && (
                           <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-black px-2.5 py-0.5 rounded-full inline-block">
                             Sắp diễn ra
                           </span>
                         )}
-                        {status === 'EXPIRED' && (
+                        {event.status === 'DA_KET_THUC' && (
                           <span className="bg-zinc-850 text-zinc-400 border border-zinc-900 text-[10px] font-black px-2.5 py-0.5 rounded-full inline-block">
                             Đã kết thúc
                           </span>
                         )}
                       </td>
                       <td className="py-4 px-6 text-zinc-300 font-medium">
-                        {event.startDate} → {event.endDate}
+                        {event.dateRange}
                       </td>
-                      <td className="py-4 px-6 text-zinc-300 font-medium max-w-xs truncate">{event.reward}</td>
+                      <td className="py-4 px-6 text-zinc-300 font-medium max-w-xs truncate">{event.rewardDetails}</td>
                       <td className="py-4 px-6">
                         <div className="flex justify-center gap-2">
                           <button
@@ -357,9 +361,9 @@ export default function AdminEventView({
                     onChange={(e) => setFormType(e.target.value)}
                     className="w-full bg-zinc-900/40 border border-zinc-900 rounded-xl px-3 py-2 text-xs text-zinc-100 outline-none focus:border-brand-coral transition-colors"
                   >
-                    <option value="Khuyến mãi">Khuyến mãi</option>
-                    <option value="Sự kiện">Sự kiện</option>
-                    <option value="Ưu đãi thành viên">Ưu đãi thành viên</option>
+                    <option value="PROMOTION">Khuyến mãi</option>
+                    <option value="EVENT">Sự kiện</option>
+                    <option value="MEMBER_DISCOUNT">Ưu đãi thành viên</option>
                   </select>
                 </div>
 
@@ -398,17 +402,6 @@ export default function AdminEventView({
                     className="w-full bg-zinc-900/40 border border-zinc-900 rounded-xl px-3 py-2 text-xs text-zinc-100 outline-none focus:border-brand-coral transition-colors"
                   />
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-black uppercase text-zinc-500 mb-1.5 font-bold">Mô Tả Sự Kiện</label>
-                <textarea
-                  value={formDescription}
-                  onChange={(e) => setFormDescription(e.target.value)}
-                  placeholder="Nhập nội dung chi tiết..."
-                  rows="4"
-                  className="w-full bg-zinc-900/40 border border-zinc-900 rounded-xl px-3 py-2 text-xs text-zinc-100 outline-none focus:border-brand-coral transition-colors resize-none"
-                />
               </div>
 
               <div className="pt-4 border-t border-zinc-900 flex justify-end gap-3">
@@ -456,30 +449,21 @@ export default function AdminEventView({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-black block mb-0.5">Phân loại</span>
-                  <p className="text-xs text-zinc-300 font-bold">{previewEvent.type}</p>
+                  <p className="text-xs text-zinc-300 font-bold">{getTypeLabel(previewEvent.type)}</p>
                 </div>
                 <div>
                   <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-black block mb-0.5">Thời gian</span>
                   <p className="text-xs text-zinc-300 font-medium flex items-center gap-1.5">
                     <Calendar className="w-3.5 h-3.5 text-zinc-500" />
-                    {previewEvent.startDate} → {previewEvent.endDate}
+                    {previewEvent.dateRange}
                   </p>
                 </div>
               </div>
 
               <div>
                 <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-black block mb-0.5">Ưu đãi đi kèm</span>
-                <p className="text-xs text-brand-coral font-bold">{previewEvent.reward}</p>
+                <p className="text-xs text-brand-coral font-bold">{previewEvent.rewardDetails}</p>
               </div>
-
-              {previewEvent.description && (
-                <div>
-                  <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-black block mb-0.5">Mô tả chi tiết</span>
-                  <p className="text-xs text-zinc-400 leading-relaxed bg-zinc-900/40 p-3 rounded-xl border border-zinc-900">
-                    {previewEvent.description}
-                  </p>
-                </div>
-              )}
             </div>
 
             <div className="px-6 py-4 bg-zinc-950/20 border-t border-zinc-900 flex justify-end">

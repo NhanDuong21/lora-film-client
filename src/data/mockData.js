@@ -1,21 +1,22 @@
-export const MOVIES = [
+// Centralized Unified Mock Database Store for LoraFilm Management System
+
+export const INITIAL_MOVIES = [
   {
-    id: 1,
-    title: 'Dinh Thinh La Yeu',
+    id: "m1",
+    title: "Định Mệnh Là Yêu",
     rating: 4.5,
-    genres: ['Lang Man', 'Hai Huoc'],
-    genre: 'Lang Man, Hai Huoc',
-    duration: '112 phut',
-    ageRating: 'T13',
-    synopsis: 'Cau chuyen tinh yeu cuc ky ngot ngao va hai huoc giua hai nguoi tre tuong chung nhu khong co diem chung. Nhung tinh huong do khoc do cuoi dien ra lien tiep khien ho nhan ra doi phuong la manh ghep hoan hao cua cuoc doi minh.',
-    posterUrl: 'https://images.unsplash.com/photo-1524712245354-2c4e5e7124c5?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1524712245354-2c4e5e7124c5?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'eHp3MbsQgzk',
-    status: 'NOW_SHOWING',
-    cast: [
-      { name: "Kaity Nguyễn", role: "Nhà Phương", avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" },
-      { name: "Trấn Thành", role: "Ông Sơn", avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" }
-    ],
+    genres: ["Lãng Mạn", "Hài Hước"],
+    genre: "Lãng Mạn, Hài Hước",
+    duration: 112,
+    ageRating: "T13",
+    releaseYear: 2026,
+    status: "DANG_CHIEU",
+    synopsis: "Câu chuyện tình yêu cực kỳ ngọt ngào và hài hước giữa hai người trẻ tưởng chừng như không có điểm chung. Những tình huống dở khóc dở cười diễn ra liên tiếp khiến họ nhận ra đối phương là mảnh ghép hoàn hảo của cuộc đời mình.",
+    posterUrl: "https://images.unsplash.com/photo-1524712245354-2c4e5e7124c5?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1524712245354-2c4e5e7124c5?w=600&auto=format&fit=crop&q=80",
+    trailerId: "eHp3MbsQgzk",
+    trailerEmbedUrl: "https://www.youtube.com/embed/eHp3MbsQgzk",
+    actorIds: ["a3", "a4"],
     director: {
       name: "Trấn Thành",
       avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80",
@@ -24,22 +25,21 @@ export const MOVIES = [
     }
   },
   {
-    id: 2,
-    title: 'Tu Vu Tru John Wick: Ballerina',
+    id: "m2",
+    title: "Từ Vũ Trụ John Wick: Ballerina",
     rating: 4.8,
-    genres: ['Hanh Dong', 'Kich Tinh'],
-    genre: 'Hanh Dong, Kich Tinh',
-    duration: '125 phut',
-    ageRating: 'T18',
-    synopsis: 'Bo phim thuong mai spin-off tu vu tru sat thu John Wick, xoay quanh nu sat thu Eve Macarro tren con duong tra thu cho gia dinh bi sat hai. Co phai doi mat voi ca the gioi ngam va ren luyen cac ky nang chien dau sinh tu de sinh ton.',
-    posterUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'yJ9w2zD244U',
-    status: 'NOW_SHOWING',
-    cast: [
-      { name: "Ana de Armas", role: "Eve Macarro", avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=80" },
-      { name: "Keanu Reeves", role: "John Wick", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" }
-    ],
+    genres: ["Hành Động", "Kịch Tính"],
+    genre: "Hành Động, Kịch Tính",
+    duration: 125,
+    ageRating: "T18",
+    releaseYear: 2026,
+    status: "DANG_CHIEU",
+    synopsis: "Bộ phim thương mại spin-off từ vũ trụ sát thủ John Wick, xoay quanh nữ sát thủ Eve Macarro trên con đường trả thù cho gia đình bị sát hại. Cô phải đối mặt với cả thế giới ngầm và rèn luyện các kỹ năng chiến đấu sinh tử để sinh tồn.",
+    posterUrl: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=80",
+    trailerId: "yJ9w2zD244U",
+    trailerEmbedUrl: "https://www.youtube.com/embed/yJ9w2zD244U",
+    actorIds: ["a1", "a2"],
     director: {
       name: "Chad Stahelski",
       avatarUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&auto=format&fit=crop&q=80",
@@ -48,22 +48,21 @@ export const MOVIES = [
     }
   },
   {
-    id: 3,
-    title: 'Biet Doi Sam Set',
+    id: "m3",
+    title: "Biệt Đội Sấm Sét",
     rating: 4.2,
-    genres: ['Hanh Dong', 'Vien Tuong'],
-    genre: 'Hanh Dong, Vien Tuong',
-    duration: '130 phut',
-    ageRating: 'T16',
-    synopsis: 'Biet doi anti-hero moi cua Marvel gom nhung ke bat hao hop luc lam nhiem vu toi mat cho chinh phu. Tap hop nhung tinh cach lap di nhung co ky nang dac biet hua hen mang den nhung tran chien man nhan va day bat ngo.',
-    posterUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'vB8VvA88d6I',
-    status: 'NOW_SHOWING',
-    cast: [
-      { name: "Florence Pugh", role: "Yelena Belova", avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&auto=format&fit=crop&q=80" },
-      { name: "Sebastian Stan", role: "Bucky Barnes", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" }
-    ],
+    genres: ["Hành Động", "Viễn Tưởng"],
+    genre: "Hành Động, Viễn Tưởng",
+    duration: 130,
+    ageRating: "T16",
+    releaseYear: 2026,
+    status: "DANG_CHIEU",
+    synopsis: "Biệt đội anti-hero mới của Marvel gồm những kẻ bất hảo hợp lực làm nhiệm vụ tối mật cho chính phủ. Tập hợp những tính cách lập dị nhưng có kỹ năng đặc biệt hứa hẹn mang đến những trận chiến mãn nhãn và đầy bất ngờ.",
+    posterUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80",
+    trailerId: "vB8VvA88d6I",
+    trailerEmbedUrl: "https://www.youtube.com/embed/vB8VvA88d6I",
+    actorIds: ["a5", "a6"],
     director: {
       name: "Jake Schreier",
       avatarUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&auto=format&fit=crop&q=80",
@@ -72,46 +71,44 @@ export const MOVIES = [
     }
   },
   {
-    id: 4,
-    title: 'De Men Cuoc Phieu Luu Toi Xu',
+    id: "m4",
+    title: "Dế Mèn Cuộc Phiêu Lưu Ký Thú",
     rating: 4.0,
-    genres: ['Hoat Hinh', 'Phieu Luu'],
-    genre: 'Hoat Hinh, Phieu Luu',
-    duration: '95 phut',
-    ageRating: 'P',
-    synopsis: 'Cuoc hanh trinh phieu luu ky thu cua chu De Men tre tuoi, hoc hoi nhung bai hoc quy gia ve tinh ban, long dung cam va hoai bao tuong lai. Di qua nhung vung dat xa la va vuot qua nhung hiem nguy day ray trong thien nhien.',
-    posterUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'fS_f0n-dF3Y',
-    status: 'NOW_SHOWING',
-    cast: [
-      { name: "Kiều Minh Tuấn", role: "Dế Mèn (Lồng tiếng)", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" },
-      { name: "Kaity Nguyễn", role: "Nhà Béo (Lồng tiếng)", avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" }
-    ],
+    genres: ["Hoạt Hình", "Phiêu Lưu"],
+    genre: "Hoạt Hình, Phiêu Lưu",
+    duration: 95,
+    ageRating: "P",
+    releaseYear: 2025,
+    status: "DANG_CHIEU",
+    synopsis: "Cuộc hành trình phiêu lưu kỳ thú của chú Dế Mèn trẻ tuổi, học hỏi những bài học quý giá về tình bạn, lòng dũng cảm và hoài bão tương lai. Đi qua những vùng đất xa lạ và vượt qua những hiểm nguy đầy rẫy trong thiên nhiên.",
+    posterUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80",
+    trailerId: "fS_f0n-dF3Y",
+    trailerEmbedUrl: "https://www.youtube.com/embed/fS_f0n-dF3Y",
+    actorIds: ["a4", "a7"],
     director: {
       name: "Phùng Đình Dũng",
       avatarUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&auto=format&fit=crop&q=80",
       bioSummary: "Đạo diễn phim hoạt hình hàng đầu Việt Nam mang nét vẽ dân gian hội nhập thế giới.",
-      metrics: { birth: "12/03/1980", height: "1m72", nationality: "Việt Nam", tags: ["Hoạt Hình", "Dân Gian", "Tỉ Mỉ"] }
+      metrics: { birth: "12/03/1980", height: "1m72", nationality: "Việt Nam", tags: ["Hoạt Hinh", "Dân Gian", "Tỉ Mỉ"] }
     }
   },
   {
-    id: 5,
-    title: 'Buon Than Ban Thanh',
+    id: "m5",
+    title: "Buôn Thần Bán Thánh",
     rating: 4.9,
-    genres: ['Kinh Di', 'Tam Linh', 'Hai'],
-    genre: 'Kinh Di, Tam Linh, Hai',
-    duration: '108 phut',
-    ageRating: 'T18',
-    synopsis: 'Cau chuyen kinh di tam linh giua gia dinh va am linh doi co. Su xen kieu giua nhung yeu to hai huoc va rung ron kien tao cam xuc thu vi. Lieu su giau co co den tu nhung thoa thuan xau xa voi the luc o am ti?',
-    posterUrl: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'R-v3W0Yp3dE',
-    status: 'NOW_SHOWING',
-    cast: [
-      { name: "Kiều Minh Tuấn", role: "Pháp Sư Pháp", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" },
-      { name: "Trấn Thành", role: "Thầy Cúng Cường", avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" }
-    ],
+    genres: ["Kinh Dị", "Tâm Linh"],
+    genre: "Kinh Dị, Tâm Linh",
+    duration: 108,
+    ageRating: "T18",
+    releaseYear: 2026,
+    status: "DANG_CHIEU",
+    synopsis: "Câu chuyện kinh dị tâm linh giữa gia đình và âm linh đối cổ. Sự xen kẽ giữa những yếu tố hài hước và rùng rợn kiến tạo cảm xúc thú vị. Liệu sự giàu có có đến từ những thỏa thuận xấu xa với thế lực ở âm ty?",
+    posterUrl: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80",
+    trailerId: "R-v3W0Yp3dE",
+    trailerEmbedUrl: "https://www.youtube.com/embed/R-v3W0Yp3dE",
+    actorIds: ["a3", "a7"],
     director: {
       name: "Charlie Nguyễn",
       avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80",
@@ -120,22 +117,21 @@ export const MOVIES = [
     }
   },
   {
-    id: 6,
-    title: 'Nam Muoi',
+    id: "m6",
+    title: "Nam Muội",
     rating: 4.1,
-    genres: ['Tam Ly', 'Hoc Duong'],
-    genre: 'Tam Ly, Hoc Duong',
-    duration: '100 phut',
-    ageRating: 'T16',
-    synopsis: 'Nam Muoi la mot bo phim kinh di hoc duong tam ly, xoay quanh truyen thuyet do thi ma mi va nhung goc khuat hoc duong dang so khong the ngo toi. Tro choi tam linh vo tinh goi len oan hon doi khat su tra thu.',
-    posterUrl: 'https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=600&auto=format&fit=crop&q=80',
-    trailerId: '3Z8vX90i-bU',
-    status: 'NOW_SHOWING',
-    cast: [
-      { name: "Kaity Nguyễn", role: "Linh", avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" },
-      { name: "Kiều Minh Tuấn", role: "Thầy giáo Bình", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" }
-    ],
+    genres: ["Tâm Lý", "Học Đường"],
+    genre: "Tâm Lý, Học Đường",
+    duration: 100,
+    ageRating: "T16",
+    releaseYear: 2026,
+    status: "DANG_CHIEU",
+    synopsis: "Nam Muội là một bộ phim kinh dị học đường tâm lý, xoay quanh truyền thuyết đô thị ma mị và những góc khuất học đường đáng sợ không thể ngờ tới. Trò chơi tâm linh vô tình gọi lên oan hồn đói khát sự trả thù.",
+    posterUrl: "https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=600&auto=format&fit=crop&q=80",
+    trailerId: "3Z8vX90i-bU",
+    trailerEmbedUrl: "https://www.youtube.com/embed/3Z8vX90i-bU",
+    actorIds: ["a4", "a7"],
     director: {
       name: "Nguyễn Hữu Hoàng",
       avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80",
@@ -144,22 +140,21 @@ export const MOVIES = [
     }
   },
   {
-    id: 7,
-    title: 'Tham Tu Kien: Ky An Buong Bau',
+    id: "m7",
+    title: "Thám Tử Kiên: Kỳ Án Buồng Bầu",
     rating: 4.6,
-    genres: ['Trinh Tham', 'Hinh Su'],
-    genre: 'Trinh Tham, Hinh Su',
-    duration: '118 phut',
-    ageRating: 'T16',
-    synopsis: 'Tham tu Kien vao cuoc dieu tra ky an an giau noi buong bau ton nghiem cua dong ho quy toc. Su that phuc tap dan duoc bo mat qua moi manh khoe suy luan thong thai nhung day hiem nguy.',
-    posterUrl: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=600&auto=format&fit=crop&q=80',
-    trailerId: '1Z_v7Gq7948',
-    status: 'NOW_SHOWING',
-    cast: [
-      { name: "Trấn Thành", role: "Thám tử Kiên", avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" },
-      { name: "Kiều Minh Tuấn", role: "Trưởng giả Thuận", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" }
-    ],
+    genres: ["Trinh Thám", "Hình Sự"],
+    genre: "Trinh Thám, Hình Sự",
+    duration: 118,
+    ageRating: "T16",
+    releaseYear: 2026,
+    status: "DANG_CHIEU",
+    synopsis: "Thám tử Kiên vào cuộc điều tra kỳ án ẩn giấu nơi buồng bầu tôn nghiêm của dòng họ quý tộc. Sự thật phức tạp dần được bóc trần qua mỗi manh mối suy luận thông thái nhưng đầy hiểm nguy.",
+    posterUrl: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=600&auto=format&fit=crop&q=80",
+    trailerId: "1Z_v7Gq7948",
+    trailerEmbedUrl: "https://www.youtube.com/embed/1Z_v7Gq7948",
+    actorIds: ["a3", "a7"],
     director: {
       name: "Victor Vũ",
       avatarUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=300&auto=format&fit=crop&q=80",
@@ -168,45 +163,44 @@ export const MOVIES = [
     }
   },
   {
-    id: 8,
-    title: 'Lat Mat 7: Mot Dieu Uoc',
+    id: "m8",
+    title: "Mufasa: Vua Sư Tử",
     rating: 4.7,
-    genres: ['Gia Dinh', 'Tam Ly'],
-    genre: 'Gia Dinh, Tam Ly',
-    duration: '112 phut',
-    ageRating: 'P',
-    synopsis: 'Cau chuyen cam dong ve tinh mau tu thieng lieng cua me gia va cac con. Bo phim la hanh trinh lay di nuoc mat nguoi xem va thuc tinh moi nguoi ve y nghia gia dinh.',
-    posterUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600&auto=format&fit=crop&q=80',
-    trailerId: '2b4S_iVsp1E',
-    status: 'NOW_SHOWING',
-    cast: [
-      { name: "Kiều Minh Tuấn", role: "Hai (Con cả)", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" }
-    ],
+    genres: ["Phiêu Lưu", "Gia Đình"],
+    genre: "Phiêu Lưu, Gia Đình",
+    duration: 120,
+    ageRating: "P",
+    releaseYear: 2025,
+    status: "DANG_CHIEU",
+    synopsis: "Khai thác quá khứ của Mufasa, từ một chú sư tử con mồ côi trở thành vị vua huyền thoại của vùng đất kiêu hãnh.",
+    posterUrl: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=600&auto=format&fit=crop&q=80",
+    trailerId: "o17MF994zMs",
+    trailerEmbedUrl: "https://www.youtube.com/embed/o17MF994zMs",
+    actorIds: ["a8"],
     director: {
-      name: "Lý Hải",
+      name: "Barry Jenkins",
       avatarUrl: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=300&auto=format&fit=crop&q=80",
-      bioSummary: "Đạo diễn chuỗi phim ăn khách Lật Mặt, bậc thầy phim gia đình hài hước tràn đầy cảm xúc.",
-      metrics: { birth: "28/09/1968", height: "1m69", nationality: "Việt Nam", tags: ["Lật Mặt", "Gia Đình", "Mộc Mạc"] }
+      bioSummary: "Đạo diễn nổi tiếng thắng giải Oscar với lối kể chuyện giàu chiều sâu điện ảnh và nghệ thuật.",
+      metrics: { birth: "24/09/1979", height: "1m78", nationality: "Mỹ", tags: ["Oscar", "Nghệ Thuật", "Cảm Xúc"] }
     }
   },
   {
-    id: 9,
-    title: 'Captain America: The Gioi Moi',
+    id: "m9",
+    title: "Captain America: Thế Giới Mới",
     rating: 4.3,
-    genres: ['Hanh Dong', 'Sci-Fi'],
-    genre: 'Hanh Dong, Sci-Fi',
-    duration: '122 phut',
-    ageRating: 'T13',
-    synopsis: 'Sam Wilson chinh thuc khoac len minh chiec khien Captain America de doi mat voi mot am muu chinh tri nguy hiem toan cau. Nhung cuoc xung dot khong khoan nhuong.',
-    posterUrl: 'https://images.unsplash.com/photo-1478720143022-9057235c7443?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1478720143022-9057235c7443?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'lh8Lal1N14A',
-    status: 'COMING_SOON',
-    cast: [
-      { name: "Anthony Mackie", role: "Sam Wilson / Captain America", avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" },
-      { name: "Sebastian Stan", role: "Bucky Barnes / Winter Soldier", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" }
-    ],
+    genres: ["Hành Động", "Viễn Tưởng"],
+    genre: "Hành Động, Viễn Tưởng",
+    duration: 122,
+    ageRating: "T13",
+    releaseYear: 2026,
+    status: "SAP_CHIEU",
+    synopsis: "Sam Wilson chính thức khoác lên mình chiếc khiên Captain America để đối mặt với một âm mưu chính trị nguy hiểm toàn cầu. Những cuộc xung đột không khoan nhượng.",
+    posterUrl: "https://images.unsplash.com/photo-1478720143022-9057235c7443?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1478720143022-9057235c7443?w=600&auto=format&fit=crop&q=80",
+    trailerId: "lh8Lal1N14A",
+    trailerEmbedUrl: "https://www.youtube.com/embed/lh8Lal1N14A",
+    actorIds: ["a5"],
     director: {
       name: "Julius Onah",
       avatarUrl: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=300&auto=format&fit=crop&q=80",
@@ -215,362 +209,275 @@ export const MOVIES = [
     }
   },
   {
-    id: 10,
-    title: 'Minecraft: Phim Dien Anh',
+    id: "m10",
+    title: "Sonic 3: Thế Nhím",
     rating: 4.4,
-    genres: ['Hoat Hinh', 'Hai Huoc'],
-    genre: 'Hoat Hinh, Hai Huoc',
-    duration: '105 phut',
-    ageRating: 'P',
-    synopsis: 'Buoc vao the gioi khoi vuong ky dieu cung nhung nhan vat quen thuoc trong cuoc hanh trinh chong lai the luc bong toi bao ve vung dat than yeu.',
-    posterUrl: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'w543_lR5_00',
-    status: 'COMING_SOON',
-    cast: [
-      { name: "Jack Black", role: "Steve", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" },
-      { name: "Jason Momoa", role: "Garrett Garrison", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" }
-    ],
+    genres: ["Hoạt Hình", "Hành Động"],
+    genre: "Hoạt Hình, Hành Động",
+    duration: 110,
+    ageRating: "P",
+    releaseYear: 2025,
+    status: "SAP_CHIEU",
+    synopsis: "Sonic trở lại trong cuộc đối đầu mới chống lại kẻ thù kiệt xuất Shadow. Tập hợp đồng minh cùng lúc xuất trận.",
+    posterUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80",
+    trailerId: "qSu6i2iFES0",
+    trailerEmbedUrl: "https://www.youtube.com/embed/qSu6i2iFES0",
+    actorIds: ["a9"],
     director: {
-      name: "Jared Hess",
+      name: "Jeff Fowler",
       avatarUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&auto=format&fit=crop&q=80",
-      bioSummary: "Đạo diễn phim hài độc lập nổi tiếng với những nhân vật kỳ quặc đáng yêu và thế giới game.",
-      metrics: { birth: "20/06/1979", height: "1m82", nationality: "Mỹ", tags: ["Minecraft", "Hài Hước", "Độc Đáo"] }
+      bioSummary: "Đạo diễn kiêm họa sĩ VFX người Mỹ đứng sau loạt phim live-action Sonic ăn khách.",
+      metrics: { birth: "27/07/1978", height: "1m80", nationality: "Mỹ", tags: ["Sonic", "Live-action", "Hài Hước"] }
     }
   },
   {
-    id: 11,
-    title: 'Superman: Kien Thiet',
-    rating: 4.9,
-    genres: ['Hanh Dong', 'Sieu Anh Hung'],
-    genre: 'Hanh Dong, Sieu Anh Hung',
-    duration: '135 phut',
-    ageRating: 'T13',
-    synopsis: 'Hanh trinh khoi dau day thu thach cua Clark Kent phai can bang giua di san Krypton va cuoc song lam con nguoi tai Trai Dat truoc hiem hoa kiet diet.',
-    posterUrl: 'https://images.unsplash.com/photo-1568832359672-e36cf5d74f54?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1568832359672-e36cf5d74f54?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'V9D-fS4WvP4',
-    status: 'COMING_SOON',
-    cast: [
-      { name: "David Corenswet", role: "Clark Kent / Superman", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" },
-      { name: "Rachel Brosnahan", role: "Lois Lane", avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=80" }
-    ],
-    director: {
-      name: "James Gunn",
-      avatarUrl: "https://images.unsplash.com/photo-1489980508314-941910ded1f4?w=300&auto=format&fit=crop&q=80",
-      bioSummary: "Tổng công trình sư mới của vũ trụ siêu anh hùng, nổi tiếng với sự sáng tạo vô biên.",
-      metrics: { birth: "05/08/1966", height: "1m83", nationality: "Mỹ", tags: ["Superman", "Sáng Tạo", "Vũ Trụ"] }
-    }
-  },
-  {
-    id: 12,
-    title: 'Conan: Ky An Tram Tau',
-    rating: 4.6,
-    genres: ['Trinh Tham', 'Hoat Hinh'],
-    genre: 'Trinh Tham, Hoat Hinh',
-    duration: '110 phut',
-    ageRating: 'T13',
-    synopsis: 'Tham tu lung danh Conan va toan doi tham tu nhi vao cuoc truy tim hung thu dung sau vu no kinh hoang tai ga tau dien ngam hien dai nhat Tokyo.',
-    posterUrl: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'wO2F1H-zC1M',
-    status: 'COMING_SOON',
-    cast: [
-      { name: "Minami Takayama", role: "Edogawa Conan (Lồng tiếng)", avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" }
-    ],
-    director: {
-      name: "Yuzuru Tachikawa",
-      avatarUrl: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=300&auto=format&fit=crop&q=80",
-      bioSummary: "Đạo diễn Anime kỳ cựu Nhật Bản chịu trách nhiệm chuyển thể các đại án Conan.",
-      metrics: { birth: "02/12/1981", height: "1m70", nationality: "Nhật Bản", tags: ["Anime", "Conan", "Kịch Tính"] }
-    }
-  },
-  {
-    id: 13,
-    title: 'Biet Doi Bat Hao',
-    rating: 4.1,
-    genres: ['Hanh Dong', 'Hai Huoc'],
-    genre: 'Hanh Dong, Hai Huoc',
-    duration: '115 phut',
-    ageRating: 'T16',
-    synopsis: 'Nhung ke tu toi khet tieng dung chung mot chien tuyen de doi lay tu do cua minh bang cach ngan chan thien tai dien ro muon chiem linh the gioi.',
-    posterUrl: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'lq5y2hZq-hM',
-    status: 'COMING_SOON',
-    cast: [
-      { name: "Florence Pugh", role: "Yelena", avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&auto=format&fit=crop&q=80" }
-    ],
-    director: {
-      name: "Jake Schreier",
-      avatarUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&auto=format&fit=crop&q=80",
-      bioSummary: "Nhà làm phim trẻ tài năng nổi tiếng với lối kể chuyện hiện đại và các tác phẩm Marvel.",
-      metrics: { birth: "29/09/1981", height: "1m80", nationality: "Mỹ", tags: ["Marvel", "Hiện Đại", "Cảm Xúc"] }
-    }
-  },
-  {
-    id: 14,
-    title: 'Chien Binh Bao Tap',
+    id: "m11",
+    title: "Kỵ Binh Bất Tử",
     rating: 4.3,
-    genres: ['Hanh Dong', 'Co Trang'],
-    genre: 'Hanh Dong, Co Trang',
-    duration: '120 phut',
-    ageRating: 'T16',
-    synopsis: 'Cuoc khoi nghia cuu quoc chong quan xam luoc cua nhung chien binh dung cam noi nui rung trung diep. Nhung tran giao kien kịch tinh man nhan.',
-    posterUrl: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'pP_o66qZt8g',
-    status: 'COMING_SOON',
-    cast: [
-      { name: "Kiều Minh Tuấn", role: "Tướng quân Phong", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" }
-    ],
+    genres: ["Viễn Tưởng", "Hành Động"],
+    genre: "Viễn Tưởng, Hành Động",
+    duration: 142,
+    ageRating: "T18",
+    releaseYear: 2026,
+    status: "SAP_CHIEU",
+    synopsis: "Bộ phim khoa học viễn tưởng về đội kỵ binh mang gen bất tử bảo vệ nền văn minh cổ đại khỏi sự diệt vong.",
+    posterUrl: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=80",
+    trailerId: "nh5Yp4cTz98",
+    trailerEmbedUrl: "https://www.youtube.com/embed/nh5Yp4cTz98",
+    actorIds: ["a2"],
     director: {
-      name: "Lý Hải",
-      avatarUrl: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=300&auto=format&fit=crop&q=80",
-      bioSummary: "Đạo diễn chuỗi phim ăn khách Lật Mặt, bậc thầy phim gia đình hài hước tràn đầy cảm xúc.",
-      metrics: { birth: "28/09/1968", height: "1m69", nationality: "Việt Nam", tags: ["Lật Mặt", "Gia Đình", "Mộc Mạc"] }
+      name: "Gina Prince-Bythewood",
+      avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=80",
+      bioSummary: "Nữ đạo diễn Mỹ cá tính đứng sau những bộ phim chính kịch hành động sâu sắc.",
+      metrics: { birth: "10/06/1969", height: "1m72", nationality: "Mỹ", tags: ["Nữ Quyền", "Hành Động", "Kịch Bản Đẹp"] }
     }
   },
   {
-    id: 15,
-    title: 'Hanh Tinh Khi: Vuong Quoc Moi',
-    rating: 4.4,
-    genres: ['Hanh Dong', 'Sci-Fi'],
-    genre: 'Hanh Dong, Sci-Fi',
-    duration: '145 phut',
-    ageRating: 'T13',
-    synopsis: 'Nhieu nam sau trieu dai cua Caesar, mot chu khi tre bat dau cuoc hanh trinh se khien anh ta cham hoi tat ca nhung gi anh ta duoc day ve qua khu va dua ra nhung lua chon quyet dinh tuong lai cho ca khi va con nguoi.',
-    posterUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'XtFI7SXZgQ4',
-    status: 'NOW_SHOWING',
-    cast: [
-      { name: "Owen Teague", role: "Noa", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" }
-    ],
-    director: {
-      name: "Wes Ball",
-      avatarUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&auto=format&fit=crop&q=80",
-      bioSummary: "Đạo diễn nổi tiếng với loạt phim Maze Runner hành động kịch tính nghẹt thở.",
-      metrics: { birth: "09/06/1980", height: "1m83", nationality: "Mỹ", tags: ["Hành Tinh Khỉ", "Sci-Fi", "Hành Động"] }
-    }
-  },
-  {
-    id: 16,
-    title: 'Ke Trom Mat Trang 4',
-    rating: 4.7,
-    genres: ['Hoat Hinh', 'Hai Huoc'],
-    genre: 'Hoat Hinh, Hai Huoc',
-    duration: '94 phut',
-    ageRating: 'P',
-    synopsis: 'Gru va gia dinh chao don thanh vien moi, Gru Jr., nguoi luon thich chọc pha bo minh. Cuoc song yen binh bi xao tron khi mot ke thu moi tron thoat khoi nha tu va the se tra thu Gru.',
-    posterUrl: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'qQlr9-rF340',
-    status: 'NOW_SHOWING',
-    cast: [
-      { name: "Steve Carell", role: "Gru (Lồng tiếng)", avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" }
-    ],
-    director: {
-      name: "Chris Renaud",
-      avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80",
-      bioSummary: "Đạo diễn và họa sĩ hoạt hình người Mỹ đứng sau thành công của Minions toàn cầu.",
-      metrics: { birth: "30/10/1966", height: "1m80", nationality: "Mỹ", tags: ["Minions", "Hài Hước", "Gia Đình"] }
-    }
-  },
-  {
-    id: 17,
-    title: 'Trong Nha Ngoai Pho',
+    id: "m12",
+    title: "Chuyến Tàu Vô Cực",
     rating: 4.5,
-    genres: ['Tam Ly', 'Gia Dinh'],
-    genre: 'Tam Ly, Gia Dinh',
-    duration: '110 phut',
-    ageRating: 'T16',
-    synopsis: 'Nhung cau chuyen doi thuong xoay quanh cac moi quan he phức tap giua cha me va con cai trong boi canh xa hoi hien dai day bien dong.',
-    posterUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'eHp3MbsQgzk',
-    status: 'NOW_SHOWING',
-    cast: [
-      { name: "Trấn Thành", role: "Chú Bảy", avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" }
-    ],
+    genres: ["Giả Tưởng", "Kịch Tính"],
+    genre: "Giả Tưởng, Kịch Tính",
+    duration: 135,
+    ageRating: "T16",
+    releaseYear: 2026,
+    status: "SAP_CHIEU",
+    synopsis: "Khai thác bối cảnh chuyến tàu lượn lách giữa những chiều không gian song song để tìm kiếm mảnh đất hứa.",
+    posterUrl: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80",
+    trailerId: "1Z_v7Gq7948",
+    trailerEmbedUrl: "https://www.youtube.com/embed/1Z_v7Gq7948",
+    actorIds: ["a1"],
     director: {
-      name: "Trấn Thành",
-      avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80",
-      bioSummary: "Đạo diễn kiêm nhà sản xuất phim xuất sắc của điện ảnh Việt Nam với doanh thu nghìn tỷ.",
-      metrics: { birth: "05/02/1987", height: "1m70", nationality: "Việt Nam", tags: ["Đa Tài", "Kỷ Lục", "Truyền Cảm Hứng"] }
-    }
-  },
-  {
-    id: 18,
-    title: 'Conan: Ngoi Sao Nam Canh',
-    rating: 4.8,
-    genres: ['Trinh Tham', 'Hoat Hinh'],
-    genre: 'Trinh Tham, Hoat Hinh',
-    duration: '111 phut',
-    ageRating: 'T13',
-    synopsis: 'Kaitou Kid nham vao mot thanh kiem nhat co gia tri lich su tai Hokkaido. Conan bat dau cuoc dieu tra ve dong co thuc su phia sau phi vu cua sieu dao chich.',
-    posterUrl: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'wO2F1H-zC1M',
-    status: 'NOW_SHOWING',
-    cast: [
-      { name: "Minami Takayama", role: "Conan (Lồng tiếng)", avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" }
-    ],
-    director: {
-      name: "Yuzuru Tachikawa",
+      name: "Haruo Sotozaki",
       avatarUrl: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=300&auto=format&fit=crop&q=80",
-      bioSummary: "Đạo diễn Anime kỳ cựu Nhật Bản chịu trách nhiệm chuyển thể các đại án Conan.",
-      metrics: { birth: "02/12/1981", height: "1m70", nationality: "Nhật Bản", tags: ["Anime", "Conan", "Kịch Tính"] }
-    }
-  },
-  {
-    id: 19,
-    title: 'Vuong Quoc Loai Nguoi',
-    rating: 4.2,
-    genres: ['Hanh Dong', 'Phieu Luu'],
-    genre: 'Hanh Dong, Phieu Luu',
-    duration: '128 phut',
-    ageRating: 'T16',
-    synopsis: 'Hanh trinh sinh ton va tranh dau khốc liet cua loai nguoi trong ky nguyen moi, giua cac the luc tu thien nhien va nhung sinh vat dot bien la thu.',
-    posterUrl: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'pP_o66qZt8g',
-    status: 'COMING_SOON',
-    cast: [
-      { name: "Kiều Minh Tuấn", role: "Bảo (Chiến binh)", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" }
-    ],
-    director: {
-      name: "Victor Vũ",
-      avatarUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=300&auto=format&fit=crop&q=80",
-      bioSummary: "Ông hoàng phim giật gân, tâm linh và chuyển thể văn học của Việt Nam với các góc quay đỉnh cao.",
-      metrics: { birth: "25/11/1975", height: "1m75", nationality: "Việt Nam / Mỹ", tags: ["Kinh Dị", "Giật Gân", "Chuyển Thể"] }
-    }
-  },
-  {
-    id: 20,
-    title: 'Dune: Phan Ba',
-    rating: 4.9,
-    genres: ['Khoa Hoc Vien Tuong', 'Kich Tinh'],
-    genre: 'Khoa Hoc Vien Tuong, Kich Tinh',
-    duration: '160 phut',
-    ageRating: 'T16',
-    synopsis: 'Paul Atreides tiep tuc cuoc hanh trinh chiem linh dinh cao quyen luc va doi mat voi dinh menh cua vung dat cat hoang tan day hiem nguy.',
-    posterUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'yJ9w2zD244U',
-    status: 'COMING_SOON',
-    cast: [
-      { name: "David Corenswet", role: "Feyd-Rautha", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" }
-    ],
-    director: {
-      name: "James Gunn",
-      avatarUrl: "https://images.unsplash.com/photo-1489980508314-941910ded1f4?w=300&auto=format&fit=crop&q=80",
-      bioSummary: "Tổng công trình sư mới của vũ trụ siêu anh hùng, nổi tiếng với sự sáng tạo vô biên.",
-      metrics: { birth: "05/08/1966", height: "1m83", nationality: "Mỹ", tags: ["Superman", "Sáng Tạo", "Vũ Trụ"] }
-    }
-  },
-  {
-    id: 21,
-    title: 'Avatar: Lua Va Tro',
-    rating: 4.9,
-    genres: ['Hanh Dong', 'Vien Tuong'],
-    genre: 'Hanh Dong, Vien Tuong',
-    duration: '150 phut',
-    ageRating: 'T13',
-    synopsis: 'Cuoc doi dau moi giua toc Na\'vi va con nguoi khi ho kham pha ra vung dat lua va tro tan nguy hiem tren hanh tinh Pandora.',
-    posterUrl: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'lh8Lal1N14A',
-    status: 'COMING_SOON',
-    cast: [
-      { name: "Sam Worthington", role: "Jake Sully", avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" }
-    ],
-    director: {
-      name: "Chad Stahelski",
-      avatarUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&auto=format&fit=crop&q=80",
-      bioSummary: "Đạo diễn hành động Hollywood nổi tiếng đứng sau loạt bom tấn John Wick hoành tráng.",
-      metrics: { birth: "20/09/1968", height: "1m85", nationality: "Mỹ", tags: ["John Wick", "Hành Động", "Võ Thuật"] }
-    }
-  },
-  {
-    id: 22,
-    title: 'Nguoi Nhen: Vu Tru Moi 3',
-    rating: 4.8,
-    genres: ['Hoat Hinh', 'Hanh Dong'],
-    genre: 'Hoat Hinh, Hanh Dong',
-    duration: '140 phut',
-    ageRating: 'P',
-    synopsis: 'Miles Morales quay tro lai de cuu lay da vu tru khoi mot moi de doa kiet quat tu phien ban nguoi nhen hac am khet tieng.',
-    posterUrl: 'https://images.unsplash.com/photo-1568832359672-e36cf5d74f54?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1568832359672-e36cf5d74f54?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'V9D-fS4WvP4',
-    status: 'COMING_SOON',
-    cast: [
-      { name: "Shameik Moore", role: "Miles Morales (Lồng tiếng)", avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" }
-    ],
-    director: {
-      name: "Jake Schreier",
-      avatarUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&auto=format&fit=crop&q=80",
-      bioSummary: "Nhà làm phim trẻ tài năng nổi tiếng với lối kể chuyện hiện đại và các tác phẩm Marvel.",
-      metrics: { birth: "29/09/1981", height: "1m80", nationality: "Mỹ", tags: ["Marvel", "Hiện Đại", "Cảm Xúc"] }
-    }
-  },
-  {
-    id: 23,
-    title: 'Doi Quan Nhi Nho',
-    rating: 4.3,
-    genres: ['Hai Huoc', 'Gia Dinh'],
-    genre: 'Hai Huoc, Gia Dinh',
-    duration: '98 phut',
-    ageRating: 'P',
-    synopsis: 'Nhung tinh huong do khoc do cuoi khi mot nhom hoc sinh cap mot quyet dinh thanh lap doi quan thuc hien nhiem vu dac biet giai cuu chu cho dang yeu.',
-    posterUrl: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'fS_f0n-dF3Y',
-    status: 'COMING_SOON',
-    cast: [
-      { name: "Kaity Nguyễn", role: "Cô giáo Hồng", avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" }
-    ],
-    director: {
-      name: "Phùng Đình Dũng",
-      avatarUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&auto=format&fit=crop&q=80",
-      bioSummary: "Đạo diễn phim hoạt hình hàng đầu Việt Nam mang nét vẽ dân gian hội nhập thế giới.",
-      metrics: { birth: "12/03/1980", height: "1m72", nationality: "Việt Nam", tags: ["Hoạt Hình", "Dân Gian", "Tỉ Mỉ"] }
-    }
-  },
-  {
-    id: 24,
-    title: 'Nha Sat Thu Ba Dao',
-    rating: 4.6,
-    genres: ['Hanh Dong', 'Hai Huoc'],
-    genre: 'Hanh Dong, Hai Huoc',
-    duration: '115 phut',
-    ageRating: 'T18',
-    synopsis: 'Bo phim hanh dong hai huoc ve mot sat thu chuyen nghiep muon nghi huu nhung lien tuc gap phai phien toai tu bang dang cu va nguoi hang xom ky quac.',
-    posterUrl: 'https://images.unsplash.com/photo-1524712245354-2c4e5e7124c5?w=600&auto=format&fit=crop&q=80',
-    image: 'https://images.unsplash.com/photo-1524712245354-2c4e5e7124c5?w=600&auto=format&fit=crop&q=80',
-    trailerId: 'XtFI7SXZgQ4',
-    status: 'COMING_SOON',
-    cast: [
-      { name: "Kiều Minh Tuấn", role: "Sát thủ Minh", avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" }
-    ],
-    director: {
-      name: "Nguyễn Hữu Hoàng",
-      avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80",
-      bioSummary: "Đạo diễn tài năng trẻ tiên phong trong dòng phim trinh thám học đường ly kỳ bí ẩn.",
-      metrics: { birth: "08/11/1991", height: "1m76", nationality: "Việt Nam", tags: ["Trinh Thám", "Học Đường", "Góc Quay Đẹp"] }
+      bioSummary: "Đạo diễn danh giá đứng sau bom tấn hoạt hình chuyển thể làm rung chuyển màn ảnh.",
+      metrics: { birth: "18/04/1970", height: "1m74", nationality: "Nhật Bản", tags: ["Anime", "Kỷ Lục", "Hoành Tráng"] }
     }
   }
 ];
 
-export const movies = MOVIES;
-
-export const CINEMA_CLUSTERS = [
-  "Lora Nguyen Du",
-  "Lora Thao Dien",
-  "Lora Royal City"
+export const INITIAL_ACTORS = [
+  {
+    id: "a1",
+    name: "Ana de Armas",
+    nationality: "Cuba/Tây Ban Nha",
+    avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
+    bio: "Ana de Armas sinh ra tại Cuba và là một trong những minh tinh Hollywood nổi tiếng nhất hiện nay. Cô ghi dấu ấn mạnh mẽ qua các vai diễn trong Blade Runner 2049, Knives Out, Blonde và mới nhất là tác phẩm hành động gay cấn từ vũ trụ John Wick mang tên Ballerina.",
+    linkedMovieIds: ["m2", "m12"]
+  },
+  {
+    id: "a2",
+    name: "Keanu Reeves",
+    nationality: "Canada",
+    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80",
+    bio: "Keanu Charles Reeves là một nam diễn viên, nhà sản xuất phim, đạo diễn và nhạc sĩ người Canada. Anh nổi tiếng thế giới qua loạt phim hành động võ thuật kinh điển The Matrix (Ma Trận) và vũ trụ sát thủ John Wick.",
+    linkedMovieIds: ["m2", "m11"]
+  },
+  {
+    id: "a3",
+    name: "Trấn Thành",
+    nationality: "Việt Nam",
+    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80",
+    bio: "Trấn Thành là đạo diễn, biên kịch, diễn viên và MC nổi bật hàng đầu tại Việt Nam. Anh là người tạo nên những kỷ lục phòng vé nghìn tỷ của điện ảnh nước nhà với các bộ phim Bố Già, Nhà Bà Nữ, Mai và Định Mệnh Là Yêu.",
+    linkedMovieIds: ["m1", "m5", "m7"]
+  },
+  {
+    id: "a4",
+    name: "Kaity Nguyễn",
+    nationality: "Việt Nam",
+    avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=80",
+    bio: "Kaity Nguyễn là một nữ diễn viên trẻ tài năng thuộc thế hệ mới của điện ảnh Việt Nam. Cô nhanh chóng vươn lên thành sao hạng A sau những bộ phim điện ảnh ăn khách như Em Chưa 18, Tiệc Trăng Máu, Gái Già Lắm Chiêu V và Người Vợ Cuối Cùng.",
+    linkedMovieIds: ["m1", "m4", "m6"]
+  },
+  {
+    id: "a5",
+    name: "Sebastian Stan",
+    nationality: "Mỹ",
+    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80",
+    bio: "Sebastian Stan là nam diễn viên người Mỹ gốc Romania. Anh nổi tiếng toàn cầu với vai diễn Bucky Barnes / Winter Soldier trong vũ trụ điện ảnh Marvel (MCU), bắt đầu từ Captain America: The First Avenger.",
+    linkedMovieIds: ["m3", "m9"]
+  },
+  {
+    id: "a6",
+    name: "Florence Pugh",
+    nationality: "Anh",
+    avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=80",
+    bio: "Florence Pugh là nữ diễn viên người Anh xuất sắc từng nhận đề cử giải Oscar. Cô ghi dấu ấn mạnh mẽ qua các bộ phim như Midsommar, Little Women, Black Widow và Oppenheimer.",
+    linkedMovieIds: ["m3"]
+  },
+  {
+    id: "a7",
+    name: "Kiều Minh Tuấn",
+    nationality: "Việt Nam",
+    avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=400&auto=format&fit=crop&q=80",
+    bio: "Kiều Minh Tuấn là nam diễn viên điện ảnh thực lực của Việt Nam. Anh được biết đến rộng rãi với lối diễn xuất đa dạng từ vai hài hước tới tâm lý phức tạp qua các bộ phim Em Chưa 18, Chị Mười Ba, Tiệc Trăng Máu, Lật Mặt 7.",
+    linkedMovieIds: ["m4", "m5", "m6", "m7"]
+  },
+  {
+    id: "a8",
+    name: "Aaron Pierre",
+    nationality: "Anh",
+    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80",
+    bio: "Aaron Pierre là nam diễn viên người Anh lồng tiếng xuất sắc cho nhân vật Mufasa thời trẻ trong bom tấn Mufasa: The Lion King của Disney.",
+    linkedMovieIds: ["m8"]
+  },
+  {
+    id: "a9",
+    name: "Ben Schwartz",
+    nationality: "Mỹ",
+    avatarUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&auto=format&fit=crop&q=80",
+    bio: "Ben Schwartz là một nam diễn viên hài, biên kịch người Mỹ nổi tiếng lồng tiếng cho nhân vật Sonic trong loạt phim điện ảnh Sonic the Hedgehog.",
+    linkedMovieIds: ["m10"]
+  }
 ];
 
+export const INITIAL_CINEMAS = [
+  {
+    id: "c1",
+    name: "Lora Nguyễn Du",
+    address: "116 Nguyễn Du, Quận 1, TP. Hồ Chí Minh",
+    halls: [
+      { id: "h1-1", name: "Phòng Chiếu 1 (IMAX)", capacity: 120, format: "IMAX 3D" },
+      { id: "h1-2", name: "Phòng Chiếu 2 (Standard)", capacity: 120, format: "2D Digital" }
+    ]
+  },
+  {
+    id: "c2",
+    name: "Lora Thảo Điền",
+    address: "Vincom Mega Mall, Thảo Điền, Quận 2, TP. Hồ Chí Minh",
+    halls: [
+      { id: "h2-1", name: "Phòng Chiếu 3 (Gold Class)", capacity: 120, format: "2D Digital" },
+      { id: "h2-2", name: "Phòng Chiếu 4 (Standard)", capacity: 120, format: "3D Digital" }
+    ]
+  },
+  {
+    id: "c3",
+    name: "Lora Royal City",
+    address: "B2-R4 Vincom Mega Mall, Thanh Xuân, Hà Nội",
+    halls: [
+      { id: "h3-1", name: "Phòng Chiếu 5 (IMAX)", capacity: 120, format: "IMAX 3D" },
+      { id: "h3-2", name: "Phòng Chiếu 6 (Standard)", capacity: 120, format: "2D Digital" }
+    ]
+  }
+];
+
+export const INITIAL_SHOWTIMES = [
+  { id: "st1", movieId: "m1", cinemaId: "c1", hallId: "h1-2", date: "2026-05-29", time: "09:30", price: 80000 },
+  { id: "st2", movieId: "m1", cinemaId: "c1", hallId: "h1-2", date: "2026-05-29", time: "13:15", price: 80000 },
+  { id: "st3", movieId: "m1", cinemaId: "c1", hallId: "h1-2", date: "2026-05-29", time: "16:45", price: 90000 },
+  { id: "st4", movieId: "m2", cinemaId: "c1", hallId: "h1-1", date: "2026-05-29", time: "13:15", price: 150000 },
+  { id: "st5", movieId: "m2", cinemaId: "c2", hallId: "h2-2", date: "2026-05-29", time: "19:30", price: 120000 },
+  { id: "st6", movieId: "m5", cinemaId: "c1", hallId: "h1-2", date: "2026-05-29", time: "20:00", price: 100000 }
+];
+
+export const INITIAL_EVENTS = [
+  {
+    id: "e1",
+    title: "Đồng Giá Vé Lora Thứ Hai - 60k",
+    type: "PROMOTION",
+    status: "DANG_DIEN_RA",
+    dateRange: "2026-06-01 - 2026-06-30",
+    rewardDetails: "Giá vé áp dụng toàn bộ suất chiếu 2D vào ngày thứ 2 hàng tuần chỉ 60.000 VNĐ."
+  },
+  {
+    id: "e2",
+    title: "Ngày Hội Thành Viên Lora Member Day",
+    type: "MEMBER_DISCOUNT",
+    status: "DANG_DIEN_RA",
+    dateRange: "2026-06-01 - 2026-12-31",
+    rewardDetails: "Nhân đôi điểm thưởng tích lũy cho mỗi giao dịch mua vé và bắp nước vào thứ Tư đầu tiên của tháng."
+  },
+  {
+    id: "e3",
+    title: "Sự Kiện Ra Mắt John Wick Spin-off",
+    type: "EVENT",
+    status: "SAP_DIEN_RA",
+    dateRange: "2026-06-15 - 2026-06-20",
+    rewardDetails: "Quà tặng độc quyền mini poster Ballerina cho 100 khách hàng đầu tiên check-in tại rạp."
+  }
+];
+
+export const INITIAL_CONCESSIONS = [
+  { id: 1, name: "Combo Solo", details: "1 Bắp Ngọt Vừa + 1 Coke Vừa", price: 79000, salesCount: 42 },
+  { id: 2, name: "Combo Couple", details: "1 Bắp Ngọt Lớn + 2 Coke Vừa", price: 109000, salesCount: 68 },
+  { id: 3, name: "Combo Family", details: "2 Bắp Ngọt Lớn + 3 Coke Lớn", price: 189000, salesCount: 15 },
+  { id: 4, name: "Bắp Phô Mai", details: "1 Bắp vừa vị phô mai đặc biệt", price: 49000, salesCount: 110 },
+  { id: 5, name: "Coca Cola", details: "1 Lon Coca Cola mát lạnh", price: 29000, salesCount: 185 }
+];
+
+export const INITIAL_TICKETS = [
+  {
+    id: "TKT-8492-9582",
+    customerName: "Lê Văn Sơn",
+    customerEmail: "leson@gmail.com",
+    movieTitle: "Từ Vũ Trụ John Wick: Ballerina",
+    theaterName: "Lora Nguyễn Du",
+    time: "19:30",
+    date: "2026-05-29",
+    seats: ["F4", "F5"],
+    totalAmount: 220000,
+    status: "DA_KIEM_TRA",
+    timestamp: "2026-05-29T10:15:30Z"
+  },
+  {
+    id: "TKT-1082-4829",
+    customerName: "Trần Thị Hoa",
+    customerEmail: "hoatran@gmail.com",
+    movieTitle: "Định Mệnh Là Yêu",
+    theaterName: "Lora Nguyễn Du",
+    time: "09:30",
+    date: "2026-05-29",
+    seats: ["A12"],
+    totalAmount: 80000,
+    status: "CHUA_KIEM_TRA",
+    timestamp: "2026-05-29T08:44:12Z"
+  }
+];
+
+export const INITIAL_CUSTOMERS = [
+  { id: 1, name: "Phạm Minh Đức", email: "member@gmail.com", tier: "Standard", points: 150, ticketsBought: 5 },
+  { id: 2, name: "Lê Văn Sơn", email: "leson@gmail.com", tier: "VIP", points: 920, ticketsBought: 28 },
+  { id: 3, name: "Nguyễn Thị Mai", email: "mai.nguyen@yahoo.com", tier: "Standard", points: 80, ticketsBought: 2 },
+  { id: 4, name: "Trần Văn Bảo", email: "baotran@gmail.com", tier: "VIP", points: 1200, ticketsBought: 45 }
+];
+
+export const INITIAL_EMPLOYEES = [
+  { id: 1, name: "Nguyễn Văn Hà", role: "Thu ngân", email: "staff@lorafilm.com", hoursWorked: 160, hourlyWage: 25000, activeMultiplier: 1.0 },
+  { id: 2, name: "Trần Thị Cúc", role: "Giám sát", email: "cuc.tran@lorafilm.com", hoursWorked: 180, hourlyWage: 40000, activeMultiplier: 1.1 },
+  { id: 3, name: "Lê Quang Sáng", role: "Thu ngân", email: "sang.le@lorafilm.com", hoursWorked: 140, hourlyWage: 25000, activeMultiplier: 1.0 }
+];
+
+// Backwards compatibility legacy exports
+export const MOVIES = INITIAL_MOVIES;
+export const movies = INITIAL_MOVIES;
+export const CINEMA_CLUSTERS = [
+  "Lora Nguyễn Du",
+  "Lora Thảo Điền",
+  "Lora Royal City"
+];
 export const SHOWTIMES = [
   "09:30",
   "13:15",

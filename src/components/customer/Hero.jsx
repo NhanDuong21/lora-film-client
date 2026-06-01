@@ -1,18 +1,13 @@
 import { useState, useMemo } from 'react';
 import { Play, ChevronDown } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { MOVIES } from '../../data/mockData';
-
-const THEATERS = [
-  { id: 1, name: "Lora Nguyễn Du" },
-  { id: 2, name: "Lora Thảo Điền" },
-  { id: 3, name: "Lora Royal City" }
-];
+import { useData } from '../../contexts/DataContext';
 
 const SHOWTIMES = ["09:30", "13:15", "16:45", "19:30", "22:15"];
 
 export default function Hero({ onBookTicket, onNavigate }) {
   const { isAuthenticated } = useAuth();
+  const { movies, cinemas } = useData();
   const videoSource = 'https://res.cloudinary.com/dqc4hufot/video/upload/hero-video_zdtmvm.mp4?_s=vp-3.7.2';
 
   // Selection states
@@ -46,8 +41,8 @@ export default function Hero({ onBookTicket, onNavigate }) {
   const handleQuickBooking = () => {
     if (!isBookingFormValid) return;
 
-    const movie = MOVIES.find(m => m.id === parseInt(selectedMovieId));
-    const cinema = THEATERS.find(t => t.id === parseInt(selectedCinemaId));
+    const movie = movies.find(m => String(m.id) === String(selectedMovieId));
+    const cinema = cinemas.find(t => String(t.id) === String(selectedCinemaId));
 
     const bookingPayload = {
       movieId: movie.id,
@@ -162,7 +157,7 @@ export default function Hero({ onBookTicket, onNavigate }) {
                   className="w-full bg-transparent text-xs font-bold text-zinc-300 outline-none cursor-pointer appearance-none border-0 p-0 focus:ring-0 focus:outline-none truncate"
                 >
                   <option value="" className="bg-zinc-950 text-zinc-550">Chọn Phim...</option>
-                  {MOVIES.map(movie => (
+                  {movies.map(movie => (
                     <option key={movie.id} value={movie.id} className="bg-zinc-950 text-white">{movie.title}</option>
                   ))}
                 </select>
@@ -185,7 +180,7 @@ export default function Hero({ onBookTicket, onNavigate }) {
                   className="w-full bg-transparent text-xs font-bold text-zinc-300 outline-none cursor-pointer appearance-none border-0 p-0 focus:ring-0 focus:outline-none truncate disabled:cursor-not-allowed"
                 >
                   <option value="" className="bg-zinc-950 text-zinc-550">Chọn Rạp...</option>
-                  {THEATERS.map(t => (
+                  {cinemas.map(t => (
                     <option key={t.id} value={t.id} className="bg-zinc-950 text-white">{t.name}</option>
                   ))}
                 </select>

@@ -1,12 +1,13 @@
 import { useState, useMemo } from 'react';
 import { Search, PlusCircle, Edit3, Trash2, X, Globe, Users, Film, UserCheck } from 'lucide-react';
-import { MOVIES } from '../../data/mockData';
+import { useData } from '../../contexts/DataContext';
 
 export default function AdminActorView({ 
   actors, 
   updateActorsState, 
   triggerToast 
 }) {
+  const { movies } = useData();
   const [searchQuery, setSearchQuery] = useState('');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editingActor, setEditingActor] = useState(null);
@@ -75,13 +76,18 @@ export default function AdminActorView({
     };
 
     if (editingActor) {
-      const updated = actors.map(a => a.id === editingActor.id ? { ...actorPayload, id: a.id } : a);
+      const updated = actors.map(a => String(a.id) === String(editingActor.id) ? { ...actorPayload, id: a.id } : a);
       updateActorsState(updated);
       triggerToast('Cập nhật thông tin diễn viên thành công!');
     } else {
+      const nextNumId = actors.length ? Math.max(...actors.map(a => {
+        const num = parseInt(String(a.id).replace(/\D/g, ''));
+        return isNaN(num) ? 0 : num;
+      })) + 1 : 1;
+      
       const newActor = {
         ...actorPayload,
-        id: actors.length ? Math.max(...actors.map(a => a.id)) + 1 : 1
+        id: `a${nextNumId}`
       };
       updateActorsState([...actors, newActor]);
       triggerToast('Thêm diễn viên mới thành công!');
@@ -91,7 +97,7 @@ export default function AdminActorView({
 
   const handleDelete = (id) => {
     if (confirm('Bạn có chắc chắn muốn xóa diễn viên này?')) {
-      const updated = actors.filter(a => a.id !== id);
+      const updated = actors.filter(a => String(a.id) !== String(id));
       updateActorsState(updated);
       triggerToast('Đã xóa diễn viên thành công!');
     }
@@ -353,7 +359,7 @@ export default function AdminActorView({
                   Liên kết phim (Chọn phim tham gia)
                 </label>
                 <div className="bg-zinc-900/40 border border-zinc-900 rounded-xl p-3 space-y-2 max-h-40 overflow-y-auto">
-                  {MOVIES.map(movie => (
+                  {movies.map(movie => (
                     <label key={movie.id} className="flex items-center gap-2 text-xs text-zinc-400 cursor-pointer select-none">
                       <input 
                         type="checkbox"

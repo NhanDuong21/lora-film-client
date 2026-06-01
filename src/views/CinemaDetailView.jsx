@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { MapPin, Phone, Clock, Star, Film, ChevronLeft, ChevronRight, HelpCircle } from 'lucide-react';
-import { MOVIES } from '../data/mockData';
+import { useData } from '../contexts/DataContext';
 
 const THEATER_DATA = {
   1: {
@@ -39,7 +39,7 @@ const THEATER_DATA = {
     address: "Tầng B2, Vincom Mega Mall Royal City, 72A Nguyễn Trãi, Thanh Xuân, Hà Nội",
     hotline: "1900 6019",
     hours: "09:00 - 24:00",
-    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.8967431526435!2d105.81299907602517!3d21.000780280642954!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ac9ad89b6b7d%3A0xbcfad5ffb0f49b14!2zVmluY29tIE1lZ2EgTWFsbCBSb3lhbCBDaXR5!5e0!3m2!1svi!2s!4v1717000000002!5m2!1svi!2s",
+    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.8967431526435!2d105.81299907602517!3d21.000780280642954!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ac9ad89b6b7d%3A0xbcfad5ffb0f49b14!2zVmluY29tIE1lZ2EgTWFsbCBUaOG6o28gxJBp4buBbg!5e0!3m2!1svi!2s!4v1717000000002!5m2!1svi!2s",
     banners: [
       "https://images.unsplash.com/photo-1513106580091-1d82408b8cd6?w=1200&auto=format&fit=crop&q=80",
       "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200&auto=format&fit=crop&q=80",
@@ -64,8 +64,30 @@ const ADDONS = [
 const FIXED_SHOWTIMES = ["09:30", "13:15", "16:45", "19:30", "22:15"];
 
 export default function CinemaDetailView({ cinemaId, onBookTicket }) {
-  const currentCinemaId = cinemaId || 1;
-  const cinema = THEATER_DATA[currentCinemaId] || THEATER_DATA[1];
+  const { movies, cinemas } = useData();
+  const currentCinemaId = cinemaId || 'c1';
+
+  const cinema = useMemo(() => {
+    let found = cinemas.find(c => String(c.id) === String(currentCinemaId));
+    if (!found) {
+      if (currentCinemaId === 1 || currentCinemaId === '1' || currentCinemaId === 'c1') found = cinemas.find(c => c.name.includes("Nguyễn Du") || c.name.includes("Nguyen Du") || c.id === 'c1');
+      else if (currentCinemaId === 2 || currentCinemaId === '2' || currentCinemaId === 'c2') found = cinemas.find(c => c.name.includes("Thảo Điền") || c.name.includes("Thao Dien") || c.id === 'c2');
+      else if (currentCinemaId === 3 || currentCinemaId === '3' || currentCinemaId === 'c3') found = cinemas.find(c => c.name.includes("Royal City") || c.id === 'c3');
+    }
+    const resolved = found || cinemas[0];
+    
+    // Merge standard properties (hotline, hours, mapUrl, banners) from static THEATER_DATA
+    const staticId = resolved.id === 'c1' ? 1 : resolved.id === 'c2' ? 2 : resolved.id === 'c3' ? 3 : 1;
+    const staticDetails = THEATER_DATA[staticId] || THEATER_DATA[1];
+    
+    return {
+      ...resolved,
+      hotline: staticDetails.hotline,
+      hours: staticDetails.hours,
+      mapUrl: staticDetails.mapUrl,
+      banners: staticDetails.banners
+    };
+  }, [cinemas, currentCinemaId]);
 
   // Carousel Active index state
   const [activeSlide, setActiveSlide] = useState(0);
@@ -110,8 +132,8 @@ export default function CinemaDetailView({ cinemaId, onBookTicket }) {
 
   // Traverses mock movies and returns only NOW_SHOWING list
   const activeMovies = useMemo(() => {
-    return MOVIES.filter(m => m.status === 'NOW_SHOWING');
-  }, []);
+    return movies.filter(m => m.status === 'NOW_SHOWING' || m.status === 'DANG_CHIEU');
+  }, [movies]);
 
   // Direct trigger booking flow
   const handleSelectShowtime = (movie, time) => {
@@ -265,7 +287,7 @@ export default function CinemaDetailView({ cinemaId, onBookTicket }) {
                   </div>
 
                   <div className="space-y-1.5">
-                    <span className="text-[9px] text-zinc-500 font-black uppercase tracking-wider block">Suất Chiếu 2D Digital:</span>
+                    <span className="text-[9px] text-zinc-555 font-black uppercase tracking-wider block">Suất Chiếu 2D Digital:</span>
                     <div className="flex flex-wrap gap-2">
                       {FIXED_SHOWTIMES.map((time, tIdx) => (
                         <button

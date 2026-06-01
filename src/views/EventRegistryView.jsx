@@ -1,43 +1,9 @@
 import { useState, useMemo } from 'react';
 import { Film, Star, Tag, Clock, ArrowRight } from 'lucide-react';
-import { MOVIES, CINEMA_CLUSTERS } from '../data/mockData';
-
-const EVENTS = [
-  {
-    id: 1,
-    title: "Thứ Ba Vui Vẻ - Đồng Giá Vé 60K",
-    category: "Khuyến mãi mới",
-    image: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=80",
-    dateUntil: "Áp dụng đến 31/12/2026",
-    content: "Đón chào những bom tấn chiếu rạp sôi động, LoraFilm Nguyễn Du tưng bừng gửi tặng tất cả khách hàng chương trình ưu đãi đặc biệt: Khi mua 2 vé xem phim bất kỳ tại quầy hoặc qua trang web LoraFilm, quý khách sẽ được nhận ngay 1 phần bắp rang bơ phô mai cỡ lớn thơm ngon.\n\nĐiều kiện áp dụng:\n- Thời gian diễn ra chương trình kéo dài đến hết 31/12/2026.\n- Áp dụng đối với tất cả suất chiếu và thể loại phim 2D/3D.\n- Không áp dụng đồng thời với các hình thức thẻ quà tặng khác."
-  },
-  {
-    id: 2,
-    title: "Thành Viên Vàng LoraFilm - Nhân Đôi Điểm Tích Lũy Suốt Tháng 6",
-    category: "Ưu đãi thành viên",
-    image: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&auto=format&fit=crop&q=80",
-    dateUntil: "Áp dụng đến 30/06/2026",
-    content: "Lời tri ân sâu sắc gửi tới toàn thể hội viên LoraFilm. Trong suốt thời gian diễn ra sự kiện từ ngày 01/06 đến hết ngày 30/06/2026, các tài khoản thành viên khi thực hiện đặt vé thành công sẽ được tự động nhân đôi (x2) điểm tích lũy thành viên.\n\nĐiều kiện áp dụng:\n- Tài khoản thành viên phải được đăng nhập đầy đủ trước khi thực hiện giao dịch mua vé.\n- Điểm thưởng nhân đôi có giá trị dùng để đổi các phần quà bắp, nước, vé xem phim miễn phí hoặc vé mời sự kiện đặc biệt."
-  },
-  {
-    id: 3,
-    title: "Đặc Quyền Họp Báo Ra Mắt Phim Bom Tấn John Wick: Ballerina",
-    category: "Sự kiện phim",
-    image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&auto=format&fit=crop&q=80",
-    dateUntil: "Áp dụng đến 15/07/2026",
-    content: "Cơ hội có một không hai để tham gia buổi họp báo công chiếu đầu tiên và giao lưu trực tiếp cùng những ngôi sao, đạo diễn tầm cỡ quốc tế của siêu phẩm vũ trụ sát thủ John Wick: Ballerina.\n\nĐiều kiện áp dụng:\n- Chương trình bốc thăm may mắn dành riêng cho khách hàng VIP đạt mức chi tiêu tối thiểu trong năm.\n- 50 vé mời VIP dành tặng cho những người may mắn nhất đăng ký tham gia đặt trước vé phim sớm."
-  },
-  {
-    id: 4,
-    title: "Combo Bắp Nước Siêu Anh Hùng - Tặng Bình Nước Giới Hạn",
-    category: "Khuyến mãi mới",
-    image: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=800&auto=format&fit=crop&q=80",
-    dateUntil: "Áp dụng đến 31/12/2026",
-    content: "Đồng hành cùng các bạn học sinh, sinh viên sau những giờ học tập căng thẳng, LoraFilm áp dụng mức giá cực kỳ ưu đãi chỉ 45.000đ/vé cho tất cả các suất chiếu phim vào ngày Thứ Hai hàng tuần.\n\nĐiều kiện áp dụng:\n- Khách hàng xuất trình thẻ Học sinh - Sinh viên còn hạn hoặc thẻ căn cước công dân chứng minh độ tuổi dưới 22 tại quầy vé.\n- Chỉ áp dụng đối với vé phổ thông 2D."
-  }
-];
+import { useData } from '../contexts/DataContext';
 
 export default function EventRegistryView({ eventId, onBackHome, onBookTicket, onNavigate }) {
+  const { movies, cinemas, events } = useData();
   const [activeCategory, setActiveCategory] = useState("Tất cả");
 
   // Sidebar booking form states
@@ -48,23 +14,43 @@ export default function EventRegistryView({ eventId, onBackHome, onBookTicket, o
   // Categories list
   const categories = ["Tất cả", "Khuyến mãi mới", "Ưu đãi thành viên", "Sự kiện phim"];
 
+  const getCategoryLabel = (type) => {
+    if (type === 'PROMOTION') return 'Khuyến mãi mới';
+    if (type === 'MEMBER_DISCOUNT') return 'Ưu đãi thành viên';
+    if (type === 'EVENT') return 'Sự kiện phim';
+    return type;
+  };
+
+  const getEventImage = (evt) => {
+    if (evt.image) return evt.image;
+    // Dynamic fallback based on ID/type
+    if (evt.id === 'e1' || evt.id === 'E1') return "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=80";
+    if (evt.id === 'e2' || evt.id === 'E2') return "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&auto=format&fit=crop&q=80";
+    if (evt.id === 'e3' || evt.id === 'E3') return "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&auto=format&fit=crop&q=80";
+    return "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=800&auto=format&fit=crop&q=80";
+  };
+
   // Filtered events
   const filteredEvents = useMemo(() => {
-    if (activeCategory === "Tất cả") return EVENTS;
-    return EVENTS.filter(e => e.category === activeCategory);
-  }, [activeCategory]);
+    if (activeCategory === "Tất cả") return events;
+    return events.filter(e => getCategoryLabel(e.type) === activeCategory);
+  }, [activeCategory, events]);
 
   // Current details event if active
   const targetEvent = useMemo(() => {
     if (!eventId) return null;
-    return EVENTS.find(e => e.id === parseInt(eventId)) || null;
-  }, [eventId]);
+    return events.find(e => String(e.id) === String(eventId)) || null;
+  }, [eventId, events]);
+
+  const cinemaClusters = useMemo(() => {
+    return cinemas.map(c => c.name);
+  }, [cinemas]);
 
   const handleQuickBookingSubmit = (e) => {
     e.preventDefault();
     if (!quickMovieId || !quickCinema || !quickDate) return;
 
-    const matchedMovie = MOVIES.find(m => m.id === parseInt(quickMovieId));
+    const matchedMovie = movies.find(m => String(m.id) === String(quickMovieId));
     if (!matchedMovie) return;
 
     const bookingPayload = {
@@ -138,7 +124,7 @@ export default function EventRegistryView({ eventId, onBackHome, onBookTicket, o
                       onClick={() => setActiveCategory(cat)}
                       className={`text-xs font-black uppercase tracking-wider px-5 py-2.5 rounded-full border transition-all ${
                         activeCategory === cat
-                          ? 'bg-amber-500 border-amber-500 text-black shadow-lg shadow-amber-500/10'
+                           ? 'bg-amber-500 border-amber-500 text-black shadow-lg shadow-amber-500/10'
                           : 'bg-zinc-900 border-zinc-800 text-zinc-450 hover:text-white hover:bg-zinc-800'
                       }`}
                     >
@@ -158,13 +144,13 @@ export default function EventRegistryView({ eventId, onBackHome, onBookTicket, o
                       {/* Image container */}
                       <div className="aspect-[16/9] w-full overflow-hidden bg-zinc-950 border-b border-zinc-800 relative">
                         <img
-                          src={evt.image}
+                          src={getEventImage(evt)}
                           alt={evt.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         <span className="absolute top-3 left-3 text-[8px] font-black uppercase tracking-wider bg-black/60 backdrop-blur-md text-amber-500 px-2 py-0.5 rounded border border-zinc-800/50 flex items-center gap-1">
                           <Tag className="w-2.5 h-2.5" />
-                          {evt.category}
+                          {getCategoryLabel(evt.type)}
                         </span>
                       </div>
 
@@ -175,8 +161,8 @@ export default function EventRegistryView({ eventId, onBackHome, onBookTicket, o
                             {evt.title}
                           </h3>
                           <div className="flex items-center gap-1.5 text-[9px] font-bold text-zinc-500">
-                            <Clock className="w-3 h-3 text-zinc-550 shrink-0" />
-                            <span>{evt.dateUntil}</span>
+                            <Clock className="w-3.5 h-3.5 text-zinc-550 shrink-0" />
+                            <span>{evt.dateRange}</span>
                           </div>
                         </div>
 
@@ -211,18 +197,18 @@ export default function EventRegistryView({ eventId, onBackHome, onBookTicket, o
                     
                     {/* Wide Image Banner */}
                     <div className="aspect-[21/9] w-full rounded-2xl overflow-hidden border border-zinc-800 bg-zinc-950">
-                      <img src={targetEvent.image} alt={targetEvent.title} className="w-full h-full object-cover" />
+                      <img src={getEventImage(targetEvent)} alt={targetEvent.title} className="w-full h-full object-cover" />
                     </div>
 
                     <div className="space-y-4">
                       {/* Meta information tags */}
                       <div className="flex items-center gap-3">
                         <span className="bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[8px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full">
-                          {targetEvent.category}
+                          {getCategoryLabel(targetEvent.type)}
                         </span>
                         <div className="flex items-center gap-1.5 text-[9px] font-bold text-zinc-400">
                           <Clock className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
-                          <span>{targetEvent.dateUntil}</span>
+                          <span>{targetEvent.dateRange}</span>
                         </div>
                       </div>
 
@@ -233,7 +219,8 @@ export default function EventRegistryView({ eventId, onBackHome, onBookTicket, o
 
                       {/* Structured typographic paragraphs */}
                       <div className="space-y-4 pt-3 border-t border-zinc-800/80 text-xs text-zinc-300 leading-relaxed whitespace-pre-line">
-                        {targetEvent.content}
+                        <p className="font-bold text-zinc-200">Chi tiết chương trình:</p>
+                        <p>{targetEvent.rewardDetails}</p>
                       </div>
 
                       {/* Large Center Action Button */}
@@ -286,7 +273,7 @@ export default function EventRegistryView({ eventId, onBackHome, onBookTicket, o
                     className="w-full bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs font-semibold rounded-xl py-3 px-3.5 focus:border-blue-600 focus:outline-none transition-colors"
                   >
                     <option value="">-- Chọn Phim --</option>
-                    {MOVIES.filter(m => m.status === 'NOW_SHOWING').map(m => (
+                    {movies.filter(m => m.status === 'NOW_SHOWING' || m.status === 'DANG_CHIEU').map(m => (
                       <option key={m.id} value={m.id}>{m.title}</option>
                     ))}
                   </select>
@@ -309,7 +296,7 @@ export default function EventRegistryView({ eventId, onBackHome, onBookTicket, o
                     }`}
                   >
                     <option value="">-- Chọn Rạp --</option>
-                    {CINEMA_CLUSTERS.map(c => (
+                    {cinemaClusters.map(c => (
                       <option key={c} value={c}>{c}</option>
                     ))}
                   </select>
@@ -360,7 +347,7 @@ export default function EventRegistryView({ eventId, onBackHome, onBookTicket, o
               </div>
 
               <div className="space-y-4">
-                {MOVIES.slice(0, 3).map((movie) => (
+                {movies.slice(0, 3).map((movie) => (
                   <div 
                     key={movie.id}
                     onClick={() => handleDirectBook(movie)}

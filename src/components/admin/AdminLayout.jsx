@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 
 import { useAuth } from '../../contexts/AuthContext';
+import { useData } from '../../contexts/DataContext';
 import AdminSidebar from './AdminSidebar';
 import AdminMovieView from './AdminMovieView';
 import AdminActorView from './AdminActorView';
@@ -15,19 +16,20 @@ import AdminCinemaView from './AdminCinemaView';
 import AdminFinanceView from './AdminFinanceView';
 import AdminDashboardView from './AdminDashboardView';
 
-import { 
-  INITIAL_MOVIES, 
-  INITIAL_ACTORS, 
-  INITIAL_THEATERS, 
-  INITIAL_SHOWTIMES, 
-  INITIAL_TICKETS, 
-  INITIAL_CONCESSIONS, 
-  INITIAL_CUSTOMERS, 
-  INITIAL_EMPLOYEES 
-} from '../../data/mockDashboardData';
-
 export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
   const { user, logout } = useAuth();
+  const { 
+    movies, setMovies,
+    actors, setActors,
+    theaters, setTheaters,
+    showtimes, setShowtimes,
+    tickets,
+    concessions,
+    customers, setCustomers,
+    employees, setEmployees,
+    events, setEvents
+  } = useData();
+
   const [activeTab, setActiveTab] = useState(() => {
     const hash = window.location.hash;
     if (hash === '#/admin') return 'dashboard';
@@ -45,84 +47,7 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
     return initialTab;
   });
   const [sidebarOpen, setSidebarOpen] = useState(true);
-
-  // Master local storage states
-  const [movies, setMovies] = useState(() => {
-    const saved = localStorage.getItem('lora_movies');
-    return saved ? JSON.parse(saved) : INITIAL_MOVIES;
-  });
-
-  const [actors, setActors] = useState(() => {
-    const saved = localStorage.getItem('lora_actors');
-    return saved ? JSON.parse(saved) : INITIAL_ACTORS;
-  });
-
-  const [theaters, setTheaters] = useState(() => {
-    const saved = localStorage.getItem('lora_theaters');
-    return saved ? JSON.parse(saved) : INITIAL_THEATERS;
-  });
-
-  const [showtimes, setShowtimes] = useState(() => {
-    const saved = localStorage.getItem('lora_showtimes');
-    return saved ? JSON.parse(saved) : INITIAL_SHOWTIMES;
-  });
-
-  const [tickets] = useState(() => {
-    const saved = localStorage.getItem('lora_tickets');
-    return saved ? JSON.parse(saved) : INITIAL_TICKETS;
-  });
-
-  const [concessions] = useState(() => {
-    const saved = localStorage.getItem('lora_concessions');
-    return saved ? JSON.parse(saved) : INITIAL_CONCESSIONS;
-  });
-
-  const [customers, setCustomers] = useState(() => {
-    const saved = localStorage.getItem('lora_customers');
-    return saved ? JSON.parse(saved) : INITIAL_CUSTOMERS;
-  });
-
-  const [employees, setEmployees] = useState(() => {
-    const saved = localStorage.getItem('lora_employees');
-    return saved ? JSON.parse(saved) : INITIAL_EMPLOYEES;
-  });
-
-  const [events, setEvents] = useState(() => {
-    const saved = localStorage.getItem('lora_admin_events');
-    if (saved) return JSON.parse(saved);
-    return [];
-  });
-
   const [timeFilter, setTimeFilter] = useState('today');
-
-  // Save changes
-  useEffect(() => {
-    localStorage.setItem('lora_movies', JSON.stringify(movies));
-  }, [movies]);
-
-  useEffect(() => {
-    localStorage.setItem('lora_actors', JSON.stringify(actors));
-  }, [actors]);
-
-  useEffect(() => {
-    localStorage.setItem('lora_theaters', JSON.stringify(theaters));
-  }, [theaters]);
-
-  useEffect(() => {
-    localStorage.setItem('lora_showtimes', JSON.stringify(showtimes));
-  }, [showtimes]);
-
-  useEffect(() => {
-    localStorage.setItem('lora_customers', JSON.stringify(customers));
-  }, [customers]);
-
-  useEffect(() => {
-    localStorage.setItem('lora_employees', JSON.stringify(employees));
-  }, [employees]);
-
-  useEffect(() => {
-    localStorage.setItem('lora_admin_events', JSON.stringify(events));
-  }, [events]);
 
   // Sync hash routing
   useEffect(() => {

@@ -1,16 +1,17 @@
 import { useState, useMemo } from 'react';
 import { Play, Clock, ArrowLeft, Star } from 'lucide-react';
-import { MOVIES, CINEMA_CLUSTERS, SHOWTIMES } from '../data/mockData';
+import { useData } from '../contexts/DataContext';
 import TrailerModal from '../components/common/TrailerModal';
 
 export default function MovieDetailView({ movieId, onSelectShowtime, onBack }) {
+  const { movies, showtimes, cinemas } = useData();
   const [selectedDateIndex, setSelectedDateIndex] = useState(0);
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
 
   // Find the current movie
   const movie = useMemo(() => {
-    return MOVIES.find((m) => m.id === movieId) || MOVIES[0];
-  }, [movieId]);
+    return movies.find((m) => String(m.id) === String(movieId)) || movies[0];
+  }, [movies, movieId]);
 
   // Generate the next 5 dates starting from today
   const dates = useMemo(() => {
@@ -45,16 +46,62 @@ export default function MovieDetailView({ movieId, onSelectShowtime, onBack }) {
     }
   };
 
-  const handleTimeClick = (cinema, time, format) => {
+  const handleTimeClick = (cinemaName, time, format) => {
     onSelectShowtime({
       movieId: movie.id,
       movieTitle: movie.title,
       date: activeDate.dateStr,
       fullDate: activeDate.fullDate,
-      cinema,
+      cinema: cinemaName,
       time,
       format
     });
+  };
+
+  const cinemaList = useMemo(() => {
+    return cinemas.map(c => c.name);
+  }, [cinemas]);
+
+  // Dynamic showtimes helper
+  const getShowtimesForCinema = (cinemaName, format) => {
+    const foundCinema = cinemas.find(c => c.name === cinemaName);
+    if (!foundCinema) {
+      return format.includes('IMAX') ? ["13:15", "16:45", "19:30"] : ["09:30", "13:15", "16:45", "19:30", "22:15"];
+    }
+    
+    const formatToYYYYMMDD = (str) => {
+      if (!str) return '';
+      if (str.includes('-')) return str; // already YYYY-MM-DD
+      const parts = str.split('/');
+      if (parts.length === 3) {
+        return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+      }
+      return str;
+    };
+    
+    const formattedTarget = formatToYYYYMMDD(activeDate.fullDate);
+    
+    const matching = showtimes.filter(st => {
+      const matchMovie = String(st.movieId) === String(movie.id);
+      const matchCinema = String(st.cinemaId) === String(foundCinema.id);
+      const matchDate = formatToYYYYMMDD(st.date) === formattedTarget;
+      
+      const hall = foundCinema.halls?.find(h => String(h.id) === String(st.hallId));
+      const hallFormat = hall ? hall.format : '2D Digital';
+      
+      const isImax = format.includes('IMAX');
+      const isHallImax = hallFormat.toUpperCase().includes('IMAX');
+      const matchFormat = isImax ? isHallImax : !isHallImax;
+      
+      return matchMovie && matchCinema && matchDate && matchFormat;
+    });
+
+    if (matching.length === 0) {
+      // Fallback default times so booking is always testable
+      return format.includes('IMAX') ? ["13:15", "16:45", "19:30"] : ["09:30", "13:15", "16:45", "19:30", "22:15"];
+    }
+
+    return [...new Set(matching.map(st => st.time))].sort();
   };
 
   return (
@@ -63,7 +110,7 @@ export default function MovieDetailView({ movieId, onSelectShowtime, onBack }) {
       <div className="relative h-[40vh] md:h-[50vh] overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-25 filter blur-md"
-          style={{ backgroundImage: `url(${movie.posterUrl})` }}
+          style={{ backgroundImage: `url(${movie.posterUrl || movie.image})` }}
         ></div>
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent"></div>
         
@@ -84,7 +131,7 @@ export default function MovieDetailView({ movieId, onSelectShowtime, onBack }) {
           <div className="w-48 md:w-64 shrink-0 mx-auto md:mx-0">
             <div className="relative aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border border-zinc-800 bg-zinc-900 group">
               <img
-                src={movie.posterUrl}
+                src={movie.posterUrl || movie.image}
                 alt={movie.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 onError={(e) => {
@@ -103,9 +150,9 @@ export default function MovieDetailView({ movieId, onSelectShowtime, onBack }) {
             <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
               <div className="flex items-center gap-1 bg-brand-yellow text-black text-xs font-black px-2 py-0.5 rounded shadow">
                 <Star className="w-3 h-3 fill-current" />
-                {movie.rating.toFixed(1)}
+                {(movie.rating || 0).toFixed(1)}
               </div>
-              <span className="text-zinc-400 text-sm">| {movie.genre}</span>
+              <span className="text-zinc-400 text-sm">| {movie.genre || movie.genres?.join(', ')}</span>
             </div>
             
             <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight mb-4">
@@ -114,7 +161,7 @@ export default function MovieDetailView({ movieId, onSelectShowtime, onBack }) {
 
             <div className="flex items-center justify-center md:justify-start gap-2 text-zinc-400 text-sm mb-6">
               <Clock className="w-4 h-4 text-brand-coral" />
-              <span>{movie.duration}</span>
+              <span>{movie.duration} phút</span>
             </div>
 
             <p className="text-zinc-300 text-sm md:text-base leading-relaxed mb-6 max-w-3xl">
@@ -133,7 +180,7 @@ export default function MovieDetailView({ movieId, onSelectShowtime, onBack }) {
           </div>
         </div>
 
-        {/* Static Showtime Scheduler Accordion & System */}
+        {/* Dynamic Showtime Scheduler Accordion & System */}
         <div className="mt-16 bg-zinc-900/50 border border-zinc-800/80 rounded-3xl p-6 md:p-8 backdrop-blur-sm">
           <h2 className="text-xl md:text-2xl font-black text-white uppercase tracking-wide mb-6">
             Lịch Chiếu & Đặt Vé
@@ -159,54 +206,63 @@ export default function MovieDetailView({ movieId, onSelectShowtime, onBack }) {
 
           {/* Cinema Accordion Cluster Rows */}
           <div className="mt-8 space-y-6">
-            {CINEMA_CLUSTERS.map((cinema, cIdx) => (
-              <div
-                key={cIdx}
-                className="bg-zinc-950/40 border border-zinc-800/60 rounded-2xl p-5 md:p-6"
-              >
-                <h3 className="text-base md:text-lg font-bold text-white mb-4 border-l-2 border-brand-coral pl-3">
-                  {cinema}
-                </h3>
+            {cinemaList.map((cinema, cIdx) => {
+              const standardTimes = getShowtimesForCinema(cinema, '2D DIGITAL');
+              const imaxTimes = getShowtimesForCinema(cinema, 'IMAX 3D');
+              
+              return (
+                <div
+                  key={cIdx}
+                  className="bg-zinc-950/40 border border-zinc-800/60 rounded-2xl p-5 md:p-6"
+                >
+                  <h3 className="text-base md:text-lg font-bold text-white mb-4 border-l-2 border-brand-coral pl-3">
+                    {cinema}
+                  </h3>
 
-                <div className="space-y-4">
-                  {/* 2D Showtimes */}
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 py-2 border-b border-zinc-900">
-                    <span className="text-xs font-black text-brand-coral uppercase tracking-widest shrink-0 w-24">
-                      2D DIGITAL
-                    </span>
-                    <div className="flex flex-wrap gap-3">
-                      {SHOWTIMES.map((time, tIdx) => (
-                        <button
-                          key={tIdx}
-                          onClick={() => handleTimeClick(cinema, time, '2D DIGITAL')}
-                          className="bg-zinc-900 hover:bg-brand-coral text-zinc-300 hover:text-white border border-zinc-800 hover:border-brand-coral text-xs md:text-sm font-semibold py-2 px-4 rounded-xl transition-all duration-300"
-                        >
-                          {time}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                  <div className="space-y-4">
+                    {/* 2D Showtimes */}
+                    {standardTimes.length > 0 && (
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-4 py-2 border-b border-zinc-900">
+                        <span className="text-xs font-black text-brand-coral uppercase tracking-widest shrink-0 w-24">
+                          2D DIGITAL
+                        </span>
+                        <div className="flex flex-wrap gap-3">
+                          {standardTimes.map((time, tIdx) => (
+                            <button
+                              key={tIdx}
+                              onClick={() => handleTimeClick(cinema, time, '2D DIGITAL')}
+                              className="bg-zinc-900 hover:bg-brand-coral text-zinc-300 hover:text-white border border-zinc-800 hover:border-brand-coral text-xs md:text-sm font-semibold py-2 px-4 rounded-xl transition-all duration-300"
+                            >
+                              {time}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
-                  {/* IMAX 3D Showtimes */}
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 py-2">
-                    <span className="text-xs font-black text-brand-yellow uppercase tracking-widest shrink-0 w-24">
-                      IMAX 3D
-                    </span>
-                    <div className="flex flex-wrap gap-3">
-                      {SHOWTIMES.slice(1, 4).map((time, tIdx) => (
-                        <button
-                          key={tIdx}
-                          onClick={() => handleTimeClick(cinema, time, 'IMAX 3D')}
-                          className="bg-zinc-900 hover:bg-brand-yellow text-zinc-300 hover:text-black border border-zinc-800 hover:border-brand-yellow text-xs md:text-sm font-semibold py-2 px-4 rounded-xl transition-all duration-300"
-                        >
-                          {time}
-                        </button>
-                      ))}
-                    </div>
+                    {/* IMAX 3D Showtimes */}
+                    {imaxTimes.length > 0 && (
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-4 py-2">
+                        <span className="text-xs font-black text-brand-yellow uppercase tracking-widest shrink-0 w-24">
+                          IMAX 3D
+                        </span>
+                        <div className="flex flex-wrap gap-3">
+                          {imaxTimes.map((time, tIdx) => (
+                            <button
+                              key={tIdx}
+                              onClick={() => handleTimeClick(cinema, time, 'IMAX 3D')}
+                              className="bg-zinc-900 hover:bg-brand-yellow text-zinc-300 hover:text-black border border-zinc-800 hover:border-brand-yellow text-xs md:text-sm font-semibold py-2 px-4 rounded-xl transition-all duration-300"
+                            >
+                              {time}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
 import { Search, Film, Award, Star, Heart, Calendar, MapPin, Ruler } from 'lucide-react';
-import { MOVIES, CINEMA_CLUSTERS } from '../data/mockData';
+import { useData } from '../contexts/DataContext';
 
 export default function ActorRegistryView({ actorName, onBackHome, onBookTicket, onNavigate }) {
+  const { movies, cinemas } = useData();
   const [searchQuery, setSearchQuery] = useState('');
   
   // Country & Sort list filter states
@@ -88,7 +89,7 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
   const consolidatedActors = useMemo(() => {
     const registry = {};
 
-    MOVIES.forEach(movie => {
+    movies.forEach(movie => {
       if (movie.cast && Array.isArray(movie.cast)) {
         movie.cast.forEach(actor => {
           const name = actor.name;
@@ -113,7 +114,7 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
     });
 
     return Object.values(registry);
-  }, []);
+  }, [movies]);
 
   // 2. Filter & Sort actors for the List view
   const processedActorsList = useMemo(() => {
@@ -186,12 +187,16 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
     onBookTicket(bookingPayload);
   };
 
+  const cinemaClusters = useMemo(() => {
+    return cinemas.map(c => c.name);
+  }, [cinemas]);
+
   // Submit quick booking sidebar widget
   const handleQuickBookingSubmit = (e) => {
     e.preventDefault();
     if (!quickMovieId || !quickCinema || !quickDate) return;
 
-    const matchedMovie = MOVIES.find(m => m.id === parseInt(quickMovieId));
+    const matchedMovie = movies.find(m => String(m.id) === String(quickMovieId));
     if (!matchedMovie) return;
 
     const bookingPayload = {
@@ -449,7 +454,7 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
                     <div className="space-y-3">
                       <div className="flex items-center gap-2 border-b border-zinc-800 pb-2.5">
                         <Film className="w-4 h-4 text-amber-500 shrink-0" />
-                        <h3 className="text-xs font-black text-white uppercase tracking-wider">HÌNH ẢNH NGỆ THUẬT</h3>
+                        <h3 className="text-xs font-black text-white uppercase tracking-wider">HÌNH ẢNH NGHỆ THUẬT</h3>
                       </div>
                       
                       {/* 4 Photo thumbnails */}
@@ -499,11 +504,11 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
                                 </p>
                                 <div className="flex items-center gap-1.5">
                                   <span className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${
-                                    work.status === 'NOW_SHOWING' 
+                                    work.status === 'NOW_SHOWING' || work.status === 'DANG_CHIEU'
                                       ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-500/10' 
                                       : 'bg-blue-950/80 text-blue-400 border border-blue-500/10'
                                   }`}>
-                                    {work.status === 'NOW_SHOWING' ? 'Đang chiếu' : 'Sắp chiếu'}
+                                    {work.status === 'NOW_SHOWING' || work.status === 'DANG_CHIEU' ? 'Đang chiếu' : 'Sắp chiếu'}
                                   </span>
                                   <div className="flex items-center gap-0.5 text-brand-yellow">
                                     <Star className="w-2.5 h-2.5 fill-brand-yellow text-brand-yellow" />
@@ -514,7 +519,7 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
                             </div>
 
                             {/* Direct Booking CTA */}
-                            {work.status === 'NOW_SHOWING' ? (
+                            {work.status === 'NOW_SHOWING' || work.status === 'DANG_CHIEU' ? (
                               <button
                                 onClick={() => handleDirectBook(work)}
                                 className="bg-amber-500 hover:bg-amber-600 text-black text-[10px] font-black uppercase py-2 px-3 rounded-xl transition-colors shrink-0 shadow-lg shadow-amber-500/10 focus:outline-none"
@@ -532,7 +537,7 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
                     </div>
 
                     {/* "TIỂU SỬ" Block (Bottom Layout Section) */}
-                    <div className="space-y-3 bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl">
+                    <div className="space-y-3 bg-zinc-900 border border-zinc-850 rounded-3xl p-6 shadow-xl">
                       <div className="flex items-center gap-2 border-b border-zinc-800 pb-2.5">
                         <Award className="w-4 h-4 text-amber-500 shrink-0" />
                         <h3 className="text-xs font-black text-white uppercase tracking-wider">Tiểu sử chi tiết</h3>
@@ -586,7 +591,7 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
                     className="w-full bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs font-semibold rounded-xl py-3 px-3.5 focus:border-blue-600 focus:outline-none transition-colors"
                   >
                     <option value="">-- Chọn Phim --</option>
-                    {MOVIES.filter(m => m.status === 'NOW_SHOWING').map(m => (
+                    {movies.filter(m => m.status === 'NOW_SHOWING' || m.status === 'DANG_CHIEU').map(m => (
                       <option key={m.id} value={m.id}>{m.title}</option>
                     ))}
                   </select>
@@ -609,7 +614,7 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
                     }`}
                   >
                     <option value="">-- Chọn Rạp --</option>
-                    {CINEMA_CLUSTERS.map(c => (
+                    {cinemaClusters.map(c => (
                       <option key={c} value={c}>{c}</option>
                     ))}
                   </select>
@@ -661,7 +666,7 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
 
               {/* Stack list */}
               <div className="space-y-4">
-                {MOVIES.slice(0, 3).map((movie) => (
+                {movies.slice(0, 3).map((movie) => (
                   <div 
                     key={movie.id}
                     onClick={() => handleDirectBook(movie)}

@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { 
   Star, Eye, ThumbsUp, Play, RefreshCw, AlertCircle, Film 
 } from 'lucide-react';
-import { MOVIES, CINEMA_CLUSTERS } from '../data/mockData';
+import { useData } from '../contexts/DataContext';
 import TrailerModal from '../components/common/TrailerModal';
 
 // Map country dynamically based on movie title/ID
@@ -35,12 +35,14 @@ const getMovieCountry = (movie) => {
 
 // Map release year dynamically based on status/ID
 const getMovieYear = (movie) => {
-  if (movie.status === 'COMING_SOON') return '2026';
-  if (movie.id % 2 === 0) return '2025';
+  if (movie.status === 'COMING_SOON' || movie.status === 'SAP_CHIEU') return '2026';
+  if (String(movie.id).replace('m', '') % 2 === 0) return '2025';
   return '2024';
 };
 
 export default function MovieDiscoveryView({ onBackHome, onBuyTicket, initialTab = 'ALL' }) {
+  const { movies, cinemas } = useData();
+  const cinemaClusters = useMemo(() => cinemas.map(c => c.name), [cinemas]);
   // Upper horizontal bar filter states
   const [selectedGenre, setSelectedGenre] = useState('ALL');
   const [selectedCountry, setSelectedCountry] = useState('ALL');
@@ -112,7 +114,7 @@ export default function MovieDiscoveryView({ onBackHome, onBuyTicket, initialTab
       return baseViews + (likedMovies[m.id] ? 1 : 0);
     };
 
-    let result = [...MOVIES];
+    let result = [...movies];
 
     // Filter by Genre
     if (selectedGenre !== 'ALL') {
@@ -131,9 +133,16 @@ export default function MovieDiscoveryView({ onBackHome, onBuyTicket, initialTab
       result = result.filter(m => getMovieYear(m) === selectedYear);
     }
 
-    // Filter by Status
     if (selectedStatus !== 'ALL') {
-      result = result.filter(m => m.status === selectedStatus);
+      result = result.filter(m => {
+        if (selectedStatus === 'NOW_SHOWING') {
+          return m.status === 'NOW_SHOWING' || m.status === 'DANG_CHIEU';
+        }
+        if (selectedStatus === 'COMING_SOON') {
+          return m.status === 'COMING_SOON' || m.status === 'SAP_CHIEU';
+        }
+        return m.status === selectedStatus;
+      });
     }
 
     // Sort
@@ -191,7 +200,7 @@ export default function MovieDiscoveryView({ onBackHome, onBuyTicket, initialTab
     e.preventDefault();
     if (!quickMovieId || !quickCinema || !quickDate) return;
 
-    const matchedMovie = MOVIES.find(m => m.id === parseInt(quickMovieId));
+    const matchedMovie = movies.find(m => String(m.id) === String(quickMovieId));
     if (!matchedMovie) return;
 
     const bookingPayload = {
@@ -487,7 +496,7 @@ export default function MovieDiscoveryView({ onBackHome, onBuyTicket, initialTab
                     className="w-full bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs font-semibold rounded-xl py-3 px-3.5 focus:border-blue-600 focus:outline-none transition-colors"
                   >
                     <option value="">-- Chọn Phim --</option>
-                    {MOVIES.filter(m => m.status === 'NOW_SHOWING').map(m => (
+                    {movies.filter(m => m.status === 'NOW_SHOWING' || m.status === 'DANG_CHIEU').map(m => (
                       <option key={m.id} value={m.id}>{m.title}</option>
                     ))}
                   </select>
@@ -510,7 +519,7 @@ export default function MovieDiscoveryView({ onBackHome, onBuyTicket, initialTab
                     }`}
                   >
                     <option value="">-- Chọn Rạp --</option>
-                    {CINEMA_CLUSTERS.map(c => (
+                    {cinemaClusters.map(c => (
                       <option key={c} value={c}>{c}</option>
                     ))}
                   </select>
@@ -562,7 +571,7 @@ export default function MovieDiscoveryView({ onBackHome, onBuyTicket, initialTab
 
               {/* Stack list */}
               <div className="space-y-4">
-                {MOVIES.slice(0, 3).map((movie) => (
+                {movies.slice(0, 3).map((movie) => (
                   <div 
                     key={movie.id}
                     onClick={(e) => handleBuyTicketClick(e, movie)}

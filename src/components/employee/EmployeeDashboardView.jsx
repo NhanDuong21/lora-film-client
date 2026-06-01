@@ -13,64 +13,18 @@ import {
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
-import { 
-  INITIAL_MOVIES, 
-  INITIAL_SHOWTIMES, 
-  INITIAL_TICKETS, 
-  INITIAL_CONCESSIONS, 
-  INITIAL_THEATERS 
-} from '../../data/mockDashboardData';
+import { useData } from '../../contexts/DataContext';
 
 export default function EmployeeDashboardView({ onBackHome, onTicketingSelect }) {
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('ticketing');
-
-  // Load from localStorage or pre-seeds
-  const [movies] = useState(() => {
-    const saved = localStorage.getItem('lora_movies');
-    if (saved) return JSON.parse(saved);
-    localStorage.setItem('lora_movies', JSON.stringify(INITIAL_MOVIES));
-    return INITIAL_MOVIES;
-  });
-
-  const [showtimes] = useState(() => {
-    const saved = localStorage.getItem('lora_showtimes');
-    if (saved) return JSON.parse(saved);
-    localStorage.setItem('lora_showtimes', JSON.stringify(INITIAL_SHOWTIMES));
-    return INITIAL_SHOWTIMES;
-  });
-
-  const [theaters] = useState(() => {
-    const saved = localStorage.getItem('lora_theaters');
-    if (saved) return JSON.parse(saved);
-    localStorage.setItem('lora_theaters', JSON.stringify(INITIAL_THEATERS));
-    return INITIAL_THEATERS;
-  });
-
-  const [tickets, setTickets] = useState(() => {
-    const saved = localStorage.getItem('lora_tickets');
-    if (saved) return JSON.parse(saved);
-    localStorage.setItem('lora_tickets', JSON.stringify(INITIAL_TICKETS));
-    return INITIAL_TICKETS;
-  });
-
-  const [concessions, setConcessions] = useState(() => {
-    const saved = localStorage.getItem('lora_concessions');
-    if (saved) return JSON.parse(saved);
-    localStorage.setItem('lora_concessions', JSON.stringify(INITIAL_CONCESSIONS));
-    return INITIAL_CONCESSIONS;
-  });
-
-  // Sync state helpers
-  const updateTicketsState = (newTickets) => {
-    setTickets(newTickets);
-    localStorage.setItem('lora_tickets', JSON.stringify(newTickets));
-  };
-
-  const updateConcessionsState = (newConcessions) => {
-    setConcessions(newConcessions);
-    localStorage.setItem('lora_concessions', JSON.stringify(newConcessions));
-  };
+  const { 
+    movies, 
+    showtimes, 
+    theaters, 
+    tickets, setTickets: updateTicketsState, 
+    concessions, setConcessions: updateConcessionsState 
+  } = useData();
 
   // Concessions Cart State
   const [cart, setCart] = useState({});

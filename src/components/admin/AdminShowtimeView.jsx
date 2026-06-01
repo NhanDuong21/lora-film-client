@@ -49,9 +49,9 @@ export default function AdminShowtimeView({
     }
 
     const newShowtime = {
-      id: Date.now(),
-      movieId: parseInt(showtimeForm.movieId),
-      theaterId: parseInt(showtimeForm.theaterId),
+      id: "st_" + Date.now(),
+      movieId: showtimeForm.movieId,
+      theaterId: showtimeForm.theaterId,
       hallId: showtimeForm.hallId,
       date: showtimeForm.date,
       time: showtimeForm.time,
@@ -91,8 +91,8 @@ export default function AdminShowtimeView({
       {/* Showtime Grid Matrix */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {showtimes.map((st) => {
-          const movie = movies.find(m => m.id === st.movieId);
-          const theater = theaters.find(t => t.id === st.theaterId);
+          const movie = movies.find(m => String(m.id) === String(st.movieId));
+          const theater = theaters.find(t => String(t.id) === String(st.theaterId));
           const hall = theater?.halls.find(h => h.id === st.hallId);
           const formatUpper = (hall?.format || '2D DIGITAL').toUpperCase();
           const displayPrice = st.price.toLocaleString('vi-VN');
@@ -182,8 +182,8 @@ export default function AdminShowtimeView({
                 <select
                   value={showtimeForm.theaterId}
                   onChange={(e) => {
-                    const tId = parseInt(e.target.value);
-                    const matchedT = theaters.find(t => t.id === tId);
+                    const tId = e.target.value;
+                    const matchedT = theaters.find(t => String(t.id) === String(tId));
                     setShowtimeForm({ 
                       ...showtimeForm, 
                       theaterId: e.target.value,

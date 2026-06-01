@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { ArrowLeft, CheckCircle, Info, ShoppingBag, Clock, CreditCard, Smartphone, AlertTriangle, Calendar } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { MOVIES, SHOWTIMES } from '../data/mockData';
+import { useData } from '../contexts/DataContext';
 
 const ROWS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
@@ -37,6 +37,7 @@ const CONCESSIONS = [
 
 export default function SeatSelectionView({ bookingData, onBack, onRequireLogin, onUpdateBookingData }) {
   const { isAuthenticated, user } = useAuth();
+  const { movies, showtimes, cinemas } = useData();
   
   // Support restoring selected seats after dynamic redirection authentication
   const [selectedSeats, setSelectedSeats] = useState(bookingData.selectedSeats || []);
@@ -117,13 +118,28 @@ export default function SeatSelectionView({ bookingData, onBack, onRequireLogin,
   };
 
   const movie = useMemo(() => {
-    return MOVIES.find((m) => m.id === movieId) || {
+    return movies.find((m) => String(m.id) === String(movieId)) || {
       title: movieTitle,
       posterUrl: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=600&auto=format&fit=crop&q=80',
       duration: '120 phút',
       ageRating: 'P'
     };
-  }, [movieId, movieTitle]);
+  }, [movies, movieId, movieTitle]);
+
+  const showtimesList = useMemo(() => {
+    const foundCinema = cinemas.find(c => c.name === cinema);
+    if (!foundCinema) {
+      return ["09:30", "13:15", "16:45", "19:30", "22:15"];
+    }
+    const matching = showtimes.filter(st => 
+      String(st.movieId) === String(movieId) && 
+      String(st.cinemaId) === String(foundCinema.id)
+    );
+    if (matching.length === 0) {
+      return ["09:30", "13:15", "16:45", "19:30", "22:15"];
+    }
+    return [...new Set(matching.map(st => st.time))].sort();
+  }, [showtimes, cinemas, movieId, cinema]);
 
   const hallLabel = useMemo(() => {
     if (format.toLowerCase().includes('imax')) return 'IMAX Theater';
@@ -388,7 +404,7 @@ export default function SeatSelectionView({ bookingData, onBack, onRequireLogin,
                     <span>Đổi suất chiếu nhanh:</span>
                   </div>
                   <div className="flex flex-wrap gap-2 justify-center">
-                    {SHOWTIMES.map((t) => {
+                    {showtimesList.map((t) => {
                       const isActive = t === time;
                       return (
                         <button

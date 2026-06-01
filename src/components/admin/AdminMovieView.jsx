@@ -9,7 +9,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
     title: '',
     duration: '',
     ageRating: 'P',
-    status: 'NOW_SHOWING',
+    status: 'DANG_CHIEU',
     genres: '',
     synopsis: '',
     releaseYear: 2026
@@ -23,9 +23,9 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
     setEditingMovie(null);
     setMovieForm({
       title: '',
-      duration: '120 phút',
+      duration: '120',
       ageRating: 'P',
-      status: 'NOW_SHOWING',
+      status: 'DANG_CHIEU',
       genres: 'Hành Động',
       synopsis: '',
       releaseYear: 2026
@@ -37,7 +37,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
     setEditingMovie(movie);
     setMovieForm({
       title: movie.title,
-      duration: movie.duration.replace('phut', 'phút'),
+      duration: String(movie.duration).replace('phút', '').replace('phut', '').trim(),
       ageRating: movie.ageRating,
       status: movie.status,
       genres: Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genres || '',
@@ -56,7 +56,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
 
     const processedMovie = {
       title: movieForm.title,
-      duration: movieForm.duration.includes('phút') ? movieForm.duration : `${movieForm.duration} phút`,
+      duration: parseInt(movieForm.duration) || 120,
       ageRating: movieForm.ageRating,
       status: movieForm.status,
       genres: movieForm.genres.split(',').map(g => g.trim()),
@@ -64,7 +64,9 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
       releaseYear: parseInt(movieForm.releaseYear) || 2026,
       rating: editingMovie ? editingMovie.rating : 4.5,
       posterUrl: editingMovie ? editingMovie.posterUrl : 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
-      trailerId: editingMovie ? editingMovie.trailerId : 'eHp3MbsQgzk'
+      trailerId: editingMovie ? editingMovie.trailerId : 'eHp3MbsQgzk',
+      trailerEmbedUrl: editingMovie ? editingMovie.trailerEmbedUrl : 'https://www.youtube.com/embed/eHp3MbsQgzk',
+      actorIds: editingMovie ? editingMovie.actorIds : []
     };
 
     if (editingMovie) {
@@ -72,7 +74,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
       updateMoviesState(updated);
       triggerToast('Cập nhật thông tin phim thành công!');
     } else {
-      const newMovie = { ...processedMovie, id: Date.now() };
+      const newMovie = { ...processedMovie, id: 'm_' + Date.now() };
       updateMoviesState([...movies, newMovie]);
       triggerToast('Thêm phim mới thành công!');
     }
@@ -138,7 +140,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                   <tr key={movie.id} className="hover:bg-zinc-900/20 transition-colors border-b border-zinc-800/40">
                     <td className="py-4 px-6 font-bold text-zinc-200 text-sm">{movie.title}</td>
                     <td className="py-4 px-6 text-zinc-300 font-medium">
-                      {movie.duration ? movie.duration.replace('phut', 'phút') : 'N/A'}
+                      {movie.duration ? `${movie.duration} phút` : 'N/A'}
                     </td>
                     <td className="py-4 px-6">
                       <span className="px-3 py-1 text-[10px] font-black rounded-full bg-red-950/40 text-red-400 border border-red-900/40">
@@ -148,11 +150,11 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                     <td className="py-4 px-6 text-zinc-300 font-medium">{movie.releaseYear}</td>
                     <td className="py-4 px-6">
                       <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase border ${
-                        movie.status === 'NOW_SHOWING' 
+                        movie.status === 'DANG_CHIEU' || movie.status === 'NOW_SHOWING'
                           ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
                           : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
                       }`}>
-                        {movie.status === 'NOW_SHOWING' ? 'ĐANG CHIẾU' : 'SẮP CHIẾU'}
+                        {movie.status === 'DANG_CHIEU' || movie.status === 'NOW_SHOWING' ? 'ĐANG CHIẾU' : 'SẮP CHIẾU'}
                       </span>
                     </td>
                     <td className="py-4 px-6">
@@ -207,12 +209,12 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-zinc-500 text-[10px] font-black uppercase block">Độ Dài</label>
+                <label className="text-zinc-500 text-[10px] font-black uppercase block">Độ Dài (Phút)</label>
                 <input
                   type="text"
                   value={movieForm.duration}
                   onChange={(e) => setMovieForm({ ...movieForm, duration: e.target.value })}
-                  placeholder="Ví dụ: 112 phút"
+                  placeholder="Ví dụ: 112"
                   className="w-full bg-zinc-900/40 border border-zinc-900 rounded-xl py-2 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral"
                   required
                 />
@@ -250,8 +252,8 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                   onChange={(e) => setMovieForm({ ...movieForm, status: e.target.value })}
                   className="w-full bg-zinc-900/40 border border-zinc-900 rounded-xl py-2 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral"
                 >
-                  <option value="NOW_SHOWING">ĐANG CHIẾU (NOW SHOWING)</option>
-                  <option value="COMING_SOON">SẮP CHIẾU (COMING SOON)</option>
+                  <option value="DANG_CHIEU">ĐANG CHIẾU (NOW SHOWING)</option>
+                  <option value="SAP_CHIEU">SẮP CHIẾU (COMING SOON)</option>
                 </select>
               </div>
             </div>

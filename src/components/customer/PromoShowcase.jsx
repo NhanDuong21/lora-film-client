@@ -1,9 +1,33 @@
 import { ArrowRight, Clock, Tag } from 'lucide-react';
+import { useData } from '../../contexts/DataContext';
 
 export default function PromoShowcase({ onNavigate }) {
+  const { events } = useData();
+
+  const featuredEvent = events && events.length > 0 ? events[0] : {
+    id: "e1",
+    title: "Thứ Hai Vui Vẻ - Đồng Giá Vé 60K",
+    dateRange: "Đến 31/12/2026",
+    rewardDetails: "Cơ hội thưởng thức phim bom tấn với giá cực hời mỗi ngày thứ ba hàng tuần tại hệ thống LoraFilm."
+  };
+
+  const miniEvent1 = events && events.length > 1 ? events[1] : {
+    id: "e2",
+    title: "Thành Viên Vàng LoraFilm - Nhân Đôi Điểm Tích Lũy",
+    dateRange: "Đến 30/06/2026",
+    rewardDetails: "Nhận x2 điểm thưởng khi mua vé online trong suốt tháng 6."
+  };
+
+  const miniEvent2 = events && events.length > 2 ? events[2] : {
+    id: "e3",
+    title: "Combo Bắp Nước Siêu Anh Hùng - Tặng Bình Nước",
+    dateRange: "Đến 31/12/2026",
+    rewardDetails: "Nhận bình nước độc quyền khi mua Combo phim bom tấn."
+  };
+
   const handleFeatureClick = () => {
     if (onNavigate) {
-      onNavigate('event-detail', { eventId: 1 });
+      onNavigate('event-detail', { eventId: featuredEvent.id });
     }
   };
 
@@ -49,7 +73,7 @@ export default function PromoShowcase({ onNavigate }) {
             {/* Featured Image */}
             <img
               src="https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=80"
-              alt="Thứ Ba Vui Vẻ"
+              alt={featuredEvent.title}
               className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
             />
             
@@ -62,17 +86,17 @@ export default function PromoShowcase({ onNavigate }) {
                 </span>
                 <span className="text-[10px] text-zinc-300 font-bold flex items-center gap-1 bg-black/40 px-2 py-0.5 rounded">
                   <Clock className="w-3 h-3 text-brand-coral" />
-                  Áp dụng đến 31/12/2026
+                  {featuredEvent.dateRange}
                 </span>
               </div>
               
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                   <h3 className="text-lg md:text-2xl font-black text-white uppercase tracking-tight group-hover:text-amber-500 transition-colors">
-                    Thứ Ba Vui Vẻ - Đồng Giá Vé 60K
+                    {featuredEvent.title}
                   </h3>
                   <p className="text-xs text-zinc-300 mt-1 max-w-xl line-clamp-1">
-                    Cơ hội thưởng thức phim bom tấn với giá cực hời mỗi ngày thứ ba hàng tuần tại hệ thống LoraFilm.
+                    {featuredEvent.rewardDetails}
                   </p>
                 </div>
                 
@@ -87,16 +111,16 @@ export default function PromoShowcase({ onNavigate }) {
           {/* RIGHT CONTENT ZONE: The Stacked Mini-Promos Column (1/3 Width Space) */}
           <div className="lg:col-span-1 flex flex-col gap-4 h-full justify-between min-h-[300px] lg:min-h-0">
             
-            {/* Mini Card 1 - Member Promo (ID: 2) */}
+            {/* Mini Card 1 - Member Promo (ID: e2) */}
             <div
-              onClick={() => handleMiniClick(2)}
+              onClick={() => handleMiniClick(miniEvent1.id)}
               className="w-full h-[47%] bg-zinc-900/50 hover:bg-zinc-900 border border-zinc-800/60 hover:border-amber-500/40 rounded-xl p-3 flex gap-4 cursor-pointer transition-all group"
             >
               {/* Left Thumbnail */}
               <div className="w-24 h-full shrink-0 overflow-hidden rounded-lg bg-zinc-850">
                 <img
                   src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&auto=format&fit=crop&q=80"
-                  alt="Thành Viên Vàng"
+                  alt={miniEvent1.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-350"
                 />
               </div>
@@ -104,15 +128,15 @@ export default function PromoShowcase({ onNavigate }) {
               <div className="flex-grow flex flex-col justify-between min-w-0">
                 <div>
                   <h4 className="text-xs md:text-sm font-black text-white line-clamp-2 uppercase tracking-tight group-hover:text-amber-500 transition-colors">
-                    Thành Viên Vàng LoraFilm - Nhân Đôi Điểm Tích Lũy
+                    {miniEvent1.title}
                   </h4>
                   <p className="text-[10px] text-zinc-400 mt-1 line-clamp-1">
-                    Nhận x2 điểm thưởng khi mua vé online trong suốt tháng 6.
+                    {miniEvent1.rewardDetails}
                   </p>
                 </div>
                 
                 <div className="flex justify-between items-center pt-2">
-                  <span className="text-[9px] text-zinc-500 font-bold">Đến 30/06/2026</span>
+                  <span className="text-[9px] text-zinc-500 font-bold">{miniEvent1.dateRange}</span>
                   <span className="text-[10px] font-black text-orange-500 uppercase flex items-center gap-0.5 group-hover:text-orange-400">
                     <span>Chi tiết</span>
                     <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
@@ -121,16 +145,16 @@ export default function PromoShowcase({ onNavigate }) {
               </div>
             </div>
 
-            {/* Mini Card 2 - Combo Promo (ID: 4) */}
+            {/* Mini Card 2 - Combo Promo (ID: e3) */}
             <div
-              onClick={() => handleMiniClick(4)}
+              onClick={() => handleMiniClick(miniEvent2.id)}
               className="w-full h-[47%] bg-zinc-900/50 hover:bg-zinc-900 border border-zinc-800/60 hover:border-amber-500/40 rounded-xl p-3 flex gap-4 cursor-pointer transition-all group"
             >
               {/* Left Thumbnail */}
               <div className="w-24 h-full shrink-0 overflow-hidden rounded-lg bg-zinc-850">
                 <img
                   src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=400&auto=format&fit=crop&q=80"
-                  alt="Combo Bắp Nước"
+                  alt={miniEvent2.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-350"
                 />
               </div>
@@ -138,15 +162,15 @@ export default function PromoShowcase({ onNavigate }) {
               <div className="flex-grow flex flex-col justify-between min-w-0">
                 <div>
                   <h4 className="text-xs md:text-sm font-black text-white line-clamp-2 uppercase tracking-tight group-hover:text-amber-500 transition-colors">
-                    Combo Bắp Nước Siêu Anh Hùng - Tặng Bình Nước
+                    {miniEvent2.title}
                   </h4>
                   <p className="text-[10px] text-zinc-400 mt-1 line-clamp-1">
-                    Nhận bình nước độc quyền khi mua Combo phim bom tấn.
+                    {miniEvent2.rewardDetails}
                   </p>
                 </div>
                 
                 <div className="flex justify-between items-center pt-2">
-                  <span className="text-[9px] text-zinc-500 font-bold">Đến 31/12/2026</span>
+                  <span className="text-[9px] text-zinc-500 font-bold">{miniEvent2.dateRange}</span>
                   <span className="text-[10px] font-black text-orange-500 uppercase flex items-center gap-0.5 group-hover:text-orange-400">
                     <span>Chi tiết</span>
                     <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
