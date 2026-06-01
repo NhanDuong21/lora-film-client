@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Menu,
   CheckCircle,
@@ -13,6 +13,7 @@ import AdminShowtimeView from './AdminShowtimeView';
 import AdminEventView from './AdminEventView';
 import AdminCinemaView from './AdminCinemaView';
 import AdminFinanceView from './AdminFinanceView';
+import AdminDashboardView from './AdminDashboardView';
 
 import { 
   INITIAL_MOVIES, 
@@ -160,19 +161,6 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
     }, 3000);
   };
 
-  // Calculate dynamic stats
-  const stats = useMemo(() => {
-    const todayRevenue = tickets
-      .filter(t => t.date === '2026-05-29')
-      .reduce((sum, t) => sum + t.totalAmount, 0) || 2840000;
-    const ticketsCount = tickets.length || 42;
-    return {
-      todayRevenue,
-      ticketsCount,
-      occupancy: 65,
-      issues: 0
-    };
-  }, [tickets]);
 
   return (
     <div className="w-full h-screen overflow-hidden bg-zinc-950 flex font-sans relative">
@@ -245,127 +233,11 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
           
           {/* TAB: DASHBOARD OVERVIEW */}
           {activeTab === 'dashboard' && (
-            <div className="space-y-6">
-              
-              {/* High-density KPI cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                
-                {/* 1. DOANH THU TỔNG HỢP (emerald theme) */}
-                <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300">
-                  <div>
-                    <span className="text-zinc-400 text-[10px] font-black uppercase tracking-wider block mb-1.5">
-                      DOANH THU TỔNG HỢP
-                    </span>
-                    <span className="text-2xl font-bold text-zinc-50">
-                      {stats.todayRevenue.toLocaleString('vi-VN')} đ
-                    </span>
-                  </div>
-                  <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
-                    <span className="text-emerald-400 text-[10px] font-bold">EMERALD</span>
-                  </div>
-                </div>
-
-                {/* 2. VÉ BÁN TẠI QUẦY (amber theme) */}
-                <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300">
-                  <div>
-                    <span className="text-zinc-400 text-[10px] font-black uppercase tracking-wider block mb-1.5">
-                      VÉ BÁN TẠI QUẦY
-                    </span>
-                    <span className="text-2xl font-bold text-zinc-50">
-                      {stats.ticketsCount} vé
-                    </span>
-                  </div>
-                  <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl">
-                    <span className="text-amber-400 text-[10px] font-bold">AMBER</span>
-                  </div>
-                </div>
-
-                {/* 3. TỶ LỆ LẤP ĐẦY */}
-                <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300">
-                  <div>
-                    <span className="text-zinc-400 text-[10px] font-black uppercase tracking-wider block mb-1.5">
-                      TỶ LỆ LẤP ĐẦY
-                    </span>
-                    <span className="text-2xl font-bold text-zinc-50">
-                      {stats.occupancy}%
-                    </span>
-                  </div>
-                  <div className="p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
-                    <span className="text-indigo-400 text-[10px] font-bold">INDIGO</span>
-                  </div>
-                </div>
-
-                {/* 4. SỰ CỐ KỸ THUẬT */}
-                <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300">
-                  <div>
-                    <span className="text-zinc-400 text-[10px] font-black uppercase tracking-wider block mb-1.5">
-                      SỰ CỐ KỸ THUẬT
-                    </span>
-                    <span className="text-2xl font-bold text-red-500">
-                      {stats.issues}
-                    </span>
-                  </div>
-                  <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
-                    <span className="text-red-400 text-[10px] font-bold">WARNING</span>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Recent ticket transaction log table */}
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-xs font-black uppercase tracking-wider text-zinc-400">
-                    Giao dịch vé gần đây
-                  </h3>
-                </div>
-
-                <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300 overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs text-zinc-400">
-                      <thead className="bg-zinc-950/80 text-zinc-400 font-black uppercase tracking-wider border-b border-zinc-800">
-                        <tr>
-                          <th className="py-4 px-6 border-r border-zinc-800/60">Mã vé</th>
-                          <th className="py-4 px-6 border-r border-zinc-800/60">Khách hàng</th>
-                          <th className="py-4 px-6 border-r border-zinc-800/60">Phim</th>
-                          <th className="py-4 px-6 border-r border-zinc-800/60">Suất chiếu</th>
-                          <th className="py-4 px-6 border-r border-zinc-800/60">Ghế</th>
-                          <th className="py-4 px-6 border-r border-zinc-800/60">Tổng tiền</th>
-                          <th className="py-4 px-6 text-center">Trạng thái</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-zinc-800/60">
-                        {tickets.map(t => (
-                          <tr key={t.id} className="hover:bg-zinc-900/20 transition-colors border-b border-zinc-800/40">
-                            <td className="py-4 px-6 font-mono text-zinc-200 font-bold border-r border-zinc-800/60">{t.id}</td>
-                            <td className="py-4 px-6 font-bold text-zinc-250 border-r border-zinc-800/60">
-                              <div className="text-zinc-200">{t.customerName}</div>
-                              <div className="text-[10px] text-zinc-400 font-normal mt-0.5">{t.customerEmail}</div>
-                            </td>
-                            <td className="py-4 px-6 text-zinc-200 font-medium border-r border-zinc-800/60">{t.movieTitle}</td>
-                            <td className="py-4 px-6 text-zinc-200 font-semibold border-r border-zinc-800/60">{t.time} | {t.date}</td>
-                            <td className="py-4 px-6 text-zinc-200 font-medium border-r border-zinc-800/60">{t.seats.join(', ')}</td>
-                            <td className="py-4 px-6 text-zinc-200 font-black text-sm border-r border-zinc-800/60">{t.totalAmount.toLocaleString('vi-VN')} đ</td>
-                            <td className="py-4 px-6 text-center">
-                              {t.status === 'DA_KIEM_TRA' ? (
-                                <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-black px-2.5 py-0.5 rounded-full inline-block">
-                                  ĐÃ KIỂM TRA
-                                </span>
-                              ) : (
-                                <span className="bg-zinc-800 text-zinc-400 border border-zinc-700/50 text-[10px] font-black px-2.5 py-0.5 rounded-full inline-block">
-                                  CHƯA CHECK-IN
-                                </span>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-
-            </div>
+            <AdminDashboardView 
+              tickets={tickets}
+              movies={movies}
+              triggerToast={triggerToast}
+            />
           )}
 
           {/* TAB: MOVIES */}
