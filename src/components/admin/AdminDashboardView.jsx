@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { 
   Ticket, 
   Users, 
@@ -8,9 +8,7 @@ import {
   Settings
 } from 'lucide-react';
 
-export default function AdminDashboardView({ tickets, movies, triggerToast }) {
-  // Section 1: Real-time time filter selection
-  const [timeFilter, setTimeFilter] = useState('today');
+export default function AdminDashboardView({ timeFilter }) {
 
   // Multi-tier KPI metrics mapping based on selected time filter
   const kpiData = useMemo(() => {
@@ -89,73 +87,11 @@ export default function AdminDashboardView({ tickets, movies, triggerToast }) {
     { day: '31/05', val: 620 }
   ];
 
-  // Dynamic filter click handler
-  const handleFilterChange = (filterKey, label) => {
-    setTimeFilter(filterKey);
-    triggerToast(`Đã cập nhật dữ liệu báo cáo: ${label}`);
-  };
-
   return (
     <div className="space-y-8">
       
-      {/* SECTION 1: HEADER STRIP & REAL-TIME FILTER */}
-      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 pb-4 border-b border-zinc-800/80">
-        <div>
-          <h2 className="text-xl font-black text-zinc-50 uppercase tracking-wide">
-            BẢNG ĐIỀU KHIỂN TỔNG QUAN
-          </h2>
-          <p className="text-xs text-zinc-400 mt-1 uppercase tracking-wide">
-            Hệ thống báo cáo hiệu suất kinh doanh và vận hành rạp phim LoraFilm (Đang vận hành {movies?.length || 0} phim, ghi nhận {tickets?.length || 0} giao dịch).
-          </p>
-        </div>
-
-        {/* Segmented control selector filter buttons row */}
-        <div className="flex items-center bg-zinc-900 border border-zinc-800 rounded-xl p-1 gap-1 select-none">
-          <button
-            onClick={() => handleFilterChange('today', 'Hôm nay')}
-            className={`${
-              timeFilter === 'today'
-                ? 'bg-amber-500 text-black font-semibold shadow-md'
-                : 'text-zinc-400 hover:text-zinc-200'
-            } rounded-lg px-3 py-1.5 text-xs transition-all`}
-          >
-            Hôm nay
-          </button>
-          <button
-            onClick={() => handleFilterChange('7days', '7 ngày qua')}
-            className={`${
-              timeFilter === '7days'
-                ? 'bg-amber-500 text-black font-semibold shadow-md'
-                : 'text-zinc-400 hover:text-zinc-200'
-            } rounded-lg px-3 py-1.5 text-xs transition-all`}
-          >
-            7 ngày qua
-          </button>
-          <button
-            onClick={() => handleFilterChange('month', 'Tháng này')}
-            className={`${
-              timeFilter === 'month'
-                ? 'bg-amber-500 text-black font-semibold shadow-md'
-                : 'text-zinc-400 hover:text-zinc-200'
-            } rounded-lg px-3 py-1.5 text-xs transition-all`}
-          >
-            Tháng này
-          </button>
-          <button
-            onClick={() => handleFilterChange('year', 'Năm nay')}
-            className={`${
-              timeFilter === 'year'
-                ? 'bg-amber-500 text-black font-semibold shadow-md'
-                : 'text-zinc-400 hover:text-zinc-200'
-            } rounded-lg px-3 py-1.5 text-xs transition-all`}
-          >
-            Năm nay
-          </button>
-        </div>
-      </div>
-
       {/* SECTION 2: ROW OF 4 CORE KPI COUNTERS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 mt-2">
         
         {/* KPI 1: Tổng Doanh Thu */}
         <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300">

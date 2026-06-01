@@ -93,6 +93,8 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
     return [];
   });
 
+  const [timeFilter, setTimeFilter] = useState('today');
+
   // Save changes
   useEffect(() => {
     localStorage.setItem('lora_movies', JSON.stringify(movies));
@@ -213,19 +215,86 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
             >
               <Menu className="w-5 h-5" />
             </button>
-            <h1 className="text-sm font-black uppercase text-zinc-50 tracking-wider">
-              {activeTab === 'dashboard' && 'Bảng Điều Khiển Tổng Quan'}
-              {activeTab === 'movies' && 'DANH SÁCH BỘ PHIM'}
-              {activeTab === 'actors' && 'DANH MỤC DIỄN VIÊN'}
-              {activeTab === 'showtimes' && 'DANH SÁCH SUẤT CHIẾU'}
-              {activeTab === 'events-promo' && 'CHƯƠNG TRÌNH ƯU ĐÃI'}
-              {activeTab === 'clusters' && 'HỆ THỐNG CỤM RẠP'}
-              {['tickets', 'concessions', 'customers', 'payroll', 'delays', 'pricing'].includes(activeTab) && 'LỊCH SỬ GIAO DỊCH'}
-            </h1>
+            <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
+              <h1 className="text-sm md:text-base font-bold uppercase tracking-wider text-zinc-50 select-none">
+                {activeTab === 'dashboard' ? 'TỔNG QUAN HỆ THỐNG' : (
+                  <>
+                    {activeTab === 'movies' && 'DANH SÁCH BỘ PHIM'}
+                    {activeTab === 'actors' && 'DANH MỤC DIỄN VIÊN'}
+                    {activeTab === 'showtimes' && 'DANH SÁCH SUẤT CHIẾU'}
+                    {activeTab === 'events-promo' && 'CHƯƠNG TRÌNH ƯU ĐÃI'}
+                    {activeTab === 'clusters' && 'HỆ THỐNG CỤM RẠP'}
+                    {['tickets', 'concessions', 'customers', 'payroll', 'delays', 'pricing'].includes(activeTab) && 'LỊCH SỬ GIAO DỊCH'}
+                  </>
+                )}
+              </h1>
+              {activeTab === 'dashboard' && (
+                <p className="text-xs text-zinc-400 font-medium truncate hidden md:block max-w-xl border-l border-zinc-850 pl-3">
+                  Hệ thống báo cáo hiệu suất kinh doanh và vận hành rạp phim LoraFilm
+                </p>
+              )}
+            </div>
           </div>
-          <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest bg-zinc-950 border border-zinc-800 px-3 py-1.5 rounded-full">
-            HỆ THỐNG AN NINH LORAFILM
-          </div>
+          {activeTab === 'dashboard' ? (
+            <div className="flex items-center bg-zinc-900 border border-zinc-800 rounded-xl p-1 gap-1 select-none">
+              <button
+                onClick={() => {
+                  setTimeFilter('today');
+                  triggerToast('Đã cập nhật dữ liệu báo cáo: Hôm nay');
+                }}
+                className={`${
+                  timeFilter === 'today'
+                    ? 'bg-amber-500 text-black font-semibold shadow-md'
+                    : 'text-zinc-400 hover:text-zinc-200'
+                } rounded-lg px-3 py-1.5 text-xs transition-all`}
+              >
+                Hôm nay
+              </button>
+              <button
+                onClick={() => {
+                  setTimeFilter('7days');
+                  triggerToast('Đã cập nhật dữ liệu báo cáo: 7 ngày qua');
+                }}
+                className={`${
+                  timeFilter === '7days'
+                    ? 'bg-amber-500 text-black font-semibold shadow-md'
+                    : 'text-zinc-400 hover:text-zinc-200'
+                } rounded-lg px-3 py-1.5 text-xs transition-all`}
+              >
+                7 ngày qua
+              </button>
+              <button
+                onClick={() => {
+                  setTimeFilter('month');
+                  triggerToast('Đã cập nhật dữ liệu báo cáo: Tháng này');
+                }}
+                className={`${
+                  timeFilter === 'month'
+                    ? 'bg-amber-500 text-black font-semibold shadow-md'
+                    : 'text-zinc-400 hover:text-zinc-200'
+                } rounded-lg px-3 py-1.5 text-xs transition-all`}
+              >
+                Tháng này
+              </button>
+              <button
+                onClick={() => {
+                  setTimeFilter('year');
+                  triggerToast('Đã cập nhật dữ liệu báo cáo: Năm nay');
+                }}
+                className={`${
+                  timeFilter === 'year'
+                    ? 'bg-amber-500 text-black font-semibold shadow-md'
+                    : 'text-zinc-400 hover:text-zinc-200'
+                } rounded-lg px-3 py-1.5 text-xs transition-all`}
+              >
+                Năm nay
+              </button>
+            </div>
+          ) : (
+            <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest bg-zinc-950 border border-zinc-800 px-3 py-1.5 rounded-full">
+              HỆ THỐNG AN NINH LORAFILM
+            </div>
+          )}
         </header>
 
         {/* Dynamic View Body Content (ONLY scrollable container region) */}
@@ -234,9 +303,7 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
           {/* TAB: DASHBOARD OVERVIEW */}
           {activeTab === 'dashboard' && (
             <AdminDashboardView 
-              tickets={tickets}
-              movies={movies}
-              triggerToast={triggerToast}
+              timeFilter={timeFilter}
             />
           )}
 
