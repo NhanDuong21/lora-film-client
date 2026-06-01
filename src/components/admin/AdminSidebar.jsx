@@ -2,260 +2,303 @@ import { useState } from 'react';
 import { 
   LayoutDashboard, 
   Film, 
-  Building2, 
-  CircleDollarSign, 
   Users, 
+  Calendar, 
+  Gift, 
+  Database, 
+  Ticket, 
+  Coffee, 
+  Clock, 
   Settings, 
-  ChevronDown, 
-  ChevronRight, 
   Home, 
-  LogOut
+  LogOut, 
+  ChevronDown, 
+  ChevronRight,
+  TrendingUp
 } from 'lucide-react';
 
 export default function AdminSidebar({ 
   activeTab, 
   setActiveTab, 
-  userRole, 
   user, 
   onBackHome, 
   handleLogout 
 }) {
-  const [expandedSections, setExpandedSections] = useState({
-    noiDung: true,
-    coSo: true,
-    kinhDoanh: false,
-    nguoiDung: false,
+  // Collapsible categories state (default all open)
+  const [collapsedSections, setCollapsedSections] = useState({
+    noiDung: false,
+    coSo: false,
+    vanHanh: false,
+    nhanSu: false,
     cauHinh: false
   });
 
   const toggleSection = (section) => {
-    setExpandedSections(prev => ({
+    setCollapsedSections(prev => ({
       ...prev,
       [section]: !prev[section]
     }));
   };
 
-  const handleTabClick = (tabKey, hash = null) => {
+  const handleTabClick = (tabKey, hash) => {
     setActiveTab(tabKey);
-    if (hash) {
-      window.location.hash = hash;
+    window.location.hash = hash;
+  };
+
+  // Helper function to return styling for a navigation item based on its active state
+  const getItemClass = (tabKey) => {
+    const isActive = activeTab === tabKey;
+    if (isActive) {
+      return "w-full flex items-center gap-3 px-4 py-2.5 text-xs font-black uppercase tracking-wider transition-all border-l-4 border-amber-500 bg-zinc-800/60 text-amber-400";
     }
+    return "w-full flex items-center gap-3 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition-all text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50";
   };
 
   return (
-    <aside className="w-full lg:w-72 bg-zinc-900 border-r border-zinc-800 flex flex-col justify-between shrink-0 select-none">
+    <aside className="w-64 h-full bg-zinc-900 border-r border-zinc-800 flex flex-col justify-between shrink-0 z-30 select-none">
+      
+      {/* Brand Top Header */}
       <div>
-        {/* Logo Section */}
-        <div className="p-6 border-b border-zinc-800">
-          <span className="text-brand-coral font-black tracking-widest text-lg uppercase block mb-1">
-            Lora Film
-          </span>
-          <div className="flex items-center gap-1.5">
-            <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded bg-brand-yellow text-black">
-              {userRole || 'ADMIN'}
-            </span>
-            <span className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold">
-              Trang Quản Trị
-            </span>
+        <div className="p-6 border-b border-zinc-800 bg-zinc-950/40">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-amber-500 flex items-center justify-center font-black text-black text-base shadow-lg shadow-amber-500/20">
+              L
+            </div>
+            <div>
+              <span className="text-sm font-black text-zinc-50 uppercase tracking-widest block">LoraFilm</span>
+              <span className="text-[10px] text-zinc-450 font-bold uppercase tracking-wider block">Trang Quản Trị</span>
+            </div>
           </div>
         </div>
 
-        {/* Navigation Items Accordion */}
-        <nav className="p-4 space-y-2 overflow-y-auto max-h-[65vh] scrollbar-thin">
-          {/* Dashboard Link */}
-          <button
-            onClick={() => handleTabClick('dashboard', '#/admin')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold uppercase transition-all duration-200 cursor-pointer ${
-              activeTab === 'dashboard'
-                ? 'bg-brand-coral/10 text-brand-coral border-l-4 border-brand-coral'
-                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white'
-            }`}
-          >
-            <LayoutDashboard className="w-4 h-4 shrink-0" />
-            <span>Dashboard (Tổng Quan)</span>
-          </button>
+        {/* Scrollable Navigation List */}
+        <nav className="p-4 space-y-4 overflow-y-auto max-h-[calc(100vh-210px)] scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+          
+          {/* Section 1: Dashboard */}
+          <div>
+            <button
+              onClick={() => handleTabClick('dashboard', '#/admin')}
+              className={getItemClass('dashboard')}
+            >
+              <LayoutDashboard className="w-4 h-4 shrink-0" />
+              <span>➊ DASHBOARD (TỔNG QUAN)</span>
+            </button>
+          </div>
 
-          {/* Quản Lý Nội Dung Section */}
+          {/* Section 2: Quản Lý Nội Dung */}
           <div className="space-y-1">
             <button
               onClick={() => toggleSection('noiDung')}
-              className="w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-xs font-bold text-zinc-400 hover:bg-zinc-800/50 hover:text-white uppercase cursor-pointer"
+              className="w-full flex items-center justify-between text-[11px] font-black uppercase text-zinc-500 px-4 py-2 hover:text-zinc-300"
             >
-              <div className="flex items-center gap-3">
-                <Film className="w-4 h-4 shrink-0" />
-                <span>Quản Lý Nội Dung</span>
-              </div>
-              {expandedSections.noiDung ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+              <span>➋ QUẢN LÝ NỘI DUNG</span>
+              {collapsedSections.noiDung ? (
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-550" />
+              ) : (
+                <ChevronDown className="w-3.5 h-3.5 text-zinc-550" />
+              )}
             </button>
-            {expandedSections.noiDung && (
-              <div className="pl-8 space-y-1">
+
+            {!collapsedSections.noiDung && (
+              <div className="space-y-1">
                 <button
                   onClick={() => handleTabClick('movies', '#/admin/movies')}
-                  className={`w-full text-left py-2 px-3 rounded text-[11px] font-semibold block cursor-pointer ${activeTab === 'movies' ? 'text-brand-coral bg-white/5 font-bold' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  className={getItemClass('movies')}
                 >
-                  Quản lý phim
+                  <Film className="w-3.5 h-3.5 shrink-0" />
+                  <span>Quản lý phim</span>
                 </button>
                 <button
                   onClick={() => handleTabClick('actors', '#/admin/actors')}
-                  className={`w-full text-left py-2 px-3 rounded text-[11px] font-semibold block cursor-pointer ${activeTab === 'actors' ? 'text-brand-coral bg-white/5 font-bold' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  className={getItemClass('actors')}
                 >
-                  Quản lý diễn viên
+                  <Users className="w-3.5 h-3.5 shrink-0" />
+                  <span>Quản lý diễn viên</span>
                 </button>
                 <button
-                  onClick={() => handleTabClick('showtimes')}
-                  className={`w-full text-left py-2 px-3 rounded text-[11px] font-semibold block cursor-pointer ${activeTab === 'showtimes' ? 'text-brand-coral bg-white/5 font-bold' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  onClick={() => handleTabClick('showtimes', '#/admin/showtimes')}
+                  className={getItemClass('showtimes')}
                 >
-                  Quản lý suất chiếu
+                  <Calendar className="w-3.5 h-3.5 shrink-0" />
+                  <span>Quản lý suất chiếu</span>
                 </button>
                 <button
-                  onClick={() => handleTabClick('events-promo', '#/admin-events')}
-                  className={`w-full text-left py-2 px-3 rounded text-[11px] font-semibold block cursor-pointer ${activeTab === 'events-promo' ? 'text-brand-coral bg-white/5 font-bold' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  onClick={() => handleTabClick('events-promo', '#/admin/events')}
+                  className={getItemClass('events-promo')}
                 >
-                  Quản lý Sự kiện & Khuyến mãi
+                  <Gift className="w-3.5 h-3.5 shrink-0" />
+                  <span>Sự kiện & Khuyến mãi</span>
                 </button>
               </div>
             )}
           </div>
 
-          {/* Quản Lý Cơ Sở Section */}
+          {/* Section 3: Quản Lý Cơ Sở */}
           <div className="space-y-1">
             <button
               onClick={() => toggleSection('coSo')}
-              className="w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-xs font-bold text-zinc-400 hover:bg-zinc-800/50 hover:text-white uppercase cursor-pointer"
+              className="w-full flex items-center justify-between text-[11px] font-black uppercase text-zinc-500 px-4 py-2 hover:text-zinc-300"
             >
-              <div className="flex items-center gap-3">
-                <Building2 className="w-4 h-4 shrink-0" />
-                <span>Quản Lý Cơ Sở</span>
-              </div>
-              {expandedSections.coSo ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+              <span>➌ QUẢN LÝ CƠ SỞ</span>
+              {collapsedSections.coSo ? (
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-550" />
+              ) : (
+                <ChevronDown className="w-3.5 h-3.5 text-zinc-550" />
+              )}
             </button>
-            {expandedSections.coSo && (
-              <div className="pl-8 space-y-1">
+
+            {!collapsedSections.coSo && (
+              <div className="space-y-1">
                 <button
-                  onClick={() => handleTabClick('clusters')}
-                  className={`w-full text-left py-2 px-3 rounded text-[11px] font-semibold block cursor-pointer ${activeTab === 'clusters' ? 'text-brand-coral bg-white/5 font-bold' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  onClick={() => handleTabClick('clusters', '#/admin/clusters')}
+                  className={getItemClass('clusters')}
                 >
-                  Cụm rạp & Phòng chiếu
+                  <Database className="w-3.5 h-3.5 shrink-0" />
+                  <span>Cụm rạp & Phòng chiếu</span>
                 </button>
               </div>
             )}
           </div>
 
-          {/* Vận Hành Kinh Doanh Section */}
+          {/* Section 4: Vận Hành Kinh Doanh */}
           <div className="space-y-1">
             <button
-              onClick={() => toggleSection('kinhDoanh')}
-              className="w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-xs font-bold text-zinc-400 hover:bg-zinc-800/50 hover:text-white uppercase cursor-pointer"
+              onClick={() => toggleSection('vanHanh')}
+              className="w-full flex items-center justify-between text-[11px] font-black uppercase text-zinc-500 px-4 py-2 hover:text-zinc-300"
             >
-              <div className="flex items-center gap-3">
-                <CircleDollarSign className="w-4 h-4 shrink-0" />
-                <span>Vận Hành Kinh Doanh</span>
-              </div>
-              {expandedSections.kinhDoanh ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+              <span>➍ VẬN HÀNH KINH DOANH</span>
+              {collapsedSections.vanHanh ? (
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-550" />
+              ) : (
+                <ChevronDown className="w-3.5 h-3.5 text-zinc-550" />
+              )}
             </button>
-            {expandedSections.kinhDoanh && (
-              <div className="pl-8 space-y-1">
+
+            {!collapsedSections.vanHanh && (
+              <div className="space-y-1">
                 <button
-                  onClick={() => handleTabClick('tickets')}
-                  className={`w-full text-left py-2 px-3 rounded text-[11px] font-semibold block cursor-pointer ${activeTab === 'tickets' ? 'text-brand-coral bg-white/5 font-bold' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  onClick={() => handleTabClick('tickets', '#/admin/tickets')}
+                  className={getItemClass('tickets')}
                 >
-                  Quản lý vé bán
+                  <Ticket className="w-3.5 h-3.5 shrink-0" />
+                  <span>Quản lý vé bán</span>
                 </button>
                 <button
-                  onClick={() => handleTabClick('concessions')}
-                  className={`w-full text-left py-2 px-3 rounded text-[11px] font-semibold block cursor-pointer ${activeTab === 'concessions' ? 'text-brand-coral bg-white/5 font-bold' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  onClick={() => handleTabClick('concessions', '#/admin/concessions')}
+                  className={getItemClass('concessions')}
                 >
-                  Doanh thu bắp nước
+                  <Coffee className="w-3.5 h-3.5 shrink-0" />
+                  <span>Doanh thu bắp nước</span>
                 </button>
               </div>
             )}
           </div>
 
-          {/* Quản Lý Người Dùng Section */}
+          {/* Section 5: Nhân Sự & Khách Hàng */}
           <div className="space-y-1">
             <button
-              onClick={() => toggleSection('nguoiDung')}
-              className="w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-xs font-bold text-zinc-400 hover:bg-zinc-800/50 hover:text-white uppercase cursor-pointer"
+              onClick={() => toggleSection('nhanSu')}
+              className="w-full flex items-center justify-between text-[11px] font-black uppercase text-zinc-500 px-4 py-2 hover:text-zinc-300"
             >
-              <div className="flex items-center gap-3">
-                <Users className="w-4 h-4 shrink-0" />
-                <span>Nhân Sự & Khách Hàng</span>
-              </div>
-              {expandedSections.nguoiDung ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+              <span>➎ NHÂN SỰ & KHÁCH HÀNG</span>
+              {collapsedSections.nhanSu ? (
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-550" />
+              ) : (
+                <ChevronDown className="w-3.5 h-3.5 text-zinc-550" />
+              )}
             </button>
-            {expandedSections.nguoiDung && (
-              <div className="pl-8 space-y-1">
+
+            {!collapsedSections.nhanSu && (
+              <div className="space-y-1">
                 <button
-                  onClick={() => handleTabClick('customers')}
-                  className={`w-full text-left py-2 px-3 rounded text-[11px] font-semibold block cursor-pointer ${activeTab === 'customers' ? 'text-brand-coral bg-white/5 font-bold' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  onClick={() => handleTabClick('customers', '#/admin/customers')}
+                  className={getItemClass('customers')}
                 >
-                  Danh sách khách hàng
+                  <Users className="w-3.5 h-3.5 shrink-0" />
+                  <span>Danh sách khách hàng</span>
                 </button>
                 <button
-                  onClick={() => handleTabClick('payroll')}
-                  className={`w-full text-left py-2 px-3 rounded text-[11px] font-semibold block cursor-pointer ${activeTab === 'payroll' ? 'text-brand-coral bg-white/5 font-bold' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  onClick={() => handleTabClick('payroll', '#/admin/payroll')}
+                  className={getItemClass('payroll')}
                 >
-                  Bảng lương nhân viên
+                  <TrendingUp className="w-3.5 h-3.5 shrink-0" />
+                  <span>Bảng lương nhân viên</span>
                 </button>
               </div>
             )}
           </div>
 
-          {/* Cấu Hình Phim Section */}
+          {/* Section 6: Cấu Hình & Bảo Mật */}
           <div className="space-y-1">
             <button
               onClick={() => toggleSection('cauHinh')}
-              className="w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-xs font-bold text-zinc-400 hover:bg-zinc-800/50 hover:text-white uppercase cursor-pointer"
+              className="w-full flex items-center justify-between text-[11px] font-black uppercase text-zinc-500 px-4 py-2 hover:text-zinc-300"
             >
-              <div className="flex items-center gap-3">
-                <Settings className="w-4 h-4 shrink-0" />
-                <span>Cấu Hình & Bảo Mật</span>
-              </div>
-              {expandedSections.cauHinh ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+              <span>➏ CẤU HÌNH & BẢO MẬT</span>
+              {collapsedSections.cauHinh ? (
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-550" />
+              ) : (
+                <ChevronDown className="w-3.5 h-3.5 text-zinc-550" />
+              )}
             </button>
-            {expandedSections.cauHinh && (
-              <div className="pl-8 space-y-1">
+
+            {!collapsedSections.cauHinh && (
+              <div className="space-y-1">
                 <button
-                  onClick={() => handleTabClick('delays')}
-                  className={`w-full text-left py-2 px-3 rounded text-[11px] font-semibold block cursor-pointer ${activeTab === 'delays' ? 'text-brand-coral bg-white/5 font-bold' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  onClick={() => handleTabClick('delays', '#/admin/delays')}
+                  className={getItemClass('delays')}
                 >
-                  Ngưỡng trễ lịch chiếu
+                  <Clock className="w-3.5 h-3.5 shrink-0" />
+                  <span>Ngưỡng trễ lịch chiếu</span>
                 </button>
                 <button
-                  onClick={() => handleTabClick('pricing')}
-                  className={`w-full text-left py-2 px-3 rounded text-[11px] font-semibold block cursor-pointer ${activeTab === 'pricing' ? 'text-brand-coral bg-white/5 font-bold' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  onClick={() => handleTabClick('pricing', '#/admin/pricing')}
+                  className={getItemClass('pricing')}
                 >
-                  Hệ số giá vé
+                  <Settings className="w-3.5 h-3.5 shrink-0" />
+                  <span>Hệ số giá vé</span>
                 </button>
               </div>
             )}
           </div>
+
         </nav>
       </div>
 
-      {/* Footer controls */}
-      <div className="p-4 border-t border-zinc-800 space-y-2 mt-auto">
-        <div className="px-4 py-2">
-          <p className="text-xs text-zinc-500 font-bold uppercase">Người dùng</p>
-          <p className="text-sm font-bold text-white truncate">{user?.fullName || 'Administrator'}</p>
+      {/* Pinned Bottom User Profile Card */}
+      <div className="p-4 border-t border-zinc-800 bg-zinc-950/80">
+        <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex flex-col gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-zinc-200 text-xs">
+              AD
+            </div>
+            <div className="truncate">
+              <span className="text-[10px] text-zinc-500 font-bold block uppercase tracking-wider">Quản Trị Viên</span>
+              <span className="text-xs text-zinc-200 font-black block truncate">
+                {user?.fullName || 'Quản trị viên Lora'}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center justify-between border-t border-zinc-800 pt-2.5">
+            <button 
+              onClick={onBackHome}
+              className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-amber-500 transition-colors"
+              title="Quay lại trang chủ khách hàng"
+            >
+              <Home className="w-4 h-4" />
+              <span>Trang chủ</span>
+            </button>
+            <button 
+              onClick={handleLogout}
+              className="flex items-center gap-1 text-xs text-red-400 hover:text-red-300 font-bold transition-colors"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Đăng xuất</span>
+            </button>
+          </div>
         </div>
-
-        <button
-          onClick={onBackHome}
-          className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-zinc-400 hover:bg-zinc-800 hover:text-white transition-all cursor-pointer"
-        >
-          <Home className="w-4 h-4" />
-          <span>Về Trang Chủ</span>
-        </button>
-
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-red-400 hover:bg-red-950/20 hover:text-red-300 transition-all cursor-pointer"
-        >
-          <LogOut className="w-4 h-4" />
-          <span>Đăng xuất</span>
-        </button>
       </div>
+
     </aside>
   );
 }
