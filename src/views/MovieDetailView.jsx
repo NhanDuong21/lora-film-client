@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Play, Clock, ArrowLeft, Star } from 'lucide-react';
 import { MOVIES, CINEMA_CLUSTERS, SHOWTIMES } from '../data/mockData';
-import TrailerModal from './TrailerModal';
+import TrailerModal from '../components/common/TrailerModal';
 
 export default function MovieDetailView({ movieId, onSelectShowtime, onBack }) {
   const [selectedDateIndex, setSelectedDateIndex] = useState(0);

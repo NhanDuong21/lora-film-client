@@ -2,8 +2,8 @@ import { useState, useMemo } from 'react';
 import { 
   Film, ChevronDown, Menu, X, Bell, Star, Search, User, History, LogOut 
 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { MOVIES } from '../data/mockData';
+import { useAuth } from '../../contexts/AuthContext';
+import { MOVIES } from '../../data/mockData';
 
 export default function Header({ onNavigate }) {
   const { user, userRole, isAuthenticated, logout } = useAuth();

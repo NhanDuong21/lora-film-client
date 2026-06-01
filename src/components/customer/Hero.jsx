@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Play, ChevronDown } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { MOVIES } from '../data/mockData';
+import { useAuth } from '../../contexts/AuthContext';
+import { MOVIES } from '../../data/mockData';
 
 const THEATERS = [
   { id: 1, name: "Lora Nguyễn Du" },

@@ -3,7 +3,7 @@ import {
   Star, Eye, ThumbsUp, Play, RefreshCw, AlertCircle, Film 
 } from 'lucide-react';
 import { MOVIES, CINEMA_CLUSTERS } from '../data/mockData';
-import TrailerModal from './TrailerModal';
+import TrailerModal from '../components/common/TrailerModal';
 
 // Map country dynamically based on movie title/ID
 const getMovieCountry = (movie) => {

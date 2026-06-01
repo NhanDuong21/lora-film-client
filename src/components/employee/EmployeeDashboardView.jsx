@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { 
   Ticket, 
   Coffee, 
@@ -19,7 +19,7 @@ import {
   INITIAL_TICKETS, 
   INITIAL_CONCESSIONS, 
   INITIAL_THEATERS 
-} from '../data/mockDashboardData';
+} from '../../data/mockDashboardData';
 
 export default function EmployeeDashboardView({ onBackHome, onTicketingSelect }) {
   const { user, logout } = useAuth();

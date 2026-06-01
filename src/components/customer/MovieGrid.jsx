@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Ticket, Play, X } from 'lucide-react';
-import { MOVIES } from '../data/mockData';
+import { MOVIES } from '../../data/mockData';
 
 export default function MovieGrid({ onSelectMovie, onNavigate, activeTab: propActiveTab, onChangeActiveTab, onBuyTicket }) {
   const [localActiveTab, setLocalActiveTab] = useState('NOW_SHOWING');
