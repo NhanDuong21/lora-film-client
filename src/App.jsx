@@ -10,7 +10,7 @@ import MovieDetailView from './components/MovieDetailView';
 import SeatSelectionView from './components/SeatSelectionView';
 import LoginView from './components/LoginView';
 import RegisterView from './components/RegisterView';
-import AdminDashboardView from './components/AdminDashboardView';
+import AdminLayout from './components/admin/AdminLayout';
 import EmployeeDashboardView from './components/EmployeeDashboardView';
 import CustomerProfileView from './components/CustomerProfileView';
 import MovieDiscoveryView from './components/MovieDiscoveryView';
@@ -65,14 +65,16 @@ function AppInner() {
         setCurrentView({ name: 'booking-funnel', data: null });
       } else if (hash === '#/profile') {
         setCurrentView({ name: 'profile', data: null });
-      } else if (hash === '#/admin') {
-        setCurrentView({ name: 'admin', data: null });
-      } else if (hash === '#/admin-events' || hash === '#/admin/events') {
-        setCurrentView({ name: 'admin-events', data: null });
-      } else if (hash === '#/admin-movies' || hash === '#/admin/movies') {
-        setCurrentView({ name: 'admin-movies', data: null });
-      } else if (hash === '#/admin-actors' || hash === '#/admin/actors') {
-        setCurrentView({ name: 'admin-actors', data: null });
+      } else if (hash.startsWith('#/admin')) {
+        if (hash === '#/admin-events' || hash === '#/admin/events') {
+          setCurrentView({ name: 'admin-events', data: null });
+        } else if (hash === '#/admin-movies' || hash === '#/admin/movies') {
+          setCurrentView({ name: 'admin-movies', data: null });
+        } else if (hash === '#/admin-actors' || hash === '#/admin/actors') {
+          setCurrentView({ name: 'admin-actors', data: null });
+        } else {
+          setCurrentView({ name: 'admin', data: null });
+        }
       } else if (hash === '#/employee') {
         setCurrentView({ name: 'employee', data: null });
       } else if (hash === '#/login') {
@@ -273,7 +275,7 @@ function AppInner() {
     }
   };
 
-  const isDashboardView = ['admin', 'employee', 'admin-events', 'admin-movies', 'admin-actors'].includes(currentView.name);
+  const isDashboardView = ['admin', 'employee', 'admin-events', 'admin-movies', 'admin-actors'].includes(currentView.name) || currentView.name.startsWith('admin');
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col selection:bg-brand-coral selection:text-white">
@@ -364,7 +366,7 @@ function AppInner() {
         )}
 
         {(currentView.name === 'admin' || currentView.name === 'admin-events' || currentView.name === 'admin-movies' || currentView.name === 'admin-actors') && (
-          <AdminDashboardView 
+          <AdminLayout 
             initialTab={
               currentView.name === 'admin-events' ? 'events-promo' : 
               (currentView.name === 'admin-movies' ? 'movies' : 

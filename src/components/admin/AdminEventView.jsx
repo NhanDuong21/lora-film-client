@@ -1,23 +1,11 @@
 import { useState, useMemo } from 'react';
-import { 
-  Trophy, 
-  Tag, 
-  Ticket, 
-  PlusCircle, 
-  Eye, 
-  Edit3, 
-  Trash2, 
-  X, 
-  Search,
-  Calendar,
-  Gift
-} from 'lucide-react';
+import { Trophy, Tag, Ticket, PlusCircle, Eye, Edit3, Trash2, X, Search, Calendar, Gift } from 'lucide-react';
 
 const DEFAULT_EVENTS = [
   {
     id: 'E1',
     title: 'Thứ Ba Vui Vẻ - Đồng Giá Vé 60K',
-    type: 'Promotion',
+    type: 'Khuyến mãi',
     startDate: '2026-05-01',
     endDate: '2026-12-31',
     reward: 'Đồng giá vé 60K + Giảm 10% Combo Bắp Nước',
@@ -26,7 +14,7 @@ const DEFAULT_EVENTS = [
   {
     id: 'E2',
     title: 'Thành Viên Vàng LoraFilm - Nhân Đôi Điểm Tích Lũy Suốt Tháng 6',
-    type: 'Member Discount',
+    type: 'Ưu đãi thành viên',
     startDate: '2026-06-01',
     endDate: '2026-06-30',
     reward: 'x2 điểm tích lũy thành viên khi đặt vé thành công',
@@ -35,7 +23,7 @@ const DEFAULT_EVENTS = [
   {
     id: 'E3',
     title: 'Đặc Quyền Họp Báo Ra Mắt Phim John Wick: Ballerina',
-    type: 'Event',
+    type: 'Sự kiện',
     startDate: '2026-07-01',
     endDate: '2026-07-15',
     reward: '50 vé mời tham gia thảm đỏ và giao lưu trực tiếp',
@@ -43,14 +31,11 @@ const DEFAULT_EVENTS = [
   }
 ];
 
-export default function AdminEventView() {
-  const [events, setEvents] = useState(() => {
-    const saved = localStorage.getItem('lora_admin_events');
-    if (saved) return JSON.parse(saved);
-    localStorage.setItem('lora_admin_events', JSON.stringify(DEFAULT_EVENTS));
-    return DEFAULT_EVENTS;
-  });
-
+export default function AdminEventView({ 
+  events = [], 
+  updateEventsState, 
+  triggerToast 
+}) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [previewEvent, setPreviewEvent] = useState(null);
@@ -58,24 +43,17 @@ export default function AdminEventView() {
 
   // Form states
   const [formTitle, setFormTitle] = useState('');
-  const [formType, setFormType] = useState('Promotion');
+  const [formType, setFormType] = useState('Khuyến mãi');
   const [formStartDate, setFormStartDate] = useState('');
   const [formEndDate, setFormEndDate] = useState('');
   const [formReward, setFormReward] = useState('');
   const [formDescription, setFormDescription] = useState('');
-
-  // Save changes to localStorage helper
-  const saveEvents = (updatedEvents) => {
-    setEvents(updatedEvents);
-    localStorage.setItem('lora_admin_events', JSON.stringify(updatedEvents));
-  };
 
   const getStatus = (startDate, endDate) => {
     const now = new Date();
     const start = new Date(startDate);
     const end = new Date(endDate);
     
-    // Normalize date timings
     now.setHours(0, 0, 0, 0);
     start.setHours(0, 0, 0, 0);
     end.setHours(0, 0, 0, 0);
@@ -89,34 +67,37 @@ export default function AdminEventView() {
     }
   };
 
-  // Filter and search
+  const activeEventsList = useMemo(() => {
+    const list = events.length > 0 ? events : DEFAULT_EVENTS;
+    return list;
+  }, [events]);
+
   const filteredEvents = useMemo(() => {
-    return events.filter(e => 
+    return activeEventsList.filter(e => 
       e.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       e.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
       e.reward.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [events, searchQuery]);
+  }, [activeEventsList, searchQuery]);
 
-  // Metric computations
   const metrics = useMemo(() => {
     let active = 0;
-    events.forEach(e => {
+    activeEventsList.forEach(e => {
       if (getStatus(e.startDate, e.endDate) === 'ACTIVE') {
         active++;
       }
     });
     return {
       activeEvents: active,
-      totalPromos: events.filter(e => e.type === 'Promotion').length + 12, // Cumulative sum
+      totalPromos: activeEventsList.filter(e => e.type === 'Khuyến mãi').length + 12,
       redeemedOffers: 2100
     };
-  }, [events]);
+  }, [activeEventsList]);
 
   const handleOpenAdd = () => {
     setSelectedEvent(null);
     setFormTitle('');
-    setFormType('Promotion');
+    setFormType('Khuyến mãi');
     setFormStartDate(new Date().toISOString().split('T')[0]);
     setFormEndDate(new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0]);
     setFormReward('');
@@ -138,7 +119,7 @@ export default function AdminEventView() {
   const handleSave = (e) => {
     e.preventDefault();
     if (!formTitle || !formStartDate || !formEndDate || !formReward) {
-      alert('Vui lòng điền đầy đủ các thông tin bắt buộc.');
+      triggerToast('Vui lòng điền đầy đủ các thông tin bắt buộc.', 'error');
       return;
     }
 
@@ -152,124 +133,122 @@ export default function AdminEventView() {
     };
 
     if (selectedEvent) {
-      // Edit
-      const updated = events.map(ev => ev.id === selectedEvent.id ? { ...eventPayload, id: ev.id } : ev);
-      saveEvents(updated);
+      const updated = activeEventsList.map(ev => ev.id === selectedEvent.id ? { ...eventPayload, id: ev.id } : ev);
+      if (updateEventsState) {
+        updateEventsState(updated);
+      } else {
+        localStorage.setItem('lora_admin_events', JSON.stringify(updated));
+      }
+      triggerToast('Cập nhật sự kiện thành công!');
     } else {
-      // Create
-      const newEvent = {
-        ...eventPayload,
-        id: 'E' + (events.length ? Math.max(...events.map(ev => parseInt(ev.id.replace('E', '')) || 0)) + 1 : 1)
-      };
-      saveEvents([...events, newEvent]);
+      const newId = 'E' + (activeEventsList.length ? Math.max(...activeEventsList.map(ev => parseInt(ev.id.replace('E', '')) || 0)) + 1 : 1);
+      const updated = [...activeEventsList, { ...eventPayload, id: newId }];
+      if (updateEventsState) {
+        updateEventsState(updated);
+      } else {
+        localStorage.setItem('lora_admin_events', JSON.stringify(updated));
+      }
+      triggerToast('Thêm sự kiện mới thành công!');
     }
     setIsModalOpen(false);
   };
 
   const handleDelete = (id) => {
     if (confirm('Bạn có chắc chắn muốn xóa sự kiện này?')) {
-      const updated = events.filter(ev => ev.id !== id);
-      saveEvents(updated);
+      const updated = activeEventsList.filter(ev => ev.id !== id);
+      if (updateEventsState) {
+        updateEventsState(updated);
+      } else {
+        localStorage.setItem('lora_admin_events', JSON.stringify(updated));
+      }
+      triggerToast('Đã xóa sự kiện thành công!');
     }
   };
 
   return (
-    <div className="w-full min-h-screen bg-zinc-950 text-zinc-100 p-6 font-sans">
+    <div className="space-y-6">
       
-      {/* 1. Top-Level Analytical Event Summary (Khối Thẻ Thống Kê KPI) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {/* Card 1: Active Events */}
-        <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-xl p-5 flex items-center justify-between shadow-md">
+      {/* 3 Upper localized analytical metrics cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-900 rounded-2xl p-5 flex items-center justify-between shadow-xl">
           <div>
-            <span className="text-zinc-500 text-xs font-black uppercase tracking-wider block mb-1">
-              Active Events
+            <span className="text-zinc-400 text-xs font-black uppercase tracking-wider block mb-1">
+              SỰ KIỆN HOẠT ĐỘNG ({metrics.activeEvents})
             </span>
-            <span className="text-3xl font-black text-white">{metrics.activeEvents}</span>
+            <span className="text-2xl font-black text-zinc-100">{metrics.activeEvents} đang chạy</span>
+          </div>
+          <div className="p-3 bg-brand-coral/10 border border-brand-coral/20 rounded-xl">
+            <Trophy className="w-5 h-5 text-brand-coral" />
+          </div>
+        </div>
+
+        <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-900 rounded-2xl p-5 flex items-center justify-between shadow-xl">
+          <div>
+            <span className="text-zinc-400 text-xs font-black uppercase tracking-wider block mb-1">
+              TỔNG KHUYẾN MÃI ({metrics.totalPromos})
+            </span>
+            <span className="text-2xl font-black text-zinc-100">{metrics.totalPromos} chiến dịch</span>
           </div>
           <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl">
-            <Trophy className="w-6 h-6 text-amber-500" />
+            <Tag className="w-5 h-5 text-amber-500" />
           </div>
         </div>
 
-        {/* Card 2: Total Promotions */}
-        <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-xl p-5 flex items-center justify-between shadow-md">
+        <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-900 rounded-2xl p-5 flex items-center justify-between shadow-xl">
           <div>
-            <span className="text-zinc-500 text-xs font-black uppercase tracking-wider block mb-1">
-              Total Promotions Run
+            <span className="text-zinc-400 text-xs font-black uppercase tracking-wider block mb-1">
+              ƯU ĐÃI ĐÃ QUY ĐỔI ({metrics.redeemedOffers.toLocaleString('vi-VN')})
             </span>
-            <span className="text-3xl font-black text-white">{metrics.totalPromos}</span>
-          </div>
-          <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
-            <Tag className="w-6 h-6 text-red-500" />
-          </div>
-        </div>
-
-        {/* Card 3: Redeemed Offers */}
-        <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-xl p-5 flex items-center justify-between shadow-md">
-          <div>
-            <span className="text-zinc-500 text-xs font-black uppercase tracking-wider block mb-1">
-              Total Redeemed Offers
-            </span>
-            <span className="text-3xl font-black text-white">{metrics.redeemedOffers.toLocaleString()}</span>
+            <span className="text-2xl font-black text-zinc-100">{metrics.redeemedOffers.toLocaleString('vi-VN')} lượt</span>
           </div>
           <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
-            <Ticket className="w-6 h-6 text-emerald-500" />
+            <Ticket className="w-5 h-5 text-emerald-500" />
           </div>
         </div>
       </div>
 
-      {/* 2. Header Control Action Strip */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-zinc-800 pb-5">
-        <div>
-          <h2 className="text-xl font-bold text-white tracking-wide uppercase">
-            Quản Lý Sự Kiện & Khuyến Mãi
-          </h2>
-          <p className="text-xs text-zinc-500 mt-1 uppercase tracking-wider">
-            Quản lý và điều phối các sự kiện, coupon ưu đãi trên toàn hệ thống LoraFilm
-          </p>
+      {/* Action Strip */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-zinc-900">
+        <div className="relative w-full sm:w-80">
+          <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-zinc-500">
+            <Search className="w-4 h-4" />
+          </span>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Tìm kiếm sự kiện..."
+            className="w-full bg-zinc-950 border border-zinc-900 rounded-xl py-2.5 pl-9 pr-4 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral transition-colors"
+          />
         </div>
         <button
           onClick={handleOpenAdd}
-          className="bg-amber-500 hover:bg-amber-600 text-black font-semibold py-2 px-4 rounded-lg text-sm transition-all shadow-md shadow-amber-500/10 flex items-center gap-2 cursor-pointer self-start sm:self-center"
+          className="flex items-center gap-2 bg-brand-coral hover:bg-opacity-90 text-white text-xs font-black py-2.5 px-4 rounded-xl transition-all w-full sm:w-auto justify-center"
         >
           <PlusCircle className="w-4.5 h-4.5" />
-          Thêm Sự Kiện Mới
+          <span>THÊM SỰ KIỆN MỚI</span>
         </button>
       </div>
 
-      {/* Search Filter input */}
-      <div className="mb-6 max-w-md relative">
-        <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
-          <Search className="w-4 h-4" />
-        </span>
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Tìm kiếm sự kiện, loại, ưu đãi..."
-          className="w-full bg-zinc-900 border border-zinc-800 text-zinc-100 placeholder-zinc-500 text-xs rounded-xl pl-9 pr-4 py-2.5 outline-none focus:border-amber-500/40 transition-colors"
-        />
-      </div>
-
-      {/* 3. High-Density Event Management Table */}
-      <div className="bg-zinc-900/20 border border-zinc-800/80 rounded-xl overflow-hidden shadow-xl">
+      {/* Grid Data Sheet */}
+      <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-900 rounded-2xl shadow-xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr className="bg-zinc-900/60 border-b border-zinc-800/80 text-zinc-400 font-bold uppercase tracking-wider">
-                <th className="py-4 px-4 text-center w-16">ID</th>
-                <th className="py-4 px-4">Tên Sự Kiện</th>
-                <th className="py-4 px-4">Loại</th>
-                <th className="py-4 px-4">Trạng Thái</th>
-                <th className="py-4 px-4">Thời Gian Diễn Ra</th>
-                <th className="py-4 px-4">Ưu Đãi Đi Kèm</th>
-                <th className="py-4 px-4 text-center w-28">Hành Động</th>
+          <table className="w-full text-left text-xs text-zinc-400">
+            <thead className="bg-zinc-950/80 text-zinc-500 font-black uppercase tracking-wider border-b border-zinc-900">
+              <tr>
+                <th className="py-4 px-6 text-center w-20">ID</th>
+                <th className="py-4 px-6">Tên Sự Kiện</th>
+                <th className="py-4 px-6">Phân Loại</th>
+                <th className="py-4 px-6">Trạng Thái</th>
+                <th className="py-4 px-6">Thời Gian Diễn Ra</th>
+                <th className="py-4 px-6">Ưu Đãi Đi Kèm</th>
+                <th className="py-4 px-6 text-center w-36">Hành Động</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-850">
+            <tbody className="divide-y divide-zinc-900/60">
               {filteredEvents.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="py-12 text-center text-zinc-500 font-medium">
+                  <td colSpan="7" className="py-12 text-center text-zinc-500 font-semibold">
                     Không tìm thấy sự kiện nào phù hợp.
                   </td>
                 </tr>
@@ -277,57 +256,57 @@ export default function AdminEventView() {
                 filteredEvents.map((event) => {
                   const status = getStatus(event.startDate, event.endDate);
                   return (
-                    <tr key={event.id} className="hover:bg-zinc-900/30 transition-colors">
-                      <td className="py-4 px-4 text-center text-zinc-500 font-mono font-medium">{event.id}</td>
-                      <td className="py-4 px-4 font-bold text-zinc-100">{event.title}</td>
-                      <td className="py-4 px-4">
-                        <span className="text-zinc-300 bg-zinc-800/50 px-2 py-0.5 rounded font-medium border border-zinc-800">
+                    <tr key={event.id} className="hover:bg-zinc-900/20 transition-colors">
+                      <td className="py-4 px-6 text-center text-zinc-400 font-mono font-medium">{event.id}</td>
+                      <td className="py-4 px-6 font-bold text-zinc-100">{event.title}</td>
+                      <td className="py-4 px-6">
+                        <span className="text-zinc-300 bg-zinc-950/60 px-2.5 py-1 rounded-xl font-bold border border-zinc-900">
                           {event.type}
                         </span>
                       </td>
-                      <td className="py-4 px-4">
+                      <td className="py-4 px-6">
                         {status === 'ACTIVE' && (
-                          <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-semibold px-2 py-0.5 rounded-full inline-block">
+                          <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-black px-2.5 py-0.5 rounded-full inline-block">
                             Đang diễn ra
                           </span>
                         )}
                         {status === 'UPCOMING' && (
-                          <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-semibold px-2 py-0.5 rounded-full inline-block">
+                          <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-black px-2.5 py-0.5 rounded-full inline-block">
                             Sắp diễn ra
                           </span>
                         )}
                         {status === 'EXPIRED' && (
-                          <span className="bg-zinc-800 text-zinc-500 text-[10px] font-semibold px-2 py-0.5 rounded-full inline-block">
+                          <span className="bg-zinc-850 text-zinc-400 border border-zinc-900 text-[10px] font-black px-2.5 py-0.5 rounded-full inline-block">
                             Đã kết thúc
                           </span>
                         )}
                       </td>
-                      <td className="py-4 px-4 text-zinc-400 font-medium">
+                      <td className="py-4 px-6 text-zinc-300 font-medium">
                         {event.startDate} → {event.endDate}
                       </td>
-                      <td className="py-4 px-4 text-zinc-300 font-medium max-w-xs truncate">{event.reward}</td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center justify-center gap-2.5">
+                      <td className="py-4 px-6 text-zinc-300 font-medium max-w-xs truncate">{event.reward}</td>
+                      <td className="py-4 px-6">
+                        <div className="flex justify-center gap-2">
                           <button
                             onClick={() => setPreviewEvent(event)}
-                            className="p-1.5 hover:text-white text-zinc-500 hover:bg-zinc-800/50 rounded transition-all cursor-pointer"
+                            className="p-2 text-zinc-400 hover:text-white bg-zinc-950 border border-zinc-900 rounded-xl transition-all"
                             title="Xem chi tiết"
                           >
-                            <Eye className="w-4 h-4" />
+                            <Eye className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => handleOpenEdit(event)}
-                            className="p-1.5 hover:text-amber-500 text-zinc-500 hover:bg-zinc-800/50 rounded transition-all cursor-pointer"
+                            className="p-2 text-zinc-400 hover:text-white bg-zinc-950 border border-zinc-900 rounded-xl transition-all"
                             title="Sửa sự kiện"
                           >
-                            <Edit3 className="w-4 h-4" />
+                            <Edit3 className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => handleDelete(event.id)}
-                            className="p-1.5 hover:text-red-500 text-zinc-500 hover:bg-zinc-800/50 rounded transition-all cursor-pointer"
+                            className="p-2 text-red-400 hover:text-red-300 bg-red-950/20 border border-red-900/40 rounded-xl transition-all"
                             title="Xóa sự kiện"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </td>
@@ -340,18 +319,18 @@ export default function AdminEventView() {
         </div>
       </div>
 
-      {/* 4. CRUD Edit/Create Modal Box */}
+      {/* Modal Add/Edit */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-zinc-900 border border-zinc-800 w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
-            <div className="px-6 py-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-950/40">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                <Gift className="w-4 h-4 text-amber-500" />
-                {selectedEvent ? 'Cập Nhật Sự Kiện' : 'Thêm Sự Kiện Mới'}
+          <div className="bg-zinc-950 border border-zinc-900 w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="px-6 py-4 border-b border-zinc-900 flex items-center justify-between bg-zinc-950/40">
+              <h3 className="text-sm font-black uppercase tracking-wider text-zinc-100 flex items-center gap-2">
+                <Gift className="w-4 h-4 text-brand-coral" />
+                {selectedEvent ? 'CẬP NHẬT SỰ KIỆN' : 'THÊM SỰ KIỆN MỚI'}
               </h3>
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="text-zinc-500 hover:text-white transition-colors cursor-pointer"
+                className="text-zinc-500 hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -359,90 +338,90 @@ export default function AdminEventView() {
 
             <form onSubmit={handleSave} className="p-6 space-y-4 overflow-y-auto">
               <div>
-                <label className="block text-[11px] font-bold uppercase text-zinc-500 mb-1.5">Tên sự kiện *</label>
+                <label className="block text-[10px] font-black uppercase text-zinc-500 mb-1.5 font-bold">Tên Sự Kiện *</label>
                 <input
                   type="text"
                   required
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
                   placeholder="Ví dụ: Thứ Ba Vui Vẻ - Đồng Giá Vé 60K"
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-100 outline-none focus:border-amber-500/40 transition-colors"
+                  className="w-full bg-zinc-900/40 border border-zinc-900 rounded-xl px-3 py-2 text-xs text-zinc-100 outline-none focus:border-brand-coral transition-colors"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[11px] font-bold uppercase text-zinc-500 mb-1.5">Loại sự kiện</label>
+                  <label className="block text-[10px] font-black uppercase text-zinc-500 mb-1.5 font-bold">Loại Sự Kiện</label>
                   <select
                     value={formType}
                     onChange={(e) => setFormType(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-100 outline-none focus:border-amber-500/40 transition-colors"
+                    className="w-full bg-zinc-900/40 border border-zinc-900 rounded-xl px-3 py-2 text-xs text-zinc-100 outline-none focus:border-brand-coral transition-colors"
                   >
-                    <option value="Promotion">Promotion</option>
-                    <option value="Event">Event</option>
-                    <option value="Member Discount">Member Discount</option>
+                    <option value="Khuyến mãi">Khuyến mãi</option>
+                    <option value="Sự kiện">Sự kiện</option>
+                    <option value="Ưu đãi thành viên">Ưu đãi thành viên</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold uppercase text-zinc-500 mb-1.5">Ưu đãi đi kèm *</label>
+                  <label className="block text-[10px] font-black uppercase text-zinc-500 mb-1.5 font-bold">Ưu Đãi Đi Kèm *</label>
                   <input
                     type="text"
                     required
                     value={formReward}
                     onChange={(e) => setFormReward(e.target.value)}
                     placeholder="Ví dụ: Đồng giá vé 60K"
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-100 outline-none focus:border-amber-500/40 transition-colors"
+                    className="w-full bg-zinc-900/40 border border-zinc-900 rounded-xl px-3 py-2 text-xs text-zinc-100 outline-none focus:border-brand-coral transition-colors"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[11px] font-bold uppercase text-zinc-500 mb-1.5">Ngày bắt đầu *</label>
+                  <label className="block text-[10px] font-black uppercase text-zinc-500 mb-1.5 font-bold">Ngày Bắt Đầu *</label>
                   <input
                     type="date"
                     required
                     value={formStartDate}
                     onChange={(e) => setFormStartDate(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-100 outline-none focus:border-amber-500/40 transition-colors"
+                    className="w-full bg-zinc-900/40 border border-zinc-900 rounded-xl px-3 py-2 text-xs text-zinc-100 outline-none focus:border-brand-coral transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold uppercase text-zinc-500 mb-1.5">Ngày kết thúc *</label>
+                  <label className="block text-[10px] font-black uppercase text-zinc-500 mb-1.5 font-bold">Ngày Kết Thúc *</label>
                   <input
                     type="date"
                     required
                     value={formEndDate}
                     onChange={(e) => setFormEndDate(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-100 outline-none focus:border-amber-500/40 transition-colors"
+                    className="w-full bg-zinc-900/40 border border-zinc-900 rounded-xl px-3 py-2 text-xs text-zinc-100 outline-none focus:border-brand-coral transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold uppercase text-zinc-500 mb-1.5">Mô tả sự kiện</label>
+                <label className="block text-[10px] font-black uppercase text-zinc-500 mb-1.5 font-bold">Mô Tả Sự Kiện</label>
                 <textarea
                   value={formDescription}
                   onChange={(e) => setFormDescription(e.target.value)}
-                  placeholder="Nhập nội dung chi tiết về chương trình ưu đãi hoặc sự kiện..."
+                  placeholder="Nhập nội dung chi tiết..."
                   rows="4"
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-100 outline-none focus:border-amber-500/40 transition-colors resize-none"
+                  className="w-full bg-zinc-900/40 border border-zinc-900 rounded-xl px-3 py-2 text-xs text-zinc-100 outline-none focus:border-brand-coral transition-colors resize-none"
                 />
               </div>
 
-              <div className="pt-4 border-t border-zinc-800 flex justify-end gap-3">
+              <div className="pt-4 border-t border-zinc-900 flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-zinc-800 hover:bg-zinc-800 hover:text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                  className="px-4 py-2 border border-zinc-900 hover:bg-zinc-900 rounded-xl text-xs font-semibold transition-colors"
                 >
                   Hủy bỏ
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-black rounded-lg text-xs font-semibold transition-colors cursor-pointer shadow-md shadow-amber-500/10"
+                  className="px-4 py-2 bg-brand-coral hover:bg-opacity-90 text-white rounded-xl text-xs font-black transition-colors shadow-lg shadow-brand-coral/10"
                 >
                   Lưu sự kiện
                 </button>
@@ -452,17 +431,17 @@ export default function AdminEventView() {
         </div>
       )}
 
-      {/* 5. Preview Modal Panel */}
+      {/* Preview Modal */}
       {previewEvent && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-zinc-900 border border-zinc-800 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl flex flex-col">
-            <div className="px-6 py-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-950/40">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-white">
+          <div className="bg-zinc-950 border border-zinc-900 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl flex flex-col animate-fade-in">
+            <div className="px-6 py-4 border-b border-zinc-900 flex items-center justify-between bg-zinc-950/40">
+              <h3 className="text-xs font-black uppercase tracking-wider text-zinc-100">
                 Chi Tiết Sự Kiện
               </h3>
               <button 
                 onClick={() => setPreviewEvent(null)}
-                className="text-zinc-500 hover:text-white transition-colors cursor-pointer"
+                className="text-zinc-500 hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -471,13 +450,13 @@ export default function AdminEventView() {
             <div className="p-6 space-y-4">
               <div>
                 <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-black block mb-0.5">Tên sự kiện</span>
-                <p className="text-sm font-bold text-white">{previewEvent.title}</p>
+                <p className="text-sm font-bold text-zinc-100">{previewEvent.title}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-black block mb-0.5">Phân loại</span>
-                  <p className="text-xs text-zinc-300 font-medium">{previewEvent.type}</p>
+                  <p className="text-xs text-zinc-300 font-bold">{previewEvent.type}</p>
                 </div>
                 <div>
                   <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-black block mb-0.5">Thời gian</span>
@@ -490,23 +469,23 @@ export default function AdminEventView() {
 
               <div>
                 <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-black block mb-0.5">Ưu đãi đi kèm</span>
-                <p className="text-xs text-amber-500 font-semibold">{previewEvent.reward}</p>
+                <p className="text-xs text-brand-coral font-bold">{previewEvent.reward}</p>
               </div>
 
               {previewEvent.description && (
                 <div>
                   <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-black block mb-0.5">Mô tả chi tiết</span>
-                  <p className="text-xs text-zinc-400 leading-relaxed bg-zinc-950/50 p-3 rounded-lg border border-zinc-850">
+                  <p className="text-xs text-zinc-400 leading-relaxed bg-zinc-900/40 p-3 rounded-xl border border-zinc-900">
                     {previewEvent.description}
                   </p>
                 </div>
               )}
             </div>
 
-            <div className="px-6 py-4 bg-zinc-950/20 border-t border-zinc-800 flex justify-end">
+            <div className="px-6 py-4 bg-zinc-950/20 border-t border-zinc-900 flex justify-end">
               <button
                 onClick={() => setPreviewEvent(null)}
-                className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl text-xs font-semibold transition-colors"
               >
                 Đóng
               </button>

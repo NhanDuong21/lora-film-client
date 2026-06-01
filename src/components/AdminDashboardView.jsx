@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 import { 
   INITIAL_MOVIES, 
-  INITIAL_ACTORS, 
   INITIAL_THEATERS, 
   INITIAL_SHOWTIMES, 
   INITIAL_TICKETS, 
