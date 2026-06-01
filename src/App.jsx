@@ -73,6 +73,8 @@ function AppInner() {
           setCurrentView({ name: 'admin-movies', data: null });
         } else if (hash === '#/admin-actors' || hash === '#/admin/actors') {
           setCurrentView({ name: 'admin-actors', data: null });
+        } else if (hash === '#/admin/showtimes') {
+          setCurrentView({ name: 'admin-showtimes', data: null });
         } else {
           setCurrentView({ name: 'admin', data: null });
         }
@@ -366,12 +368,13 @@ function AppInner() {
           />
         )}
 
-        {(currentView.name === 'admin' || currentView.name === 'admin-events' || currentView.name === 'admin-movies' || currentView.name === 'admin-actors') && (
+        {(currentView.name === 'admin' || currentView.name === 'admin-events' || currentView.name === 'admin-movies' || currentView.name === 'admin-actors' || currentView.name === 'admin-showtimes') && (
           <AdminLayout 
             initialTab={
               currentView.name === 'admin-events' ? 'events-promo' : 
               (currentView.name === 'admin-movies' ? 'movies' : 
-              (currentView.name === 'admin-actors' ? 'actors' : 'dashboard'))
+              (currentView.name === 'admin-actors' ? 'actors' : 
+              (currentView.name === 'admin-showtimes' ? 'showtimes' : 'dashboard')))
             }
             onBackHome={() => handleViewChange({ name: 'home', data: null })} 
           />
