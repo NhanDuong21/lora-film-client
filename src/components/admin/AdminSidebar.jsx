@@ -92,7 +92,7 @@ export default function AdminSidebar({
               className={getTopLinkClass('dashboard')}
             >
               <LayoutDashboard className="w-4 h-4 shrink-0" />
-              <span>BẢNG ĐIỀU KHIỂN (TỔNG QUAN)</span>
+              <span>DASHBOARD</span>
             </button>
           </div>
 

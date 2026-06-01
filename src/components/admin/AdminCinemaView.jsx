@@ -134,10 +134,10 @@ export default function AdminCinemaView({
   return (
     <div className="space-y-6">
       {/* Page Header Titles */}
-      <div className="flex justify-between items-center pb-2 border-b border-zinc-900">
+      <div className="flex justify-between items-center pb-2 border-b border-zinc-800">
         <div>
-          <h3 className="text-base font-bold text-zinc-100 uppercase tracking-wider">Cơ Sở & Phòng Chiếu</h3>
-          <p className="text-xs text-zinc-500 mt-1 uppercase tracking-wider">Cấu hình cụm rạp và các buồng chiếu phim</p>
+          <h3 className="text-base font-bold text-zinc-50 uppercase tracking-wide">QUẢN LÝ PHÒNG CHIẾU</h3>
+          <p className="text-xs text-zinc-400 mt-1 uppercase tracking-wide">Cấu hình sơ đồ và định dạng thiết bị phòng chiếu hệ thống Lora</p>
         </div>
       </div>
 

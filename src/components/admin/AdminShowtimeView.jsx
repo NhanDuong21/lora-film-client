@@ -74,10 +74,10 @@ export default function AdminShowtimeView({
   return (
     <div className="space-y-6">
       {/* View Title & Action Bar */}
-      <div className="flex justify-between items-center pb-2">
+      <div className="flex justify-between items-center pb-2 border-b border-zinc-800">
         <div>
-          <h3 className="text-base font-bold text-zinc-100 uppercase tracking-wider">Lịch Chiếu Hệ Thống</h3>
-          <p className="text-xs text-zinc-500 mt-1 uppercase tracking-wider">Cấu hình thời gian và phòng chiếu phim</p>
+          <h3 className="text-base font-bold text-zinc-50 uppercase tracking-wide">DANH SÁCH SUẤT CHIẾU</h3>
+          <p className="text-xs text-zinc-400 mt-1 uppercase tracking-wide">Thiết lập khung giờ phát sóng và biểu giá vé rạp LoraFilm</p>
         </div>
         <button
           onClick={handleOpenAddShowtime}

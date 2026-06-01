@@ -117,36 +117,36 @@ export default function AdminActorView({
     <div className="space-y-6">
       {/* 3 analytical summary indicators */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-900 rounded-2xl p-5 flex items-center justify-between shadow-xl">
+        <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300">
           <div>
             <span className="text-zinc-400 text-xs font-black uppercase tracking-wider block mb-1">
-              Tổng diễn viên ({metrics.total})
+              TỔNG SỐ DIỄN VIÊN
             </span>
-            <span className="text-2xl font-black text-zinc-100">{metrics.total} nhân sự</span>
+            <span className="text-2xl font-bold text-amber-400">{metrics.total} Diễn viên</span>
           </div>
           <div className="p-3 bg-brand-coral/10 border border-brand-coral/20 rounded-xl">
             <Users className="w-5 h-5 text-brand-coral" />
           </div>
         </div>
 
-        <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-900 rounded-2xl p-5 flex items-center justify-between shadow-xl">
+        <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300">
           <div>
             <span className="text-zinc-400 text-xs font-black uppercase tracking-wider block mb-1">
-              Quốc tịch đại diện ({metrics.nationalities})
+              QUỐC TỊCH ĐẠI DIỆN
             </span>
-            <span className="text-2xl font-black text-zinc-100">{metrics.nationalities} quốc gia</span>
+            <span className="text-2xl font-bold text-amber-400">{metrics.nationalities} Quốc tịch</span>
           </div>
           <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl">
             <Globe className="w-5 h-5 text-amber-500" />
           </div>
         </div>
 
-        <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-900 rounded-2xl p-5 flex items-center justify-between shadow-xl">
+        <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300">
           <div>
             <span className="text-zinc-400 text-xs font-black uppercase tracking-wider block mb-1">
-              Phim được liên kết ({metrics.totalLinkedFilms})
+              BỘ SƯU TẬP TÁC PHẨM
             </span>
-            <span className="text-2xl font-black text-zinc-100">{metrics.totalLinkedFilms} tác phẩm</span>
+            <span className="text-2xl font-bold text-amber-400">{metrics.totalLinkedFilms} Phim liên kết</span>
           </div>
           <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
             <Film className="w-5 h-5 text-emerald-500" />
@@ -178,10 +178,10 @@ export default function AdminActorView({
       </div>
 
       {/* Main Grid Data Sheet */}
-      <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-900 rounded-2xl shadow-xl overflow-hidden">
+      <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-zinc-400">
-            <thead className="bg-zinc-950/80 text-zinc-500 font-black uppercase tracking-wider border-b border-zinc-900">
+            <thead className="bg-zinc-950/80 text-zinc-400 font-black uppercase tracking-wider border-b border-zinc-800">
               <tr>
                 <th className="py-4 px-6 text-center w-20">ID</th>
                 <th className="py-4 px-6">Ảnh & Tên Diễn Viên</th>
@@ -190,7 +190,7 @@ export default function AdminActorView({
                 <th className="py-4 px-6 text-center w-32">Hành Động</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-900/60">
+            <tbody className="divide-y divide-zinc-800/60">
               {filteredActors.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="py-12 text-center text-zinc-500 font-semibold">
@@ -199,7 +199,7 @@ export default function AdminActorView({
                 </tr>
               ) : (
                 filteredActors.map((actor) => (
-                  <tr key={actor.id} className="hover:bg-zinc-900/20 transition-colors">
+                  <tr key={actor.id} className="hover:bg-zinc-900/20 transition-colors border-b border-zinc-800/40">
                     <td className="py-4 px-6 text-center text-zinc-400 font-mono font-medium">
                       #{actor.id}
                     </td>
@@ -214,7 +214,7 @@ export default function AdminActorView({
                             e.target.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80';
                           }}
                         />
-                        <span className="font-bold text-zinc-100 text-sm">{actor.name}</span>
+                        <span className="font-bold text-zinc-200 text-sm">{actor.name}</span>
                       </div>
                     </td>
                     <td className="py-4 px-6 text-zinc-300 font-medium">
@@ -229,7 +229,7 @@ export default function AdminActorView({
                       <div className="flex justify-center gap-2">
                         <button
                           onClick={() => handleOpenEdit(actor)}
-                          className="p-2 text-zinc-400 hover:text-white bg-zinc-950 border border-zinc-900 rounded-xl transition-all"
+                          className="p-2 text-zinc-400 hover:text-white bg-zinc-950 border border-zinc-800 rounded-xl transition-all"
                           title="Sửa diễn viên"
                         >
                           <Edit3 className="w-3.5 h-3.5" />

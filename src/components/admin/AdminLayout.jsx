@@ -227,12 +227,12 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
             </button>
             <h1 className="text-sm font-black uppercase text-zinc-50 tracking-wider">
               {activeTab === 'dashboard' && 'Bảng Điều Khiển Tổng Quan'}
-              {activeTab === 'movies' && 'Quản Lý Danh Sách Phim'}
-              {activeTab === 'actors' && 'Quản Lý Diễn Viên Điện Ảnh'}
-              {activeTab === 'showtimes' && 'Quản Lý Lịch Chiếu Phim'}
-              {activeTab === 'events-promo' && 'Quản Lý Sự Kiện & Ưu Đãi'}
-              {activeTab === 'clusters' && 'Hạ Tầng Cụm Rạp & Phòng Chiếu'}
-              {['tickets', 'concessions', 'customers', 'payroll', 'delays', 'pricing'].includes(activeTab) && 'Kế Toán & Vận Hành Kinh Doanh'}
+              {activeTab === 'movies' && 'DANH SÁCH BỘ PHIM'}
+              {activeTab === 'actors' && 'DANH MỤC DIỄN VIÊN'}
+              {activeTab === 'showtimes' && 'DANH SÁCH SUẤT CHIẾU'}
+              {activeTab === 'events-promo' && 'CHƯƠNG TRÌNH ƯU ĐÃI'}
+              {activeTab === 'clusters' && 'HỆ THỐNG CỤM RẠP'}
+              {['tickets', 'concessions', 'customers', 'payroll', 'delays', 'pricing'].includes(activeTab) && 'LỊCH SỬ GIAO DỊCH'}
             </h1>
           </div>
           <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest bg-zinc-950 border border-zinc-800 px-3 py-1.5 rounded-full">

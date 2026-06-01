@@ -170,36 +170,36 @@ export default function AdminEventView({
       
       {/* 3 Upper localized analytical metrics cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-900 rounded-2xl p-5 flex items-center justify-between shadow-xl">
+        <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300">
           <div>
             <span className="text-zinc-400 text-xs font-black uppercase tracking-wider block mb-1">
-              SỰ KIỆN HOẠT ĐỘNG ({metrics.activeEvents})
+              SỰ KIỆN HOẠT ĐỘNG
             </span>
-            <span className="text-2xl font-black text-zinc-100">{metrics.activeEvents} đang chạy</span>
+            <span className="text-2xl font-bold text-amber-400">{metrics.activeEvents} Sự kiện</span>
           </div>
           <div className="p-3 bg-brand-coral/10 border border-brand-coral/20 rounded-xl">
             <Trophy className="w-5 h-5 text-brand-coral" />
           </div>
         </div>
 
-        <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-900 rounded-2xl p-5 flex items-center justify-between shadow-xl">
+        <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300">
           <div>
             <span className="text-zinc-400 text-xs font-black uppercase tracking-wider block mb-1">
-              TỔNG KHUYẾN MÃI ({metrics.totalPromos})
+              CHIẾN DỊCH ƯU ĐÃI
             </span>
-            <span className="text-2xl font-black text-zinc-100">{metrics.totalPromos} chiến dịch</span>
+            <span className="text-2xl font-bold text-amber-400">{metrics.totalPromos} Khuyến mãi</span>
           </div>
           <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl">
             <Tag className="w-5 h-5 text-amber-500" />
           </div>
         </div>
 
-        <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-900 rounded-2xl p-5 flex items-center justify-between shadow-xl">
+        <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300">
           <div>
             <span className="text-zinc-400 text-xs font-black uppercase tracking-wider block mb-1">
-              ƯU ĐÃI ĐÃ QUY ĐỔI ({metrics.redeemedOffers.toLocaleString('vi-VN')})
+              LƯỢT QUY ĐỔI VOUCHER
             </span>
-            <span className="text-2xl font-black text-zinc-100">{metrics.redeemedOffers.toLocaleString('vi-VN')} lượt</span>
+            <span className="text-2xl font-bold text-amber-400">{metrics.redeemedOffers.toLocaleString('vi-VN')} Lượt dùng</span>
           </div>
           <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
             <Ticket className="w-5 h-5 text-emerald-500" />

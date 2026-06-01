@@ -113,10 +113,10 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
       </div>
 
       {/* Main Grid Data Sheet Table */}
-      <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-900 rounded-2xl shadow-xl overflow-hidden">
+      <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-zinc-400">
-            <thead className="bg-zinc-950/80 text-zinc-500 font-black uppercase tracking-wider border-b border-zinc-900">
+            <thead className="bg-zinc-950/80 text-zinc-400 font-black uppercase tracking-wider border-b border-zinc-800">
               <tr>
                 <th className="py-4 px-6">Tên Phim</th>
                 <th className="py-4 px-6">Độ Dài</th>
@@ -126,7 +126,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                 <th className="py-4 px-6 text-center w-32">Thao Tác</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-900/60">
+            <tbody className="divide-y divide-zinc-800/60">
               {filteredMovies.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="py-12 text-center text-zinc-500 font-semibold">
@@ -135,8 +135,8 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                 </tr>
               ) : (
                 filteredMovies.map((movie) => (
-                  <tr key={movie.id} className="hover:bg-zinc-900/20 transition-colors">
-                    <td className="py-4 px-6 font-bold text-zinc-100 text-sm">{movie.title}</td>
+                  <tr key={movie.id} className="hover:bg-zinc-900/20 transition-colors border-b border-zinc-800/40">
+                    <td className="py-4 px-6 font-bold text-zinc-200 text-sm">{movie.title}</td>
                     <td className="py-4 px-6 text-zinc-300 font-medium">
                       {movie.duration ? movie.duration.replace('phut', 'phút') : 'N/A'}
                     </td>
@@ -159,7 +159,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                       <div className="flex justify-center gap-2">
                         <button
                           onClick={() => handleOpenEditMovie(movie)}
-                          className="p-2 text-zinc-400 hover:text-white bg-zinc-950 border border-zinc-900 rounded-xl transition-all"
+                          className="p-2 text-zinc-400 hover:text-white bg-zinc-950 border border-zinc-800 rounded-xl transition-all"
                           title="Sửa phim"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
