@@ -71,6 +71,8 @@ function AppInner() {
         setCurrentView({ name: 'admin-events', data: null });
       } else if (hash === '#/admin-movies' || hash === '#/admin/movies') {
         setCurrentView({ name: 'admin-movies', data: null });
+      } else if (hash === '#/admin-actors' || hash === '#/admin/actors') {
+        setCurrentView({ name: 'admin-actors', data: null });
       } else if (hash === '#/employee') {
         setCurrentView({ name: 'employee', data: null });
       } else if (hash === '#/login') {
@@ -161,6 +163,9 @@ function AppInner() {
         break;
       case 'admin-movies':
         targetHash = '#/admin-movies';
+        break;
+      case 'admin-actors':
+        targetHash = '#/admin/actors';
         break;
       case 'employee':
         targetHash = '#/employee';
@@ -268,7 +273,7 @@ function AppInner() {
     }
   };
 
-  const isDashboardView = ['admin', 'employee', 'admin-events', 'admin-movies'].includes(currentView.name);
+  const isDashboardView = ['admin', 'employee', 'admin-events', 'admin-movies', 'admin-actors'].includes(currentView.name);
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col selection:bg-brand-coral selection:text-white">
@@ -358,9 +363,13 @@ function AppInner() {
           />
         )}
 
-        {(currentView.name === 'admin' || currentView.name === 'admin-events' || currentView.name === 'admin-movies') && (
+        {(currentView.name === 'admin' || currentView.name === 'admin-events' || currentView.name === 'admin-movies' || currentView.name === 'admin-actors') && (
           <AdminDashboardView 
-            initialTab={currentView.name === 'admin-events' ? 'events-promo' : (currentView.name === 'admin-movies' ? 'movies' : 'dashboard')}
+            initialTab={
+              currentView.name === 'admin-events' ? 'events-promo' : 
+              (currentView.name === 'admin-movies' ? 'movies' : 
+              (currentView.name === 'admin-actors' ? 'actors' : 'dashboard'))
+            }
             onBackHome={() => handleViewChange({ name: 'home', data: null })} 
           />
         )}

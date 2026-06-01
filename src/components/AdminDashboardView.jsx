@@ -23,6 +23,7 @@ import {
 } from '../data/mockDashboardData';
 import AdminSidebar from './admin/AdminSidebar';
 import AdminEventView from './admin/AdminEventView';
+import AdminActorView from './admin/AdminActorView';
 
 export default function AdminDashboardView({ onBackHome, initialTab }) {
   const { user, userRole, logout } = useAuth();
@@ -44,13 +45,6 @@ export default function AdminDashboardView({ onBackHome, initialTab }) {
     if (saved) return JSON.parse(saved);
     localStorage.setItem('lora_movies', JSON.stringify(INITIAL_MOVIES));
     return INITIAL_MOVIES;
-  });
-
-  const [actors, setActors] = useState(() => {
-    const saved = localStorage.getItem('lora_actors');
-    if (saved) return JSON.parse(saved);
-    localStorage.setItem('lora_actors', JSON.stringify(INITIAL_ACTORS));
-    return INITIAL_ACTORS;
   });
 
   const [theaters, setTheaters] = useState(() => {
@@ -101,10 +95,6 @@ export default function AdminDashboardView({ onBackHome, initialTab }) {
     localStorage.setItem('lora_movies', JSON.stringify(newMovies));
   };
 
-  const updateActorsState = (newActors) => {
-    setActors(newActors);
-    localStorage.setItem('lora_actors', JSON.stringify(newActors));
-  };
 
   const updateShowtimesState = (newShowtimes) => {
     setShowtimes(newShowtimes);
@@ -137,7 +127,6 @@ export default function AdminDashboardView({ onBackHome, initialTab }) {
 
   // Search filter states
   const [movieSearch, setMovieSearch] = useState('');
-  const [actorSearch, setActorSearch] = useState('');
   const [ticketSearch, setTicketSearch] = useState('');
   const [customerSearch, setCustomerSearch] = useState('');
 
@@ -148,10 +137,6 @@ export default function AdminDashboardView({ onBackHome, initialTab }) {
   const [movieModalOpen, setMovieModalOpen] = useState(false);
   const [editingMovie, setEditingMovie] = useState(null);
   const [movieForm, setMovieForm] = useState({ title: '', duration: '', ageRating: 'P', status: 'NOW_SHOWING', genres: '', synopsis: '', releaseYear: 2026 });
-
-  const [actorModalOpen, setActorModalOpen] = useState(false);
-  const [editingActor, setEditingActor] = useState(null);
-  const [actorForm, setActorForm] = useState({ name: '', nationality: '', starredFilms: '', birthdate: '' });
 
   const [showtimeModalOpen, setShowtimeModalOpen] = useState(false);
   const [showtimeForm, setShowtimeForm] = useState({ movieId: '', theaterId: '', hallId: '', date: '', time: '', price: 80000 });
@@ -218,58 +203,6 @@ export default function AdminDashboardView({ onBackHome, initialTab }) {
     }
   };
 
-  // 2. Actors CRUD Handlers
-  const handleOpenAddActor = () => {
-    setEditingActor(null);
-    setActorForm({ name: '', nationality: '', starredFilms: '', birthdate: '' });
-    setActorModalOpen(true);
-  };
-
-  const handleOpenEditActor = (actor) => {
-    setEditingActor(actor);
-    setActorForm({
-      name: actor.name,
-      nationality: actor.nationality,
-      starredFilms: actor.starredFilms.join(', '),
-      birthdate: actor.birthdate || ''
-    });
-    setActorModalOpen(true);
-  };
-
-  const handleSaveActor = (e) => {
-    e.preventDefault();
-    if (!actorForm.name || !actorForm.nationality) {
-      triggerToast('Vui long dien ten va quoc tich!', 'error');
-      return;
-    }
-
-    const processedActor = {
-      name: actorForm.name,
-      nationality: actorForm.nationality,
-      starredFilms: actorForm.starredFilms.split(',').map(f => f.trim()),
-      birthdate: actorForm.birthdate,
-      imageUrl: editingActor ? editingActor.imageUrl : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80'
-    };
-
-    if (editingActor) {
-      const updated = actors.map(a => a.id === editingActor.id ? { ...processedActor, id: a.id } : a);
-      updateActorsState(updated);
-      triggerToast('Cap nhat dien vien thanh cong!');
-    } else {
-      const newActor = { ...processedActor, id: Date.now() };
-      updateActorsState([...actors, newActor]);
-      triggerToast('Them dien vien thanh cong!');
-    }
-    setActorModalOpen(false);
-  };
-
-  const handleDeleteActor = (id) => {
-    if (confirm('Ban co chac chan muon xoa dien vien nay?')) {
-      const updated = actors.filter(a => a.id !== id);
-      updateActorsState(updated);
-      triggerToast('Da xoa dien vien!');
-    }
-  };
 
   // 3. Showtimes CRUD & Overlap detection
   const handleOpenAddShowtime = () => {
@@ -481,11 +414,6 @@ export default function AdminDashboardView({ onBackHome, initialTab }) {
   const filteredMovies = useMemo(() => {
     return movies.filter(m => m.title.toLowerCase().includes(movieSearch.toLowerCase()));
   }, [movies, movieSearch]);
-
-  const filteredActors = useMemo(() => {
-    return actors.filter(a => a.name.toLowerCase().includes(actorSearch.toLowerCase()));
-  }, [actors, actorSearch]);
-
   const filteredTickets = useMemo(() => {
     return tickets.filter(t => 
       t.id.toLowerCase().includes(ticketSearch.toLowerCase()) || 
@@ -533,7 +461,7 @@ export default function AdminDashboardView({ onBackHome, initialTab }) {
 
       {/* Main Content Space */}
       <main className="flex-grow p-6 md:p-10 space-y-8 overflow-y-auto lg:max-h-screen">
-        {activeTab !== 'events-promo' && (
+        {activeTab !== 'events-promo' && activeTab !== 'actors' && (
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-800/80 pb-6">
             <div>
               <h1 className="text-2xl md:text-3xl font-black text-white tracking-wide uppercase">
@@ -733,68 +661,7 @@ export default function AdminDashboardView({ onBackHome, initialTab }) {
 
           {/* Actor CRUD View */}
           {activeTab === 'actors' && (
-            <div className="space-y-6">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div className="relative w-full md:w-80">
-                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-zinc-500">
-                    <Search className="w-4 h-4" />
-                  </span>
-                  <input
-                    type="text"
-                    value={actorSearch}
-                    onChange={(e) => setActorSearch(e.target.value)}
-                    placeholder="Tim kiem dien vien..."
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl py-2 pl-9 pr-4 text-xs text-white focus:outline-none focus:border-brand-coral transition-colors"
-                  />
-                </div>
-                <button
-                  onClick={handleOpenAddActor}
-                  className="flex items-center gap-2 bg-brand-coral hover:bg-opacity-95 text-white text-xs font-black py-2.5 px-4 rounded-xl"
-                >
-                  <PlusCircle className="w-4 h-4" />
-                  <span>THÊM DIỄN VIÊN</span>
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                {filteredActors.map(actor => (
-                  <div key={actor.id} className="bg-zinc-950 border border-zinc-850 rounded-2xl overflow-hidden p-4 relative group flex flex-col justify-between">
-                    <div>
-                      <img
-                        src={actor.imageUrl}
-                        alt={actor.name}
-                        className="w-full aspect-square object-cover rounded-xl mb-3 border border-zinc-800"
-                        onError={(e) => {
-                          e.target.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80';
-                        }}
-                      />
-                      <h4 className="text-white font-bold text-sm block">{actor.name}</h4>
-                      <span className="text-[10px] text-zinc-500 uppercase font-black block mt-0.5">Quoc tich: {actor.nationality}</span>
-                      <p className="text-[11px] text-zinc-400 line-clamp-2 mt-2">
-                        Phim tham gia: {actor.starredFilms.join(', ')}
-                      </p>
-                    </div>
-                    
-                    <div className="flex gap-2 mt-4 pt-3 border-t border-zinc-850">
-                      <button
-                        onClick={() => handleOpenEditActor(actor)}
-                        className="flex-1 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-[10px] font-black uppercase text-zinc-300 rounded-lg flex items-center justify-center gap-1"
-                      >
-                        <Edit3 className="w-3 h-3" />
-                        <span>Sua</span>
-                      </button>
-                      <button
-                        onClick={() => handleDeleteActor(actor.id)}
-                        className="flex-1 py-1.5 bg-red-950/20 hover:bg-red-950/40 border border-red-900/40 text-[10px] font-black uppercase text-red-400 rounded-lg flex items-center justify-center gap-1"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                        <span>Xoa</span>
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <AdminActorView />
           )}
 
           {/* Showtimes configuration tab */}
@@ -1321,68 +1188,7 @@ export default function AdminDashboardView({ onBackHome, initialTab }) {
         </div>
       )}
 
-      {/* Actor add/edit modal form */}
-      {actorModalOpen && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <form onSubmit={handleSaveActor} className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 md:p-8 max-w-md w-full space-y-4">
-            <div className="flex justify-between items-center border-b border-zinc-800 pb-3">
-              <h3 className="text-lg font-black text-white uppercase tracking-wider">
-                {editingActor ? 'Cap nhat dien vien' : 'Them dien vien'}
-              </h3>
-              <button type="button" onClick={() => setActorModalOpen(false)} className="text-zinc-400 hover:text-white">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
 
-            <div className="space-y-1">
-              <label className="text-zinc-500 text-xs font-bold uppercase block">Ten dien vien</label>
-              <input
-                type="text"
-                value={actorForm.name}
-                onChange={(e) => setActorForm({ ...actorForm, name: e.target.value })}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-brand-coral"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-zinc-500 text-xs font-bold uppercase block">Quoc tich</label>
-              <input
-                type="text"
-                value={actorForm.nationality}
-                onChange={(e) => setActorForm({ ...actorForm, nationality: e.target.value })}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-brand-coral"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-zinc-500 text-xs font-bold uppercase block">Ngay sinh (YYYY-MM-DD)</label>
-              <input
-                type="text"
-                value={actorForm.birthdate}
-                onChange={(e) => setActorForm({ ...actorForm, birthdate: e.target.value })}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-brand-coral"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-zinc-500 text-xs font-bold uppercase block">Cac phim tham gia (Dau phay)</label>
-              <input
-                type="text"
-                value={actorForm.starredFilms}
-                onChange={(e) => setActorForm({ ...actorForm, starredFilms: e.target.value })}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-brand-coral"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-brand-coral hover:bg-opacity-95 text-white font-black py-3 rounded-xl text-xs uppercase tracking-wider"
-            >
-              Luu thong tin
-            </button>
-          </form>
-        </div>
-      )}
 
       {/* Showtime add modal form */}
       {showtimeModalOpen && (

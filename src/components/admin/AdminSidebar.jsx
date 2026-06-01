@@ -96,7 +96,7 @@ export default function AdminSidebar({
                   Quản lý phim
                 </button>
                 <button
-                  onClick={() => handleTabClick('actors')}
+                  onClick={() => handleTabClick('actors', '#/admin/actors')}
                   className={`w-full text-left py-2 px-3 rounded text-[11px] font-semibold block cursor-pointer ${activeTab === 'actors' ? 'text-brand-coral bg-white/5 font-bold' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                   Quản lý diễn viên
