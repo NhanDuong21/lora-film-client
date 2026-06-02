@@ -9,11 +9,10 @@ export default function AdminShowtimeView({
   triggerToast 
 }) {
   // Unified Scheduler Configuration States
-  const [dateRange, setDateRange] = useState({ from: '2026-05-28', to: '2026-05-31' });
+  const [activeDate, setActiveDate] = useState('2026-05-29'); // Single active Date
   const [operatingHours, setOperatingHours] = useState({ start: '08:00', end: '22:00' });
   const [goldenHour, setGoldenHour] = useState('19:00');
   const [selectedMovies, setSelectedMovies] = useState([]); // Array of checked movie IDs
-  const [timetableGrid, setTimetableGrid] = useState({}); // Mapped showtime blocks structured by [day][room]
 
   // Target Cinema complex selection
   const [selectedTheaterId, setSelectedTheaterId] = useState(theaters[0]?.id || '');
@@ -32,34 +31,12 @@ export default function AdminShowtimeView({
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
   };
 
-  // Helper: Generate all date strings in the range [from, to] inclusive
-  const getDatesInRange = (from, to) => {
-    if (!from || !to) return [];
-    const list = [];
-    const start = new Date(from);
-    const end = new Date(to);
-    const current = new Date(start);
-    let limit = 0;
-    while (current <= end && limit < 30) { // Safety ceiling to prevent infinite loops
-      list.push(current.toISOString().split('T')[0]);
-      current.setDate(current.getDate() + 1);
-      limit++;
-    }
-    return list;
-  };
-
-  // Helper: Get day name in Vietnamese
-  const getVNWeekday = (dateStr) => {
-    const d = new Date(dateStr);
-    const days = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
-    return days[d.getDay()];
-  };
-
   // Helper: Format YYYY-MM-DD to DD/MM
   const formatDateVN = (dateStr) => {
+    if (!dateStr) return '';
     const parts = dateStr.split('-');
     if (parts.length === 3) {
-      return `${parts[2]}/${parts[1]}`;
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
     return dateStr;
   };
@@ -67,40 +44,14 @@ export default function AdminShowtimeView({
   // Helper: Generate unique movie visual profile classes
   const getMovieColorClasses = (index) => {
     const colors = [
-      'bg-purple-500/10 border-purple-500/30 text-purple-300 hover:bg-purple-500/20',
-      'bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20',
-      'bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20',
-      'bg-blue-500/10 border-blue-500/30 text-blue-300 hover:bg-blue-500/20',
-      'bg-rose-500/10 border-rose-500/30 text-rose-300 hover:bg-rose-500/20',
-      'bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20'
+      'bg-purple-500/10 border-purple-500/30 text-purple-300 hover:bg-purple-500/20 border-l-purple-500',
+      'bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 border-l-emerald-500',
+      'bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20 border-l-amber-500',
+      'bg-blue-500/10 border-blue-500/30 text-blue-300 hover:bg-blue-500/20 border-l-blue-500',
+      'bg-rose-500/10 border-rose-500/30 text-rose-300 hover:bg-rose-500/20 border-l-rose-500',
+      'bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 border-l-cyan-500'
     ];
     return colors[index % colors.length];
-  };
-
-  // Build grid map of showtimes for active cinema & dates
-  const buildTimetableGrid = (showtimeList, dateList, hallsList) => {
-    const grid = {};
-    dateList.forEach(dateStr => {
-      grid[dateStr] = {};
-      hallsList.forEach(hall => {
-        grid[dateStr][hall.name] = [];
-      });
-    });
-
-    showtimeList.forEach(st => {
-      if (String(st.cinemaId) === String(selectedTheaterId)) {
-        const dateStr = st.date;
-        const hall = hallsList.find(h => String(h.id) === String(st.hallId));
-        if (hall && grid[dateStr]) {
-          if (!grid[dateStr][hall.name]) {
-            grid[dateStr][hall.name] = [];
-          }
-          grid[dateStr][hall.name].push(st);
-        }
-      }
-    });
-
-    return grid;
   };
 
   // Select theater halls
@@ -112,27 +63,58 @@ export default function AdminShowtimeView({
     return activeTheater?.halls || [];
   }, [activeTheater]);
 
-  const dateTokens = useMemo(() => {
-    return getDatesInRange(dateRange.from, dateRange.to);
-  }, [dateRange.from, dateRange.to]);
+  // Dynamic horizontal track scale positioning math
+  const startHourNum = parseInt(operatingHours.start.split(':')[0]) || 8;
+  const endHourNum = parseInt(operatingHours.end.split(':')[0]) || 22;
+  const startMin = startHourNum * 60;
+  const endMin = endHourNum * 60;
+  const totalMin = endMin - startMin;
 
-  // Synchronize local grid coordinates when showtimes change
-  useEffect(() => {
-    if (activeTheater) {
-      const grid = buildTimetableGrid(showtimes, dateTokens, activeHalls);
-      setTimetableGrid(grid);
+  const calculateLeftOffset = (timeStr) => {
+    const mins = timeToMinutes(timeStr);
+    const offset = mins - startMin;
+    const percent = (offset / totalMin) * 100;
+    return Math.max(0, Math.min(100, percent));
+  };
+
+  const calculateWidthScale = (durationVal) => {
+    const dur = parseInt(durationVal) || 120;
+    const percent = (dur / totalMin) * 100;
+    return Math.max(1, Math.min(100, percent));
+  };
+
+  // Filter showtimes of active cinema on activeDate
+  const dayShowtimes = useMemo(() => {
+    return showtimes.filter(st => {
+      const isSameTheater = String(st.cinemaId) === String(selectedTheaterId);
+      const isSameDate = String(st.date) === String(activeDate);
+      return isSameTheater && isSameDate;
+    });
+  }, [showtimes, selectedTheaterId, activeDate]);
+
+  // Sequential timescale milestones for horizontal header
+  const milestones = useMemo(() => {
+    const list = [];
+    const step = 2; // plot every 2 hours
+    for (let h = startHourNum; h <= endHourNum; h += step) {
+      list.push(`${String(h).padStart(2, '0')}:00`);
     }
-  }, [showtimes, selectedTheaterId, dateRange.from, dateRange.to, activeHalls, activeTheater]);
+    const lastStr = `${String(endHourNum).padStart(2, '0')}:00`;
+    if (!list.includes(lastStr)) {
+      list.push(lastStr);
+    }
+    return list;
+  }, [startHourNum, endHourNum]);
 
-  // Execute client-side Mock Showtime Scheduler Algorithm
+  // Execute client-side Mock Showtime Scheduler Algorithm for activeDate
   const handleAutoGenerate = () => {
     if (selectedMovies.length === 0) {
       triggerToast('Vui lòng chọn ít nhất một bộ phim cần xếp lịch!', 'error');
       return;
     }
 
-    if (dateTokens.length === 0) {
-      triggerToast('Vui lòng cấu hình khoảng ngày hợp lệ!', 'error');
+    if (!activeDate) {
+      triggerToast('Vui lòng cấu hình ngày lập lịch!', 'error');
       return;
     }
 
@@ -146,8 +128,6 @@ export default function AdminShowtimeView({
       return;
     }
 
-    const startMin = timeToMinutes(operatingHours.start);
-    const endMin = timeToMinutes(operatingHours.end);
     const goldenMin = timeToMinutes(goldenHour);
 
     if (startMin >= endMin) {
@@ -176,76 +156,72 @@ export default function AdminShowtimeView({
         const priorityA = ratingA + genreWeightA;
         const priorityB = ratingB + genreWeightB;
 
-        return priorityB - priorityA; // Descending weight
+        return priorityB - priorityA; // Descending priority
       });
 
     const newGenerated = [];
 
     // Phase 2 & 3: Time-Block Interval Parsing & Collision Detection Guard
-    dateTokens.forEach(dateStr => {
-      activeHalls.forEach(hall => {
-        let currentMinutes = startMin;
-        let movieCycleIdx = 0;
+    activeHalls.forEach(hall => {
+      let currentMinutes = startMin;
+      let movieCycleIdx = 0;
 
-        // Walk timeframe until operatingHours boundary is reached
-        while (currentMinutes + 30 < endMin) {
-          // Select movie: prioritize highest weights during the golden hour window (+/- 90 mins)
-          let targetMovie = null;
-          const diffToGolden = Math.abs(currentMinutes - goldenMin);
-          if (diffToGolden <= 90 && sortedMovies.length > 0) {
-            targetMovie = sortedMovies[0]; // Pick highest rated/priority movie
-          } else {
-            targetMovie = sortedMovies[movieCycleIdx % sortedMovies.length];
-          }
-
-          if (!targetMovie) break;
-
-          const duration = parseInt(targetMovie.duration) || 120;
-          const endMinutes = currentMinutes + duration;
-
-          if (endMinutes > endMin) {
-            break; // Exceeds closing hour bounds
-          }
-
-          // Build Showtime Block Capsule
-          const newShowtimeItem = {
-            id: `st_auto_${Math.random().toString(36).substr(2, 9)}`,
-            movieId: targetMovie.id,
-            cinemaId: selectedTheaterId, // USE cinemaId HERE
-            hallId: hall.id,
-            date: dateStr,
-            time: minutesToTime(currentMinutes),
-            price: hall.format.toUpperCase().includes('IMAX') ? 140000 : 90000
-          };
-
-          newGenerated.push(newShowtimeItem);
-
-          // Add mandatory 20-minute cleanup buffer to block sequence
-          currentMinutes = endMinutes + 20;
-          movieCycleIdx++;
+      while (currentMinutes + 30 < endMin) {
+        let targetMovie = null;
+        const diffToGolden = Math.abs(currentMinutes - goldenMin);
+        if (diffToGolden <= 90 && sortedMovies.length > 0) {
+          targetMovie = sortedMovies[0]; // Prioritize highest priority movie in golden hour
+        } else {
+          targetMovie = sortedMovies[movieCycleIdx % sortedMovies.length];
         }
-      });
+
+        if (!targetMovie) break;
+
+        const duration = parseInt(targetMovie.duration) || 120;
+        const endMinutes = currentMinutes + duration;
+
+        if (endMinutes > endMin) {
+          break; // Doesn't fit in operating hours
+        }
+
+        // Build Showtime Block Capsule
+        const newShowtimeItem = {
+          id: `st_auto_${Math.random().toString(36).substr(2, 9)}`,
+          movieId: targetMovie.id,
+          cinemaId: selectedTheaterId,
+          hallId: hall.id,
+          date: activeDate,
+          time: minutesToTime(currentMinutes),
+          price: hall.format.toUpperCase().includes('IMAX') ? 140000 : 90000
+        };
+
+        newGenerated.push(newShowtimeItem);
+
+        // Add mandatory 20-minute clean-up sequence buffer
+        currentMinutes = endMinutes + 20;
+        movieCycleIdx++;
+      }
     });
 
-    // Merge generated showtimes: purge target date-range/theater records & write new
+    // Merge generated showtimes: purge target date / theater records & write new
     const preservedShowtimes = showtimes.filter(st => {
-      const isSameTheater = String(st.cinemaId) === String(selectedTheaterId); // USE cinemaId HERE
-      const isInTargetRange = dateTokens.includes(st.date);
-      return !(isSameTheater && isInTargetRange);
+      const isSameTheater = String(st.cinemaId) === String(selectedTheaterId);
+      const isSameDate = String(st.date) === String(activeDate);
+      return !(isSameTheater && isSameDate);
     });
 
     const finalState = [...preservedShowtimes, ...newGenerated];
     updateShowtimesState(finalState);
-    triggerToast(`Đã tự động lập lịch ${newGenerated.length} suất chiếu thành công!`);
+    triggerToast(`Đã tự động lập lịch ${newGenerated.length} suất chiếu thành công cho ngày ${formatDateVN(activeDate)}!`);
   };
 
   // Quick deletion trigger
   const handleClearSchedules = () => {
-    if (confirm('Bạn có chắc muốn xóa toàn bộ lịch chiếu của rạp này trong khoảng ngày đã chọn?')) {
+    if (confirm(`Bạn có chắc muốn xóa toàn bộ lịch chiếu của rạp này trong ngày ${formatDateVN(activeDate)}?`)) {
       const preserved = showtimes.filter(st => {
-        const isSameTheater = String(st.cinemaId) === String(selectedTheaterId); // USE cinemaId HERE
-        const isInTargetRange = dateTokens.includes(st.date);
-        return !(isSameTheater && isInTargetRange);
+        const isSameTheater = String(st.cinemaId) === String(selectedTheaterId);
+        const isSameDate = String(st.date) === String(activeDate);
+        return !(isSameTheater && isSameDate);
       });
       updateShowtimesState(preserved);
       triggerToast('Đã dọn dẹp các suất chiếu trong khung lịch.');
@@ -259,39 +235,24 @@ export default function AdminShowtimeView({
     triggerToast('Đã xóa suất chiếu thành công!');
   };
 
-  // Hourly grid setup (08:00 -> 22:00 etc)
-  const gridHours = useMemo(() => {
-    const hoursList = [];
-    const startHour = parseInt(operatingHours.start.split(':')[0]) || 8;
-    const endHour = parseInt(operatingHours.end.split(':')[0]) || 22;
-    for (let h = startHour; h <= endHour; h++) {
-      hoursList.push(`${String(h).padStart(2, '0')}:00`);
-    }
-    return hoursList;
-  }, [operatingHours.start, operatingHours.end]);
-
-  const startHourNum = parseInt(operatingHours.start.split(':')[0]) || 8;
-  const endHourNum = parseInt(operatingHours.end.split(':')[0]) || 22;
-  const gridHeightPx = (endHourNum - startHourNum) * 60;
-
   return (
     <div className="space-y-6">
       {/* View Title */}
       <div className="flex justify-between items-center pb-2 border-b border-zinc-800">
         <div>
           <h3 className="text-base font-bold text-zinc-50 uppercase tracking-wide">TỰ ĐỘNG LẬP LỊCH CHIẾU</h3>
-          <p className="text-xs text-zinc-400 mt-1 uppercase tracking-wide">Thuật toán phân bổ giờ chiếu dựa trên mức độ ưu tiên và thời lượng phim</p>
+          <p className="text-xs text-zinc-400 mt-1 uppercase tracking-wide">Bản tiến độ tuyến tính theo phòng chiếu &amp; tối ưu hóa thời gian thực</p>
         </div>
       </div>
 
-      {/* ➊ Top Configuration Strip */}
-      <div className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-5 mb-6 flex flex-wrap items-end gap-5 text-xs">
+      {/* ➊ Top Control Filter Ribbon & Single-Date Target Selector */}
+      <div className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-5 mb-6 flex flex-wrap items-end gap-5 text-xs text-zinc-300">
         <div className="flex flex-col gap-1.5">
           <label className="text-zinc-500 text-[10px] font-black uppercase">Chi Nhánh Rạp</label>
           <select 
             value={selectedTheaterId} 
             onChange={(e) => setSelectedTheaterId(e.target.value)}
-            className="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral"
+            className="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-zinc-150 focus:outline-none focus:border-brand-coral"
           >
             {theaters.map(t => (
               <option key={t.id} value={t.id}>{t.name}</option>
@@ -300,21 +261,11 @@ export default function AdminShowtimeView({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-zinc-500 text-[10px] font-black uppercase">Từ Ngày</label>
+          <label className="text-zinc-500 text-[10px] font-black uppercase">Ngày Lịch Chiếu</label>
           <input 
             type="date" 
-            value={dateRange.from} 
-            onChange={(e) => setDateRange({ ...dateRange, from: e.target.value })}
-            className="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral"
-          />
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <label className="text-zinc-500 text-[10px] font-black uppercase">Đến Ngày</label>
-          <input 
-            type="date" 
-            value={dateRange.to} 
-            onChange={(e) => setDateRange({ ...dateRange, to: e.target.value })}
+            value={activeDate} 
+            onChange={(e) => setActiveDate(e.target.value)}
             className="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral"
           />
         </div>
@@ -372,7 +323,7 @@ export default function AdminShowtimeView({
       <div className="flex gap-6 items-start">
         
         {/* ➋ Left Side: Movie Selection Directory */}
-        <div className="w-72 bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4 flex flex-col gap-3 h-[600px] overflow-y-auto">
+        <div className="w-72 bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4 flex flex-col gap-3 h-[600px] overflow-y-auto shrink-0">
           <div className="flex items-center justify-between pb-2 border-b border-zinc-800">
             <span className="text-xs font-black uppercase text-zinc-300 tracking-wider">PHIM XẾP LỊCH</span>
             <span className="text-[10px] font-bold text-amber-500 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20">
@@ -447,128 +398,124 @@ export default function AdminShowtimeView({
           </div>
         </div>
 
-        {/* ➌ Right Side: Weekly Timetable Multi-Day Grid */}
-        <div className="flex-1 bg-zinc-900/30 border border-zinc-800 rounded-2xl p-6 h-[600px] overflow-auto flex flex-col">
-          {/* Calendar Day Columns Header */}
-          <div className="flex border-b border-zinc-800 pb-3 mb-2 sticky top-0 bg-zinc-950/80 z-20">
-            <div className="w-16 shrink-0"></div>
-            <div className="flex-grow flex gap-3">
-              {dateTokens.map(dateStr => (
-                <div key={dateStr} className="flex-1 text-center font-bold text-xs text-zinc-300">
-                  <div className="text-zinc-500 uppercase text-[9px] tracking-wider mb-0.5">{getVNWeekday(dateStr)}</div>
-                  <div>{formatDateVN(dateStr)}</div>
-                </div>
-              ))}
-              {dateTokens.length === 0 && (
-                <div className="w-full text-center text-zinc-500 font-bold uppercase text-[10px] tracking-widest py-1">
-                  Chưa thiết lập khoảng ngày biểu diễn
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Timetable Grid Body Canvas */}
-          <div className="flex-1 relative flex gap-3" style={{ height: `${gridHeightPx}px` }}>
-            {/* Hour vertical labels track */}
-            <div className="w-16 shrink-0 relative h-full select-none">
-              {gridHours.map((hour, idx) => (
-                <div 
-                  key={hour} 
-                  style={{ top: `${idx * 60}px`, transform: 'translateY(-50%)' }} 
-                  className="absolute right-3 text-[10px] text-zinc-500 font-mono font-medium"
-                >
-                  {hour}
-                </div>
-              ))}
+        {/* ➌ The Horizontal Linear Resource Timeline Matrix (Bố cục hàng ngang phòng chiếu) */}
+        <div className="flex-1 bg-zinc-900/30 border border-zinc-800 rounded-2xl p-6 overflow-x-auto min-h-[500px]">
+          <div className="min-w-[1000px] flex flex-col">
+            
+            {/* ➊ X-Axis Time Header Track (Dải giờ trên cùng) */}
+            <div className="flex border-b border-zinc-800 pb-3 mb-2 sticky top-0 bg-zinc-950/80 z-20 items-center">
+              <div className="w-[180px] shrink-0 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">
+                Phòng Chiếu
+              </div>
+              <div className="flex-grow relative h-6">
+                {milestones.map((timeStr) => {
+                  const leftPercent = calculateLeftOffset(timeStr);
+                  return (
+                    <div 
+                      key={timeStr} 
+                      style={{ left: `${leftPercent}%` }} 
+                      className="absolute -translate-x-1/2 text-[10px] text-zinc-400 font-mono font-bold"
+                    >
+                      {timeStr}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Timetable main canvas area */}
-            <div className="flex-grow flex gap-3 relative h-full">
-              {/* Hour horizontal grid overlay ticks */}
-              {gridHours.map((hour, idx) => (
-                <div 
-                  key={`line-${hour}`} 
-                  style={{ top: `${idx * 60}px` }} 
-                  className="absolute left-0 right-0 border-t border-zinc-800/40 h-[1px] pointer-events-none"
-                />
-              ))}
-
-              {/* Day column layers */}
-              {dateTokens.map(dateStr => {
-                const dayHallsData = timetableGrid[dateStr] || {};
-                const dayShowtimes = [];
-                activeHalls.forEach(hall => {
-                  const list = dayHallsData[hall.name] || [];
-                  list.forEach(st => {
-                    dayShowtimes.push({ ...st, hallName: hall.name, hallIndex: activeHalls.indexOf(hall) });
-                  });
-                });
-
+            {/* ➋ Y-Axis Row Allocation Grid (Hàng ngang Phòng Chiếu) */}
+            <div className="flex flex-col">
+              {activeHalls.map((hall) => {
+                const hallShowtimes = dayShowtimes.filter(st => String(st.hallId) === String(hall.id));
                 return (
                   <div 
-                    key={dateStr} 
-                    className="flex-1 relative border-r border-zinc-800/20 last:border-r-0 h-full bg-zinc-950/5"
+                    key={hall.id}
+                    className="w-full flex items-center border-b border-zinc-800/80 min-h-[100px] relative py-4 group/row"
                   >
-                    {dayShowtimes.map(st => {
-                      const movie = movies.find(m => String(m.id) === String(st.movieId));
-                      const movieIndex = movies.findIndex(m => String(m.id) === String(st.movieId));
-                      const duration = parseInt(movie?.duration) || 120;
-                      
-                      const startM = timeToMinutes(st.time);
-                      const topPx = startM - (startHourNum * 60);
+                    
+                    {/* Left Column Anchor */}
+                    <div className="w-[180px] shrink-0 pr-4 flex flex-col justify-center select-none">
+                      <span className="font-bold text-xs text-zinc-100 tracking-wide leading-snug">{hall.name}</span>
+                      <span className="text-xs text-amber-500 font-mono font-bold bg-amber-500/5 px-2 py-1 rounded border border-amber-500/20 w-fit mt-1.5 uppercase">
+                        {hall.format}
+                      </span>
+                      <span className="text-[9px] text-zinc-500 font-semibold mt-1">Sức chứa: {hall.capacity} ghế</span>
+                    </div>
 
-                      // Filter out-of-bounds items
-                      if (topPx < 0 || topPx >= gridHeightPx) return null;
+                    {/* Right Column Slot Area (Fluid Timeline Canvas) */}
+                    <div className="flex-grow relative h-20 bg-zinc-950/20 rounded-xl border border-zinc-800/30 overflow-hidden">
+                      {/* Hour milestone background grid overlays */}
+                      {milestones.map((timeStr) => {
+                        const leftPercent = calculateLeftOffset(timeStr);
+                        return (
+                          <div 
+                            key={`line-${timeStr}`} 
+                            style={{ left: `${leftPercent}%` }} 
+                            className="absolute top-0 bottom-0 border-l border-zinc-800/20 w-[1px] pointer-events-none"
+                          />
+                        );
+                      })}
 
-                      const heightPx = duration;
-                      const leftPercent = (st.hallIndex / activeHalls.length) * 100;
-                      const widthPercent = (100 / activeHalls.length) - 2;
+                      {/* ➌ Visual Duration Block Capsules */}
+                      {hallShowtimes.map((st) => {
+                        const movie = movies.find(m => String(m.id) === String(st.movieId));
+                        const movieIndex = movies.findIndex(m => String(m.id) === String(st.movieId));
+                        const duration = parseInt(movie?.duration) || 120;
+                        
+                        const leftPercent = calculateLeftOffset(st.time);
+                        const widthPercent = calculateWidthScale(duration);
+                        const visualStyle = getMovieColorClasses(movieIndex);
+                        const endTimeStr = minutesToTime(timeToMinutes(st.time) + duration);
+                        const showtimeSpan = `${st.time} - ${endTimeStr}`;
 
-                      const visualStyle = getMovieColorClasses(movieIndex);
-                      const endTimeStr = minutesToTime(startM + duration);
-                      const showtimeSpan = `${st.time} - ${endTimeStr}`;
-
-                      return (
-                        <div
-                          key={st.id}
-                          style={{
-                            top: `${topPx}px`,
-                            height: `${heightPx}px`,
-                            left: `${leftPercent}%`,
-                            width: `${widthPercent}%`
-                          }}
-                          className={`absolute rounded-xl p-2.5 border text-left transition-all backdrop-blur-md cursor-pointer group shadow-lg flex flex-col justify-between overflow-hidden ${visualStyle}`}
-                        >
-                          <div className="min-w-0 flex-1">
-                            <div className="font-bold text-[10px] leading-tight text-zinc-100 truncate pr-4 group-hover:text-white" title={movie?.title}>
-                              {movie?.title || 'Phim Chưa Xác Định'}
-                            </div>
-                            <div className="text-[9px] text-zinc-400 font-mono mt-0.5">{showtimeSpan}</div>
-                          </div>
-                          
-                          <div className="flex items-center justify-between mt-1 pt-1 border-t border-white/5 shrink-0">
-                            <span className="text-[8px] font-black uppercase tracking-wider text-amber-500 bg-amber-500/10 px-1 py-0.5 rounded border border-amber-500/10">{st.hallName}</span>
-                            <span className="text-[8px] font-mono font-bold text-zinc-400">{st.price.toLocaleString('vi-VN')} đ</span>
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteShowtime(st.id);
+                        return (
+                          <div
+                            key={st.id}
+                            style={{
+                              left: `${leftPercent}%`,
+                              width: `${widthPercent}%`
                             }}
-                            className="absolute top-1.5 right-1.5 p-1 rounded-md bg-black/60 border border-zinc-800 hover:bg-red-950 hover:border-red-500 hover:text-white text-zinc-400 opacity-0 group-hover:opacity-100 transition-all duration-150"
-                            title="Xóa suất chiếu"
+                            className={`absolute top-2 h-16 rounded-xl border p-3 flex flex-col justify-between transition-all hover:scale-[1.01] hover:shadow-xl duration-200 overflow-hidden border-l-4 group cursor-pointer z-10 ${visualStyle}`}
                           >
-                            <Trash2 className="w-3 h-3" />
-                          </button>
+                            <div className="min-w-0 flex-1 flex flex-col">
+                              <div 
+                                className="text-xs font-bold text-zinc-100 truncate-none white-space-normal break-words leading-tight"
+                                title={movie?.title}
+                              >
+                                {movie?.title || 'Phim Chưa Xác Định'}
+                              </div>
+                              <div className="text-[10px] font-mono text-amber-400 font-bold bg-amber-500/5 px-1.5 py-0.5 rounded border border-amber-500/10 w-fit mt-1">
+                                {showtimeSpan}
+                              </div>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteShowtime(st.id);
+                              }}
+                              className="absolute top-1 right-1 p-1 rounded-md bg-black/60 border border-zinc-800 hover:bg-red-950 hover:border-red-500 hover:text-white text-zinc-400 opacity-0 group-hover:opacity-100 transition-all duration-150"
+                              title="Xóa suất chiếu"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        );
+                      })}
+
+                      {hallShowtimes.length === 0 && (
+                        <div className="absolute inset-0 flex items-center justify-center text-zinc-650 text-[10px] font-black uppercase tracking-wider select-none pointer-events-none">
+                          Chưa lập lịch chiếu trong ngày
                         </div>
-                      );
-                    })}
+                      )}
+
+                    </div>
                   </div>
                 );
               })}
             </div>
+
           </div>
         </div>
 
