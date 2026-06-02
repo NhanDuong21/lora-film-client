@@ -175,96 +175,128 @@ export default function AdminShowtimeView({
       return;
     }
 
-    if (startMin >= endMin) {
+    const baseStartMin = timeToMinutes(operatingHours.start || '08:00');
+    const baseEndMin = timeToMinutes(operatingHours.end || '22:00');
+    if (baseStartMin >= baseEndMin) {
       triggerToast('Giờ đóng cửa phải sau giờ mở cửa!', 'error');
       return;
     }
 
-    // Phase 1: Input Collection & Global Movie Queue Setup
+    // Phase 1: Dynamic Movie Priority Weights
+    const getMovieWeight = (movie) => {
+      const rating = parseFloat(movie.rating) || 0;
+      const status = movie.status || '';
+      const genresList = Array.isArray(movie.genres)
+        ? movie.genres.map(g => g.toLowerCase())
+        : String(movie.genres || movie.genre || '').toLowerCase().split(',').map(g => g.trim());
+      const isAction = genresList.some(g => g === 'hành động');
+      const genreScore = isAction ? 3 : 1;
+      const statusScore = status === 'DANG_CHIEU' ? 5 : 2;
+      return (rating * 2) + statusScore + genreScore;
+    };
+
     const sortedMovies = [...selectedMovies]
       .map(id => movies.find(m => String(m.id) === String(id)))
       .filter(Boolean)
-      .sort((a, b) => {
-        const ratingA = parseFloat(a.rating) || 0;
-        const ratingB = parseFloat(b.rating) || 0;
-        const genreA = Array.isArray(a.genres) 
-          ? a.genres.join(', ').toLowerCase() 
-          : String(a.genre || a.genres || '').toLowerCase();
-        const genreB = Array.isArray(b.genres) 
-          ? b.genres.join(', ').toLowerCase() 
-          : String(b.genre || b.genres || '').toLowerCase();
-
-        const highTrafficGenres = ['hành động', 'sci-fi', 'kịch tính', 'kinh dị'];
-        const genreWeightA = highTrafficGenres.some(g => genreA.includes(g)) ? 2 : 0;
-        const genreWeightB = highTrafficGenres.some(g => genreB.includes(g)) ? 2 : 0;
-
-        const priorityA = ratingA + genreWeightA;
-        const priorityB = ratingB + genreWeightB;
-
-        return priorityB - priorityA; // Descending priority
-      });
+      .sort((a, b) => getMovieWeight(b) - getMovieWeight(a));
 
     const newGenerated = [];
 
-    // Phase 2: Multi-Layered Iteration Walker (Vòng lặp phân phối đa tầng)
-    // Loop through each Date string in the scheduleCycle range
-    dateTokens.forEach(dateStr => {
-      // Loop through each Movie in the processing Queue
-      sortedMovies.forEach(movie => {
-        const duration = parseInt(movie.duration) || 120;
-        let allocated = false;
+    // Phase 2 & 3: Round-Robin Hall Balancing & Multi-Day Variance
+    dateTokens.forEach((dateStr, dayIdx) => {
+      // Check if the date falls on Friday, Saturday, or Sunday (Cuối tuần)
+      const parts = dateStr.split('-').map(Number);
+      const dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+      const dayOfWeek = dateObj.getDay();
+      const isWeekend = dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0;
 
-        // Loop through each Hall in active theater
-        for (let hallIdx = 0; hallIdx < activeHalls.length; hallIdx++) {
-          const hall = activeHalls[hallIdx];
-          let currentMinutes = startMin;
+      const cleanUpBuffer = isWeekend ? 15 : 20;
+      const closingTime = isWeekend ? '23:30' : (operatingHours.end || '22:00');
+      const currentEndLimit = timeToMinutes(closingTime);
+      const startMin = timeToMinutes(operatingHours.start || '08:00');
 
-          while (currentMinutes + duration <= endMin) {
-            const potentialEnd = currentMinutes + duration;
-            
-            // Filter showtimes already allocated on this specific Date in this specific Hall
-            const hallShowtimes = newGenerated.filter(
-              st => st.date === dateStr && String(st.hallId) === String(hall.id)
+      // Offset starting movie index by day factor to create variation across dates
+      const shiftedQueue = sortedMovies.map((_, idx) => 
+        sortedMovies[(idx + dayIdx) % sortedMovies.length]
+      );
+
+      // Track cursor times individually per hall
+      const hallCursors = {};
+      activeHalls.forEach(hall => {
+        hallCursors[hall.id] = startMin;
+      });
+
+      let activeScheduling = true;
+      let loopGuard = 0;
+      let dayQueue = [...shiftedQueue];
+
+      while (activeScheduling && loopGuard < 500) {
+        loopGuard++;
+        let scheduledAny = false;
+
+        // Distribute movies round-robin across available halls
+        for (let hIdx = 0; hIdx < activeHalls.length; hIdx++) {
+          const hall = activeHalls[hIdx];
+
+          if (dayQueue.length === 0) {
+            dayQueue = [...shiftedQueue];
+          }
+
+          if (dayQueue.length === 0) {
+            activeScheduling = false;
+            break;
+          }
+
+          const movie = dayQueue.shift();
+          const duration = parseInt(movie.duration) || 120;
+          let currentMinutes = hallCursors[hall.id];
+
+          let foundSlot = false;
+          let tempMinutes = currentMinutes;
+
+          while (tempMinutes + duration <= currentEndLimit) {
+            // Intercept and prevent showtime collisions in the active hall
+            const hasCollision = newGenerated.some(st => 
+              st.date === dateStr && 
+              String(st.hallId) === String(hall.id) &&
+              (() => {
+                const stStart = timeToMinutes(st.time);
+                const stMovie = movies.find(m => String(m.id) === String(st.movieId));
+                const stDur = parseInt(stMovie?.duration) || 120;
+                const stEnd = stStart + stDur + cleanUpBuffer;
+                return (tempMinutes < stEnd && (tempMinutes + duration + cleanUpBuffer) > stStart);
+              })()
             );
 
-            // Execute deep collision interception check
-            const collidingShowtime = hallShowtimes.find(st => {
-              const stStart = timeToMinutes(st.time);
-              const stMovie = movies.find(m => String(m.id) === String(st.movieId));
-              const stDur = parseInt(stMovie?.duration) || 120;
-              const stEnd = stStart + stDur + 20; // 20 min clean-up buffer
-              
-              return (currentMinutes < stEnd && (potentialEnd + 20) > stStart);
-            });
-
-            if (!collidingShowtime) {
-              // No collision: schedule here!
-              const newShowtimeItem = {
-                id: `st_auto_${Math.random().toString(36).substr(2, 9)}`,
-                movieId: movie.id,
-                cinemaId: selectedTheaterId,
-                hallId: hall.id,
-                date: dateStr,
-                time: minutesToTime(currentMinutes),
-                price: hall.format.toUpperCase().includes('IMAX') ? 140000 : 90000
-              };
-              newGenerated.push(newShowtimeItem);
-              allocated = true;
+            if (!hasCollision) {
+              foundSlot = true;
               break;
-            } else {
-              // Collision: advance time cursor past the conflicting block
-              const conflictMovie = movies.find(m => String(m.id) === String(collidingShowtime.movieId));
-              const conflictDur = parseInt(conflictMovie?.duration) || 120;
-              const conflictEnd = timeToMinutes(collidingShowtime.time) + conflictDur + 20;
-              currentMinutes = conflictEnd;
             }
+            tempMinutes += 5; // Advance to resolve collision
           }
 
-          if (allocated) {
-            break; // Successfully scheduled this movie on this day; skip remaining halls
+          if (foundSlot) {
+            const newShowtimeItem = {
+              id: `st_auto_${Math.random().toString(36).substr(2, 9)}`,
+              movieId: movie.id,
+              cinemaId: selectedTheaterId,
+              hallId: hall.id,
+              date: dateStr,
+              time: minutesToTime(tempMinutes),
+              price: hall.format.toUpperCase().includes('IMAX') ? 140000 : 90000
+            };
+            newGenerated.push(newShowtimeItem);
+            
+            // Advance the cursor past the scheduled screening and buffer
+            hallCursors[hall.id] = tempMinutes + duration + cleanUpBuffer;
+            scheduledAny = true;
           }
         }
-      });
+
+        if (!scheduledAny) {
+          activeScheduling = false; // Stop scheduling once halls are completely full
+        }
+      }
     });
 
     // Merge generated showtimes: purge target dates & theater records & write new
@@ -563,7 +595,7 @@ export default function AdminShowtimeView({
                         
                         const leftPercent = calculateLeftOffset(st.time);
                         const widthPercent = calculateWidthScale(duration);
-                        const visualStyle = getMovieColorClasses(movieIndex);
+                        const borderClass = movieIndex >= 0 ? getMovieColorClasses(movieIndex).split(' ')[0] : 'border-l-amber-500';
                         const endTimeStr = minutesToTime(timeToMinutes(st.time) + duration);
 
                         return (
@@ -573,19 +605,16 @@ export default function AdminShowtimeView({
                               left: `${leftPercent}%`,
                               width: `${widthPercent}%`
                             }}
-                            className={`absolute rounded-xl p-3 border border-zinc-800/80 bg-zinc-900/95 flex flex-col justify-between items-start gap-2 shadow-xl border-l-4 group overflow-visible min-h-[75px] ${visualStyle}`}
+                            className={`absolute border border-zinc-800/80 bg-zinc-900/95 flex flex-col justify-between items-start p-3 rounded-xl border-l-4 ${borderClass} group shadow-lg shadow-black/50 hover:scale-[1.02] hover:z-20 transition-all duration-200 min-h-[85px] overflow-visible`}
                           >
-                            <div className="flex-1 w-full">
-                              <div 
-                                className="text-xs font-bold text-zinc-100 whitespace-normal break-words leading-tight line-clamp-2 block mb-1"
-                                title={movie?.title}
-                              >
+                            <div className="flex-1 w-full overflow-hidden mb-1">
+                              <h4 className="text-xs font-bold text-zinc-50 whitespace-normal break-words line-clamp-2 leading-tight" title={movie?.title}>
                                 {movie?.title || 'Phim Chưa Xác Định'}
-                              </div>
+                              </h4>
                             </div>
 
-                            <div className="w-full mt-auto pt-1 border-t border-zinc-800/40 flex items-center justify-between gap-1.5">
-                              <span className="text-[10px] font-mono font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded flex items-center gap-1 select-none">
+                            <div className="w-full mt-auto pt-1.5 border-t border-zinc-800/40 flex items-center justify-between select-none">
+                              <span className="text-[10px] font-mono font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded shadow-sm">
                                 {st.time} - {endTimeStr}
                               </span>
                               <span className="text-[8px] font-mono font-bold text-zinc-500 shrink-0">
