@@ -296,7 +296,7 @@ export default function AdminCinemaView({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="flex-1 h-full overflow-y-auto p-6 bg-zinc-950 space-y-6">
       {/* Page Header Titles */}
       <div className="flex justify-between items-center pb-2 border-b border-zinc-800">
         <div>
@@ -308,7 +308,7 @@ export default function AdminCinemaView({
       {/* Dual Panel Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column (1/3 Width Cluster Selector) */}
-        <div className="lg:col-span-1 space-y-3">
+        <div className="lg:col-span-1 bg-zinc-900/40 border border-zinc-900 p-6 rounded-2xl space-y-3 shadow-xl h-fit">
           <div className="flex justify-between items-center pb-2">
             <span className="text-zinc-500 text-[10px] font-black uppercase tracking-wider">
               Danh sách cụm rạp

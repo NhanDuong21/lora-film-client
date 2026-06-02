@@ -451,10 +451,10 @@ export default function AdminShowtimeView({
       </div>
 
       {/* Main Workspace split panel */}
-      <div className="flex gap-6 items-start">
+      <div className="flex flex-col xl:flex-row gap-6 items-start w-full max-w-full">
         
         {/* ➋ Left Side: Movie Selection Directory */}
-        <div className="w-72 bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4 flex flex-col gap-3 h-[600px] overflow-y-auto shrink-0">
+        <div className="w-full xl:w-72 bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4 flex flex-col gap-3 h-[600px] overflow-y-auto shrink-0">
           <div className="flex items-center justify-between pb-2 border-b border-zinc-800">
             <span className="text-xs font-black uppercase text-zinc-300 tracking-wider">PHIM XẾP LỊCH</span>
             <span className="text-[10px] font-bold text-amber-500 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20">
@@ -530,12 +530,12 @@ export default function AdminShowtimeView({
         </div>
 
         {/* ➌ The Horizontal Linear Resource Timeline Matrix (Bố cục hàng ngang phòng chiếu) */}
-        <div className="flex-1 bg-zinc-900/30 border border-zinc-800 rounded-2xl p-6 overflow-x-auto min-h-[500px]">
-          <div className="min-w-[1000px] flex flex-col">
+        <div className="flex-1 w-full max-w-full bg-zinc-900/30 border border-zinc-800 rounded-2xl p-6 overflow-x-hidden flex flex-col min-h-[500px]">
+          <div className="w-full flex flex-col">
             
             {/* ➊ X-Axis Time Header Track (Dải giờ trên cùng) */}
             <div className="flex border-b border-zinc-800 pb-3 mb-2 sticky top-0 bg-zinc-950/80 z-20 items-center">
-              <div className="w-[180px] shrink-0 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">
+              <div className="w-28 md:w-36 shrink-0 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">
                 Phòng Chiếu
               </div>
               <div className="flex-grow relative h-6">
@@ -565,7 +565,7 @@ export default function AdminShowtimeView({
                   >
                     
                     {/* Left Column Anchor */}
-                    <div className="w-[180px] shrink-0 pr-4 flex flex-col justify-center select-none">
+                    <div className="w-28 md:w-36 shrink-0 pr-4 flex flex-col justify-center select-none">
                       <span className="font-bold text-xs text-zinc-100 tracking-wide leading-snug">{hall.name}</span>
                       <span className="text-xs text-amber-500 font-mono font-bold bg-amber-500/5 px-2 py-1 rounded border border-amber-500/20 w-fit mt-1.5 uppercase">
                         {hall.format}
@@ -605,19 +605,19 @@ export default function AdminShowtimeView({
                               left: `${leftPercent}%`,
                               width: `${widthPercent}%`
                             }}
-                            className={`absolute border border-zinc-800/80 bg-zinc-900/95 flex flex-col justify-between items-start p-3 rounded-xl border-l-4 ${borderClass} group shadow-lg shadow-black/50 hover:scale-[1.02] hover:z-20 transition-all duration-200 min-h-[85px] overflow-visible`}
+                            className={`absolute border border-zinc-800/80 bg-zinc-900/95 flex flex-col justify-between items-start py-2.5 px-3 rounded-xl border-l-4 ${borderClass} shadow-md group overflow-visible h-fit min-h-[90px] transition-all duration-200 hover:scale-[1.02] hover:z-20`}
                           >
                             <div className="flex-1 w-full overflow-hidden mb-1">
-                              <h4 className="text-xs font-bold text-zinc-50 whitespace-normal break-words line-clamp-2 leading-tight" title={movie?.title}>
+                              <h4 className="text-[11px] md:text-xs font-bold text-zinc-100 whitespace-normal break-words line-clamp-2 leading-tight block w-full mb-1" title={movie?.title}>
                                 {movie?.title || 'Phim Chưa Xác Định'}
                               </h4>
                             </div>
 
-                            <div className="w-full mt-auto pt-1.5 border-t border-zinc-800/40 flex items-center justify-between select-none">
-                              <span className="text-[10px] font-mono font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded shadow-sm">
+                            <div className="w-full mt-auto pt-1 border-t border-zinc-800/40 select-none flex items-center justify-between gap-1">
+                              <span className="text-[9px] md:text-[10px] font-mono font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded block w-fit whitespace-nowrap">
                                 {st.time} - {endTimeStr}
                               </span>
-                              <span className="text-[8px] font-mono font-bold text-zinc-500 shrink-0">
+                              <span className="text-[8px] md:text-[9px] font-mono font-bold text-zinc-500 shrink-0">
                                 {st.price.toLocaleString('vi-VN')} đ
                               </span>
                             </div>
