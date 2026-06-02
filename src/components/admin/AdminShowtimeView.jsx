@@ -91,12 +91,12 @@ export default function AdminShowtimeView({
   // Helper: Generate unique movie visual profile classes
   const getMovieColorClasses = (index) => {
     const colors = [
-      'bg-purple-500/10 border-purple-500/30 text-purple-300 hover:bg-purple-500/20 border-l-purple-500',
-      'bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 border-l-emerald-500',
-      'bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20 border-l-amber-500',
-      'bg-blue-500/10 border-blue-500/30 text-blue-300 hover:bg-blue-500/20 border-l-blue-500',
-      'bg-rose-500/10 border-rose-500/30 text-rose-300 hover:bg-rose-500/20 border-l-rose-500',
-      'bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 border-l-cyan-500'
+      'border-l-purple-500 text-purple-400',
+      'border-l-emerald-500 text-emerald-400',
+      'border-l-amber-500 text-amber-400',
+      'border-l-blue-500 text-blue-400',
+      'border-l-rose-500 text-rose-400',
+      'border-l-cyan-500 text-cyan-400'
     ];
     return colors[index % colors.length];
   };
@@ -175,14 +175,12 @@ export default function AdminShowtimeView({
       return;
     }
 
-    const goldenMin = timeToMinutes(goldenHour);
-
     if (startMin >= endMin) {
       triggerToast('Giờ đóng cửa phải sau giờ mở cửa!', 'error');
       return;
     }
 
-    // Phase 1: Priority Points Calculation
+    // Phase 1: Input Collection & Global Movie Queue Setup
     const sortedMovies = [...selectedMovies]
       .map(id => movies.find(m => String(m.id) === String(id)))
       .filter(Boolean)
@@ -208,46 +206,63 @@ export default function AdminShowtimeView({
 
     const newGenerated = [];
 
-    // Loop through each date string in the scheduleCycle cycle range
+    // Phase 2: Multi-Layered Iteration Walker (Vòng lặp phân phối đa tầng)
+    // Loop through each Date string in the scheduleCycle range
     dateTokens.forEach(dateStr => {
-      activeHalls.forEach(hall => {
-        let currentMinutes = startMin;
-        let movieCycleIdx = 0;
+      // Loop through each Movie in the processing Queue
+      sortedMovies.forEach(movie => {
+        const duration = parseInt(movie.duration) || 120;
+        let allocated = false;
 
-        while (currentMinutes + 30 < endMin) {
-          let targetMovie = null;
-          const diffToGolden = Math.abs(currentMinutes - goldenMin);
-          if (diffToGolden <= 90 && sortedMovies.length > 0) {
-            targetMovie = sortedMovies[0]; // Prioritize highest priority movie in golden hour
-          } else {
-            targetMovie = sortedMovies[movieCycleIdx % sortedMovies.length];
+        // Loop through each Hall in active theater
+        for (let hallIdx = 0; hallIdx < activeHalls.length; hallIdx++) {
+          const hall = activeHalls[hallIdx];
+          let currentMinutes = startMin;
+
+          while (currentMinutes + duration <= endMin) {
+            const potentialEnd = currentMinutes + duration;
+            
+            // Filter showtimes already allocated on this specific Date in this specific Hall
+            const hallShowtimes = newGenerated.filter(
+              st => st.date === dateStr && String(st.hallId) === String(hall.id)
+            );
+
+            // Execute deep collision interception check
+            const collidingShowtime = hallShowtimes.find(st => {
+              const stStart = timeToMinutes(st.time);
+              const stMovie = movies.find(m => String(m.id) === String(st.movieId));
+              const stDur = parseInt(stMovie?.duration) || 120;
+              const stEnd = stStart + stDur + 20; // 20 min clean-up buffer
+              
+              return (currentMinutes < stEnd && (potentialEnd + 20) > stStart);
+            });
+
+            if (!collidingShowtime) {
+              // No collision: schedule here!
+              const newShowtimeItem = {
+                id: `st_auto_${Math.random().toString(36).substr(2, 9)}`,
+                movieId: movie.id,
+                cinemaId: selectedTheaterId,
+                hallId: hall.id,
+                date: dateStr,
+                time: minutesToTime(currentMinutes),
+                price: hall.format.toUpperCase().includes('IMAX') ? 140000 : 90000
+              };
+              newGenerated.push(newShowtimeItem);
+              allocated = true;
+              break;
+            } else {
+              // Collision: advance time cursor past the conflicting block
+              const conflictMovie = movies.find(m => String(m.id) === String(collidingShowtime.movieId));
+              const conflictDur = parseInt(conflictMovie?.duration) || 120;
+              const conflictEnd = timeToMinutes(collidingShowtime.time) + conflictDur + 20;
+              currentMinutes = conflictEnd;
+            }
           }
 
-          if (!targetMovie) break;
-
-          const duration = parseInt(targetMovie.duration) || 120;
-          const endMinutes = currentMinutes + duration;
-
-          if (endMinutes > endMin) {
-            break; // Doesn't fit in operating hours
+          if (allocated) {
+            break; // Successfully scheduled this movie on this day; skip remaining halls
           }
-
-          // Build Showtime Block Capsule
-          const newShowtimeItem = {
-            id: `st_auto_${Math.random().toString(36).substr(2, 9)}`,
-            movieId: targetMovie.id,
-            cinemaId: selectedTheaterId,
-            hallId: hall.id,
-            date: dateStr,
-            time: minutesToTime(currentMinutes),
-            price: hall.format.toUpperCase().includes('IMAX') ? 140000 : 90000
-          };
-
-          newGenerated.push(newShowtimeItem);
-
-          // Add mandatory 20-minute clean-up sequence buffer
-          currentMinutes = endMinutes + 20;
-          movieCycleIdx++;
         }
       });
     });
@@ -550,7 +565,6 @@ export default function AdminShowtimeView({
                         const widthPercent = calculateWidthScale(duration);
                         const visualStyle = getMovieColorClasses(movieIndex);
                         const endTimeStr = minutesToTime(timeToMinutes(st.time) + duration);
-                        const showtimeSpan = `${st.time} - ${endTimeStr}`;
 
                         return (
                           <div
@@ -559,18 +573,24 @@ export default function AdminShowtimeView({
                               left: `${leftPercent}%`,
                               width: `${widthPercent}%`
                             }}
-                            className={`absolute top-2 h-16 rounded-xl border p-3 flex flex-col justify-between transition-all hover:scale-[1.01] hover:shadow-xl duration-200 overflow-hidden border-l-4 group cursor-pointer z-10 ${visualStyle}`}
+                            className={`absolute rounded-xl p-3 border border-zinc-800/80 bg-zinc-900/95 flex flex-col justify-between items-start gap-2 shadow-xl border-l-4 group overflow-visible min-h-[75px] ${visualStyle}`}
                           >
-                            <div className="min-w-0 flex-1 flex flex-col">
+                            <div className="flex-1 w-full">
                               <div 
-                                className="text-xs font-bold text-zinc-100 truncate-none white-space-normal break-words leading-tight"
+                                className="text-xs font-bold text-zinc-100 whitespace-normal break-words leading-tight line-clamp-2 block mb-1"
                                 title={movie?.title}
                               >
                                 {movie?.title || 'Phim Chưa Xác Định'}
                               </div>
-                              <div className="text-[10px] font-mono text-amber-400 font-bold bg-amber-500/5 px-1.5 py-0.5 rounded border border-amber-500/10 w-fit mt-1">
-                                {showtimeSpan}
-                              </div>
+                            </div>
+
+                            <div className="w-full mt-auto pt-1 border-t border-zinc-800/40 flex items-center justify-between gap-1.5">
+                              <span className="text-[10px] font-mono font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded flex items-center gap-1 select-none">
+                                {st.time} - {endTimeStr}
+                              </span>
+                              <span className="text-[8px] font-mono font-bold text-zinc-500 shrink-0">
+                                {st.price.toLocaleString('vi-VN')} đ
+                              </span>
                             </div>
 
                             <button
