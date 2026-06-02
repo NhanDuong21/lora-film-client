@@ -9,7 +9,9 @@ export default function AdminShowtimeView({
   triggerToast 
 }) {
   // Unified Scheduler Configuration States
-  const [activeDate, setActiveDate] = useState('2026-05-29'); // Single active Date
+  const [scheduleCycle, setScheduleCycle] = useState({ from: '2026-05-28', to: '2026-05-31' }); // 4-day operational cycle range
+  const [focusedDate, setFocusedDate] = useState('2026-05-28'); // Active focused date pointer
+
   const [operatingHours, setOperatingHours] = useState({ start: '08:00', end: '22:00' });
   const [goldenHour, setGoldenHour] = useState('19:00');
   const [selectedMovies, setSelectedMovies] = useState([]); // Array of checked movie IDs
@@ -31,7 +33,34 @@ export default function AdminShowtimeView({
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
   };
 
-  // Helper: Format YYYY-MM-DD to DD/MM
+  // Helper: Generate all date strings in the range [from, to] inclusive
+  const getDatesInRange = (from, to) => {
+    if (!from || !to) return [];
+    const list = [];
+    const start = new Date(from);
+    const end = new Date(to);
+    const current = new Date(start);
+    let limit = 0;
+    while (current <= end && limit < 30) { // Safety ceiling to prevent infinite loops
+      list.push(current.toISOString().split('T')[0]);
+      current.setDate(current.getDate() + 1);
+      limit++;
+    }
+    return list;
+  };
+
+  const dateTokens = useMemo(() => {
+    return getDatesInRange(scheduleCycle.from, scheduleCycle.to);
+  }, [scheduleCycle.from, scheduleCycle.to]);
+
+  // Self-healing: if focusedDate is no longer in range, point to first index
+  useEffect(() => {
+    if (dateTokens.length > 0 && !dateTokens.includes(focusedDate)) {
+      setFocusedDate(dateTokens[0]);
+    }
+  }, [dateTokens, focusedDate]);
+
+  // Helper: Format YYYY-MM-DD to DD/MM/YYYY
   const formatDateVN = (dateStr) => {
     if (!dateStr) return '';
     const parts = dateStr.split('-');
@@ -39,6 +68,24 @@ export default function AdminShowtimeView({
       return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
     return dateStr;
+  };
+
+  // Helper: Format YYYY-MM-DD to DD/MM
+  const formatDateVNShort = (dateStr) => {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      return `${parts[2]}/${parts[1]}`;
+    }
+    return dateStr;
+  };
+
+  // Helper: Get day name in Vietnamese
+  const getVNWeekday = (dateStr) => {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    const days = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+    return days[d.getDay()];
   };
 
   // Helper: Generate unique movie visual profile classes
@@ -83,14 +130,14 @@ export default function AdminShowtimeView({
     return Math.max(1, Math.min(100, percent));
   };
 
-  // Filter showtimes of active cinema on activeDate
+  // Filter showtimes of active cinema on active focusedDate
   const dayShowtimes = useMemo(() => {
     return showtimes.filter(st => {
       const isSameTheater = String(st.cinemaId) === String(selectedTheaterId);
-      const isSameDate = String(st.date) === String(activeDate);
+      const isSameDate = String(st.date) === String(focusedDate);
       return isSameTheater && isSameDate;
     });
-  }, [showtimes, selectedTheaterId, activeDate]);
+  }, [showtimes, selectedTheaterId, focusedDate]);
 
   // Sequential timescale milestones for horizontal header
   const milestones = useMemo(() => {
@@ -106,15 +153,15 @@ export default function AdminShowtimeView({
     return list;
   }, [startHourNum, endHourNum]);
 
-  // Execute client-side Mock Showtime Scheduler Algorithm for activeDate
+  // Execute client-side Mock Showtime Scheduler Algorithm for active schedule range
   const handleAutoGenerate = () => {
     if (selectedMovies.length === 0) {
       triggerToast('Vui lòng chọn ít nhất một bộ phim cần xếp lịch!', 'error');
       return;
     }
 
-    if (!activeDate) {
-      triggerToast('Vui lòng cấu hình ngày lập lịch!', 'error');
+    if (dateTokens.length === 0) {
+      triggerToast('Vui lòng cấu hình khoảng ngày hợp lệ!', 'error');
       return;
     }
 
@@ -161,67 +208,69 @@ export default function AdminShowtimeView({
 
     const newGenerated = [];
 
-    // Phase 2 & 3: Time-Block Interval Parsing & Collision Detection Guard
-    activeHalls.forEach(hall => {
-      let currentMinutes = startMin;
-      let movieCycleIdx = 0;
+    // Loop through each date string in the scheduleCycle cycle range
+    dateTokens.forEach(dateStr => {
+      activeHalls.forEach(hall => {
+        let currentMinutes = startMin;
+        let movieCycleIdx = 0;
 
-      while (currentMinutes + 30 < endMin) {
-        let targetMovie = null;
-        const diffToGolden = Math.abs(currentMinutes - goldenMin);
-        if (diffToGolden <= 90 && sortedMovies.length > 0) {
-          targetMovie = sortedMovies[0]; // Prioritize highest priority movie in golden hour
-        } else {
-          targetMovie = sortedMovies[movieCycleIdx % sortedMovies.length];
+        while (currentMinutes + 30 < endMin) {
+          let targetMovie = null;
+          const diffToGolden = Math.abs(currentMinutes - goldenMin);
+          if (diffToGolden <= 90 && sortedMovies.length > 0) {
+            targetMovie = sortedMovies[0]; // Prioritize highest priority movie in golden hour
+          } else {
+            targetMovie = sortedMovies[movieCycleIdx % sortedMovies.length];
+          }
+
+          if (!targetMovie) break;
+
+          const duration = parseInt(targetMovie.duration) || 120;
+          const endMinutes = currentMinutes + duration;
+
+          if (endMinutes > endMin) {
+            break; // Doesn't fit in operating hours
+          }
+
+          // Build Showtime Block Capsule
+          const newShowtimeItem = {
+            id: `st_auto_${Math.random().toString(36).substr(2, 9)}`,
+            movieId: targetMovie.id,
+            cinemaId: selectedTheaterId,
+            hallId: hall.id,
+            date: dateStr,
+            time: minutesToTime(currentMinutes),
+            price: hall.format.toUpperCase().includes('IMAX') ? 140000 : 90000
+          };
+
+          newGenerated.push(newShowtimeItem);
+
+          // Add mandatory 20-minute clean-up sequence buffer
+          currentMinutes = endMinutes + 20;
+          movieCycleIdx++;
         }
-
-        if (!targetMovie) break;
-
-        const duration = parseInt(targetMovie.duration) || 120;
-        const endMinutes = currentMinutes + duration;
-
-        if (endMinutes > endMin) {
-          break; // Doesn't fit in operating hours
-        }
-
-        // Build Showtime Block Capsule
-        const newShowtimeItem = {
-          id: `st_auto_${Math.random().toString(36).substr(2, 9)}`,
-          movieId: targetMovie.id,
-          cinemaId: selectedTheaterId,
-          hallId: hall.id,
-          date: activeDate,
-          time: minutesToTime(currentMinutes),
-          price: hall.format.toUpperCase().includes('IMAX') ? 140000 : 90000
-        };
-
-        newGenerated.push(newShowtimeItem);
-
-        // Add mandatory 20-minute clean-up sequence buffer
-        currentMinutes = endMinutes + 20;
-        movieCycleIdx++;
-      }
+      });
     });
 
-    // Merge generated showtimes: purge target date / theater records & write new
+    // Merge generated showtimes: purge target dates & theater records & write new
     const preservedShowtimes = showtimes.filter(st => {
       const isSameTheater = String(st.cinemaId) === String(selectedTheaterId);
-      const isSameDate = String(st.date) === String(activeDate);
-      return !(isSameTheater && isSameDate);
+      const isInTargetRange = dateTokens.includes(st.date);
+      return !(isSameTheater && isInTargetRange);
     });
 
     const finalState = [...preservedShowtimes, ...newGenerated];
     updateShowtimesState(finalState);
-    triggerToast(`Đã tự động lập lịch ${newGenerated.length} suất chiếu thành công cho ngày ${formatDateVN(activeDate)}!`);
+    triggerToast(`Đã tự động lập lịch ${newGenerated.length} suất chiếu thành công cho chu kỳ ${formatDateVN(scheduleCycle.from)} - ${formatDateVN(scheduleCycle.to)}!`);
   };
 
   // Quick deletion trigger
   const handleClearSchedules = () => {
-    if (confirm(`Bạn có chắc muốn xóa toàn bộ lịch chiếu của rạp này trong ngày ${formatDateVN(activeDate)}?`)) {
+    if (confirm(`Bạn có chắc muốn xóa toàn bộ lịch chiếu của rạp này trong khoảng ngày từ ${formatDateVN(scheduleCycle.from)} đến ${formatDateVN(scheduleCycle.to)}?`)) {
       const preserved = showtimes.filter(st => {
         const isSameTheater = String(st.cinemaId) === String(selectedTheaterId);
-        const isSameDate = String(st.date) === String(activeDate);
-        return !(isSameTheater && isSameDate);
+        const isInTargetRange = dateTokens.includes(st.date);
+        return !(isSameTheater && isInTargetRange);
       });
       updateShowtimesState(preserved);
       triggerToast('Đã dọn dẹp các suất chiếu trong khung lịch.');
@@ -245,7 +294,7 @@ export default function AdminShowtimeView({
         </div>
       </div>
 
-      {/* ➊ Top Control Filter Ribbon & Single-Date Target Selector */}
+      {/* ➊ Top Control Filter Ribbon & Cycle Selectors */}
       <div className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-5 mb-6 flex flex-wrap items-end gap-5 text-xs text-zinc-300">
         <div className="flex flex-col gap-1.5">
           <label className="text-zinc-500 text-[10px] font-black uppercase">Chi Nhánh Rạp</label>
@@ -261,11 +310,21 @@ export default function AdminShowtimeView({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-zinc-500 text-[10px] font-black uppercase">Ngày Lịch Chiếu</label>
+          <label className="text-zinc-500 text-[10px] font-black uppercase">Từ Ngày</label>
           <input 
             type="date" 
-            value={activeDate} 
-            onChange={(e) => setActiveDate(e.target.value)}
+            value={scheduleCycle.from} 
+            onChange={(e) => setScheduleCycle({ ...scheduleCycle, from: e.target.value })}
+            className="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-zinc-500 text-[10px] font-black uppercase">Đến Ngày</label>
+          <input 
+            type="date" 
+            value={scheduleCycle.to} 
+            onChange={(e) => setScheduleCycle({ ...scheduleCycle, to: e.target.value })}
             className="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral"
           />
         </div>
@@ -317,6 +376,31 @@ export default function AdminShowtimeView({
             <span>TỰ ĐỘNG TẠO SUẤT CHIẾU</span>
           </button>
         </div>
+      </div>
+
+      {/* ➋ Reactive 4-Day Navigation Tab Strip (Thanh chuyển đổi ngày hiển thị) */}
+      <div className="flex items-center gap-2 border-b border-zinc-800/80 pb-4 mb-4 mt-2 animate-fade-in">
+        {dateTokens.map(dateStr => {
+          const isActive = dateStr === focusedDate;
+          const weekday = getVNWeekday(dateStr);
+          const formatted = formatDateVNShort(dateStr);
+          return (
+            <button
+              key={dateStr}
+              type="button"
+              onClick={() => setFocusedDate(dateStr)}
+              className={isActive 
+                ? "bg-amber-500 text-black font-bold shadow-lg rounded-xl px-4 py-2 text-xs transition-all"
+                : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40 px-4 py-2 text-xs rounded-xl transition-all"
+              }
+            >
+              {weekday} - {formatted}
+            </button>
+          );
+        })}
+        {dateTokens.length === 0 && (
+          <span className="text-zinc-600 text-xs italic">Cấu hình ngày hợp lệ để hiển thị các tab</span>
+        )}
       </div>
 
       {/* Main Workspace split panel */}
