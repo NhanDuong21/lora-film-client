@@ -8,7 +8,7 @@ const SHOWTIMES = ["09:30", "13:15", "16:45", "19:30", "22:15"];
 export default function Hero({ onBookTicket, onNavigate }) {
   const { isAuthenticated } = useAuth();
   const { movies, cinemas } = useData();
-  const videoSource = '/0603.mp4';
+  const videoSource = 'https://res.cloudinary.com/dqc4hufot/video/upload/0603_ugvo4m.mp4';
 
   // Selection states
   const [selectedMovieId, setSelectedMovieId] = useState('');
