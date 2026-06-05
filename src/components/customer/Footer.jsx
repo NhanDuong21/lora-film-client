@@ -17,7 +17,7 @@ export default function Footer() {
             </span>
           </div>
           <p className="text-xs text-zinc-500 leading-relaxed">
-            Hệ thống rạp chiếu phim hiện đại mang đến trải nghiệm điện ảnh vượt chuẩn vượt giới hạn với công nghệ đỉnh cao.
+            Hệ thốngggggg rạp chiếu phim hiện đại mang đến trải nghiệm điện ảnh vượt chuẩn vượt giới hạn với công nghệ đỉnh cao.
           </p>
           <div className="flex items-center gap-3 mt-4">
             <a
