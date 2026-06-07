@@ -77,7 +77,10 @@ export function AuthProvider({ children }) {
     const sessionUser = {
       email: matchedUser.email,
       fullName: matchedUser.fullName,
-      role: matchedUser.role
+      role: matchedUser.role,
+      phone: matchedUser.phone || '',
+      gender: matchedUser.gender || 'NAM',
+      dateOfBirth: matchedUser.dateOfBirth || ''
     };
 
     setUser(sessionUser);
@@ -92,7 +95,7 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('lora_session');
   };
 
-  const register = (fullName, email, password) => {
+  const register = (fullName, email, password, phone, gender, dateOfBirth) => {
     const exists = usersList.some((u) => u.email.toLowerCase() === email.toLowerCase());
     if (exists) {
       return { success: false, message: 'Email này đã được sử dụng!' };
@@ -102,7 +105,10 @@ export function AuthProvider({ children }) {
       fullName,
       email: email.toLowerCase(),
       password,
-      role: 'CUSTOMER'
+      role: 'CUSTOMER',
+      phone: phone || '',
+      gender: gender || 'NAM',
+      dateOfBirth: dateOfBirth || ''
     };
 
     const updatedList = [...usersList, newUser];
