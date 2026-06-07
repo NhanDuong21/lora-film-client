@@ -70,16 +70,20 @@ export default function AdminSidebar({
       
       <div>
         {/* Brand Top Header */}
-        <div className="p-6 border-b border-zinc-800 bg-zinc-950/40">
-          <div className="flex items-center justify-start text-left gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-amber-500 flex items-center justify-center font-black text-black text-base shadow-lg shadow-amber-500/20 shrink-0">
-              L
-            </div>
-            <div className="truncate">
-              <span className="text-sm font-black text-zinc-50 uppercase tracking-wide block truncate">LoraFilm</span>
-              <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wide block truncate">Trang Quản Trị</span>
-            </div>
-          </div>
+        <div className="px-6 py-6 border-b border-zinc-800/60 flex items-center justify-between shrink-0">
+          <a href="#/" className="flex items-center gap-2.5 bg-transparent p-0 m-0 shadow-none border-none select-none decoration-none group">
+            <img 
+              src="/images/main-logo.png" 
+              alt="LoraFilm Icon" 
+              className="h-8 md:h-9 w-auto object-contain bg-transparent" 
+            />
+            <span className="text-lg md:text-xl font-black tracking-tight text-white font-sans leading-none">
+              Lora<span className="text-amber-500 font-black ml-0.5">Film</span>
+            </span>
+          </a>
+          <span className="bg-amber-500/10 border border-amber-500/30 text-amber-400 font-mono text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider select-none">
+            Admin
+          </span>
         </div>
 
         {/* Scrollable Navigation List */}

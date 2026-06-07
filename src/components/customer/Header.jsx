@@ -117,12 +117,20 @@ export default function Header({ onNavigate }) {
       {/* LEFT SECTION: Brand Logo & Mua Ve Coupon Stub */}
       <div className="flex items-center gap-6">
         {/* Brand Logo */}
-        <a href="/" onClick={handleLogoClick} className="flex items-center gap-2 group shrink-0 select-none">
-          <div className="bg-orange-500/10 p-2 rounded-xl group-hover:bg-orange-500/20 transition-all duration-300">
-            <Film className="w-6 h-6 text-orange-500" />
-          </div>
-          <span className="text-xl font-black tracking-tight text-white uppercase">
-            Lora<span className="text-orange-500">Film</span>
+        <a href="#/" onClick={handleLogoClick} className="flex items-center gap-2.5 shrink-0 bg-transparent p-0 m-0 border-none shadow-none outline-none group mr-4 md:mr-6 select-none decoration-none transition-transform duration-200 hover:scale-[1.02]">
+          {/* Left: Upscaled Mascot Asset Icon Container */}
+          <img 
+            src="/images/main-logo.png" 
+            alt="LoraFilm Mascot" 
+            className="h-9 sm:h-10 md:h-11 w-auto object-contain bg-transparent will-change-transform"
+          />
+          
+          {/* Right: Bold, Large High-Contrast Branding Typography */}
+          <span className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white font-sans flex items-center leading-none">
+            Lora
+            <span className="text-amber-500 font-black ml-0.5 group-hover:text-amber-400 transition-colors">
+              Film
+            </span>
           </span>
         </a>
 
