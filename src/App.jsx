@@ -11,7 +11,7 @@ import SeatSelectionView from './views/SeatSelectionView';
 import LoginView from './views/LoginView';
 import RegisterView from './views/RegisterView';
 import AdminLayout from './components/admin/AdminLayout';
-import EmployeeDashboardView from './components/employee/EmployeeDashboardView';
+import EmployeeLayout from './components/employee/EmployeeLayout';
 import CustomerProfileView from './views/CustomerProfileView';
 import MovieDiscoveryView from './views/MovieDiscoveryView';
 import ActorRegistryView from './views/ActorRegistryView';
@@ -78,8 +78,12 @@ function AppInner() {
         } else {
           setCurrentView({ name: 'admin', data: null });
         }
-      } else if (hash === '#/employee') {
-        setCurrentView({ name: 'employee', data: null });
+      } else if (hash === '#/employee' || hash === '#/employee/pos') {
+        setCurrentView({ name: 'employee-pos', data: null });
+      } else if (hash === '#/employee/checkin') {
+        setCurrentView({ name: 'employee-checkin', data: null });
+      } else if (hash === '#/employee/schedules') {
+        setCurrentView({ name: 'employee-schedules', data: null });
       } else if (hash === '#/login') {
         setCurrentView({ name: 'login', data: null });
       } else if (hash === '#/register') {
@@ -175,6 +179,15 @@ function AppInner() {
       case 'employee':
         targetHash = '#/employee';
         break;
+      case 'employee-pos':
+        targetHash = '#/employee/pos';
+        break;
+      case 'employee-checkin':
+        targetHash = '#/employee/checkin';
+        break;
+      case 'employee-schedules':
+        targetHash = '#/employee/schedules';
+        break;
       case 'events':
         targetHash = '#/events';
         break;
@@ -229,7 +242,7 @@ function AppInner() {
   if (['admin', 'admin-events', 'admin-movies'].includes(currentView.name) && userRole !== 'ADMIN') {
       return <div className="p-20 text-center text-red-500 font-bold">403 FORBIDDEN: Bạn không có quyền truy cập trang quản trị Admin!</div>;
   }
-  if (currentView.name === 'employee' && userRole !== 'EMPLOYEE') {
+  if (currentView.name.startsWith('employee') && userRole !== 'EMPLOYEE') {
       return <div className="p-20 text-center text-red-500 font-bold">403 FORBIDDEN: Bạn không có quyền truy cập trang Nhân Viên!</div>;
   }
 
@@ -271,14 +284,14 @@ function AppInner() {
       if (loggedInUser.role === 'ADMIN') {
         handleViewChange({ name: 'admin', data: null });
       } else if (loggedInUser.role === 'EMPLOYEE') {
-        handleViewChange({ name: 'employee', data: null });
+        handleViewChange({ name: 'employee-pos', data: null });
       } else {
         handleViewChange({ name: 'home', data: null });
       }
     }
   };
 
-  const isDashboardView = ['admin', 'employee', 'admin-events', 'admin-movies', 'admin-actors'].includes(currentView.name) || currentView.name.startsWith('admin');
+  const isDashboardView = ['admin', 'employee', 'admin-events', 'admin-movies', 'admin-actors'].includes(currentView.name) || currentView.name.startsWith('admin') || currentView.name.startsWith('employee');
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col selection:bg-brand-coral selection:text-white">
@@ -380,10 +393,14 @@ function AppInner() {
           />
         )}
 
-        {currentView.name === 'employee' && (
-          <EmployeeDashboardView 
+        {(currentView.name === 'employee' || currentView.name === 'employee-pos' || currentView.name === 'employee-checkin' || currentView.name === 'employee-schedules') && (
+          <EmployeeLayout 
+            initialTab={
+              currentView.name === 'employee-checkin' ? 'checkin' :
+              (currentView.name === 'employee-schedules' ? 'schedules' : 'pos')
+            }
             onBackHome={() => handleViewChange({ name: 'home', data: null })}
-            onTicketingSelect={(bookingData) => handleViewChange({ name: 'seats', data: bookingData })}
+            onNavigate={(viewName) => handleViewChange({ name: viewName, data: null })}
           />
         )}
 
