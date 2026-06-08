@@ -35,7 +35,7 @@ export default function BookingSteps() {
       </div>
 
       {/* Glassmorphism Steps Grid Wrapper */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mt-12 relative px-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mt-12 relative px-4 perspective-1500 transform-style-3d">
         
         {/* Vector Flow Connector 1 (Desktop only progress line connecting Step 1 to 2) */}
         <div className="absolute top-[4.5rem] left-[25%] w-[16%] h-[2px] bg-gradient-to-r from-amber-500/50 to-orange-500/50 hidden md:block z-0" />
@@ -45,10 +45,11 @@ export default function BookingSteps() {
 
         {steps.map((step) => {
           const Icon = step.icon;
+          const cardClass = step.id === 1 ? 'booking-step-card-1' : step.id === 2 ? 'booking-step-card-2' : 'booking-step-card-3';
           return (
             <div
               key={step.id}
-              className="w-full bg-zinc-900/30 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 flex flex-col items-center text-center transition-all duration-500 relative overflow-hidden group hover:border-amber-500/50 hover:shadow-[0_0_30px_rgba(245,158,11,0.05)] hover:bg-zinc-900/50 z-10"
+              className={`w-full bg-zinc-900/30 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 flex flex-col items-center text-center transition-all duration-500 relative overflow-hidden group hover:border-amber-500/50 hover:shadow-[0_0_30px_rgba(245,158,11,0.05)] hover:bg-zinc-900/50 z-10 ${cardClass}`}
             >
               {/* Decorative internal card light glow */}
               <div className="absolute -top-12 -left-12 w-24 h-24 bg-amber-500/5 rounded-full filter blur-xl pointer-events-none group-hover:bg-amber-500/10 transition-all duration-500"></div>

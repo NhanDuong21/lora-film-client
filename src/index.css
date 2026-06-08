@@ -49,3 +49,61 @@
 .smooth-transition {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Immersive 3D Spatial Layout Classes */
+.perspective-1200 {
+  perspective: 1200px;
+}
+.perspective-1000 {
+  perspective: 1000px;
+}
+.perspective-1500 {
+  perspective: 1500px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+/* Hero Content Monolith */
+.hero-3d-content {
+  transform-style: preserve-3d;
+  transform: translateZ(60px);
+  transition: transform 0.7s ease-out;
+}
+.hero-3d-content:hover {
+  transform: translateZ(60px) rotateX(2deg) rotateY(-2deg);
+}
+
+/* Volumetric Movie Cards */
+.volumetric-movie-card {
+  transform-style: preserve-3d;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.volumetric-movie-card:hover {
+  transform: rotateY(12deg) rotateX(-6deg) translateZ(30px);
+}
+
+/* Asymmetric Isometric Step Cards */
+.booking-step-card-1 {
+  transform: rotateY(-10deg) rotateX(5deg) translateZ(20px);
+  transition: all 0.5s ease-out;
+}
+.booking-step-card-1:hover {
+  transform: rotateY(0) rotateX(0) translateZ(20px);
+}
+
+.booking-step-card-2 {
+  transform: translateY(-12px) translateZ(50px);
+  border-color: rgba(245, 158, 11, 0.3) !important;
+  box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.15) !important;
+  transition: all 0.5s ease-out;
+}
+
+.booking-step-card-3 {
+  transform: rotateY(10deg) rotateX(5deg) translateZ(20px);
+  transition: all 0.5s ease-out;
+}
+.booking-step-card-3:hover {
+  transform: rotateY(0) rotateX(0) translateZ(20px);
+}

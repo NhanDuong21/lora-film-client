@@ -67,27 +67,52 @@ export default function MovieGrid({ onSelectMovie, onNavigate, activeTab: propAc
 
       {/* Main Grid Workspace Framework */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-zinc-100 bg-zinc-950">
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-6 md:px-12 py-10">
           {activeMovies.map((movie) => (
             <div
               key={movie.id}
               onClick={() => onSelectMovie && onSelectMovie(movie.id)}
-              className="w-full flex flex-col group cursor-pointer overflow-hidden transition-all duration-300"
+              className="w-full flex flex-col group cursor-pointer overflow-visible"
             >
-              {/* Image & Hover Overlay Wrapper */}
-              <div className="relative overflow-hidden rounded-xl shadow-lg border border-zinc-800/40 group-hover:border-amber-500/50 group">
-                <img
-                  src={movie.posterUrl}
-                  alt={movie.title}
-                  className="w-full aspect-[2/3] object-cover group-hover:scale-[1.05] transition-all duration-500"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = 'https://placehold.co/500x750?text=LoraFilm';
-                  }}
-                />
+              {/* The Dynamic Colored Glow Framework / Pop-out Card */}
+              <div className="group relative w-full aspect-[2/3] rounded-2xl bg-zinc-900 border border-zinc-800/80 transition-all duration-500 ease-out hover:translate-y-[-8px] hover:shadow-[0_35px_60px_-15px_rgba(245,158,11,0.25)] hover:border-amber-500/40 cursor-pointer overflow-visible">
+                
+                {/* Layer 1: The Background Frame */}
+                <div className="z-10 absolute inset-0 rounded-2xl overflow-hidden">
+                  <img 
+                    src={movie.posterUrl} 
+                    alt={movie.title}
+                    className="w-full h-full object-cover rounded-2xl transition-transform duration-500 group-hover:scale-[1.02]" 
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://placehold.co/500x750?text=LoraFilm';
+                    }}
+                  />
+                </div>
+                
+                {/* Layer 2: The Dark Cinema Gradients Interceptor */}
+                <div className="z-20 absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent opacity-90 rounded-2xl" />
+                
+                {/* Layer 3: The Extended Foreground Elements */}
+                <div className="z-30 absolute bottom-0 left-0 w-full p-5 flex flex-col transform transition-transform duration-500 group-hover:scale-110 group-hover:translate-y-[-4px]">
+                  {/* Age Rating Badge */}
+                  <span className="text-[10px] font-mono font-black uppercase tracking-widest text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded shadow-sm w-fit mb-2">
+                    {movie.ageRating || 'T13'}
+                  </span>
+                  
+                  {/* Text Title (Bypass single-line truncation locks, wraps beautifully) */}
+                  <h3 className="text-sm md:text-base font-black text-white whitespace-normal break-words leading-tight drop-shadow-md mt-1 block">
+                    {movie.title}
+                  </h3>
+                  
+                  {/* Genre */}
+                  <p className="text-[10px] text-zinc-400 mt-1 truncate">
+                    {movie.genres ? movie.genres.join(', ') : movie.genre}
+                  </p>
+                </div>
 
                 {/* Animated Poster Hover Overlay Architecture */}
-                <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 p-4">
+                <div className="absolute inset-0 bg-black/75 flex flex-col items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-40 p-4 rounded-2xl">
                   {/* Nút "Mua Vé" */}
                   <button
                     onClick={(e) => {
@@ -127,16 +152,7 @@ export default function MovieGrid({ onSelectMovie, onNavigate, activeTab: propAc
                     Xem Trailer
                   </button>
                 </div>
-              </div>
 
-              {/* Text Description Box - Aligns flawlessly beneath the image edge */}
-              <div className="pt-4 flex flex-col">
-                <h3 className="text-sm md:text-base font-bold text-zinc-100 truncate group-hover:text-amber-500 transition-colors">
-                  {movie.title}
-                </h3>
-                <p className="text-xs text-zinc-400 mt-1 truncate">
-                  {movie.genres ? movie.genres.join(', ') : movie.genre}
-                </p>
               </div>
             </div>
           ))}
