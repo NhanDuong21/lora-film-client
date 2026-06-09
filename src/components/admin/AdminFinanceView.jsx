@@ -16,17 +16,19 @@ export default function AdminFinanceView({
 
   // 1. Filter Tickets
   const filteredTickets = useMemo(() => {
+    if (!tickets) return [];
     return tickets.filter(t => 
-      t.id.toLowerCase().includes(ticketSearch.toLowerCase()) || 
-      t.customerName.toLowerCase().includes(ticketSearch.toLowerCase())
+      t?.id?.toLowerCase()?.includes(ticketSearch?.toLowerCase() ?? '') || 
+      t?.customerName?.toLowerCase()?.includes(ticketSearch?.toLowerCase() ?? '')
     );
   }, [tickets, ticketSearch]);
 
   // 2. Filter Customers
   const filteredCustomers = useMemo(() => {
+    if (!customers) return [];
     return customers.filter(c => 
-      c.name.toLowerCase().includes(customerSearch.toLowerCase()) || 
-      c.email.toLowerCase().includes(customerSearch.toLowerCase())
+      c?.name?.toLowerCase()?.includes(customerSearch?.toLowerCase() ?? '') || 
+      c?.email?.toLowerCase()?.includes(customerSearch?.toLowerCase() ?? '')
     );
   }, [customers, customerSearch]);
 
@@ -105,35 +107,35 @@ export default function AdminFinanceView({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-800/60">
-                  {filteredTickets.length === 0 ? (
+                  {filteredTickets && filteredTickets.length > 0 ? (
+                    filteredTickets.map((t, index) => (
+                      <tr key={t?.id ?? index} className="hover:bg-zinc-900/20 transition-colors border-b border-zinc-800/40">
+                        <td className="py-4 px-6 font-mono text-brand-yellow font-bold">{t?.id ?? ''}</td>
+                        <td className="py-4 px-6 font-bold text-zinc-200">
+                          <div>{t?.customerName ?? 'Chưa rõ khách'}</div>
+                          <div className="text-[10px] text-zinc-400 mt-0.5">{t?.customerEmail ?? ''}</div>
+                        </td>
+                        <td className="py-4 px-6 text-zinc-200 font-medium">{t?.movieTitle ?? ''}</td>
+                        <td className="py-4 px-6 font-semibold text-brand-coral">{t?.time ?? ''} | {t?.date ?? ''}</td>
+                        <td className="py-4 px-6 text-zinc-200 font-medium">{(t?.seats ?? []).join(', ')}</td>
+                        <td className="py-4 px-6 text-emerald-400 font-black text-sm">{(t?.totalAmount ?? 0).toLocaleString('vi-VN')} đ</td>
+                        <td className="py-4 px-6">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase border ${
+                            t?.status === 'DA_KIEM_TRA' 
+                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+                              : 'bg-zinc-800 text-zinc-400 border-zinc-700/50'
+                          }`}>
+                            {t?.status === 'DA_KIEM_TRA' ? 'ĐÃ KIỂM TRA' : 'CHƯA CHECK-IN'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
                     <tr>
                       <td colSpan="7" className="py-12 text-center text-zinc-500 font-semibold">
                         Không tìm thấy vé nào phù hợp.
                       </td>
                     </tr>
-                  ) : (
-                    filteredTickets.map(t => (
-                      <tr key={t.id} className="hover:bg-zinc-900/20 transition-colors border-b border-zinc-800/40">
-                        <td className="py-4 px-6 font-mono text-brand-yellow font-bold">{t.id}</td>
-                        <td className="py-4 px-6 font-bold text-zinc-200">
-                          <div>{t.customerName}</div>
-                          <div className="text-[10px] text-zinc-400 mt-0.5">{t.customerEmail}</div>
-                        </td>
-                        <td className="py-4 px-6 text-zinc-200 font-medium">{t.movieTitle}</td>
-                        <td className="py-4 px-6 font-semibold text-brand-coral">{t.time} | {t.date}</td>
-                        <td className="py-4 px-6 text-zinc-200 font-medium">{t.seats.join(', ')}</td>
-                        <td className="py-4 px-6 text-emerald-400 font-black text-sm">{t.totalAmount.toLocaleString('vi-VN')} đ</td>
-                        <td className="py-4 px-6">
-                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase border ${
-                            t.status === 'DA_KIEM_TRA' 
-                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
-                              : 'bg-zinc-800 text-zinc-400 border-zinc-700/50'
-                          }`}>
-                            {t.status === 'DA_KIEM_TRA' ? 'ĐÃ KIỂM TRA' : 'CHƯA CHECK-IN'}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
                   )}
                 </tbody>
               </table>
@@ -151,36 +153,44 @@ export default function AdminFinanceView({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {concessions.map(c => {
-              // Ensure we translate key names exactly:
-              // Combo Solo, Combo Couple, Combo Family, Popcorn Ngọt, Coca Cola
-              let displayName = c.name;
-              if (c.name === 'Popcorn Ngot') displayName = 'Popcorn Ngọt';
-              
-              const totalIncome = c.price * c.salesCount;
+            {concessions && concessions.length > 0 ? (
+              concessions.map((c, index) => {
+                // Ensure we translate key names exactly:
+                // Combo Solo, Combo Couple, Combo Family, Popcorn Ngọt, Coca Cola
+                let displayName = c?.name ?? 'Sản phẩm dịch vụ';
+                if (c?.name === 'Popcorn Ngot') displayName = 'Popcorn Ngọt';
+                
+                const price = c?.price ?? 0;
+                const salesCount = c?.salesCount ?? 0;
+                const totalIncome = price * salesCount;
 
-              return (
-                <div 
-                  key={c.id} 
-                  className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 p-5 rounded-2xl flex flex-col justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300"
-                >
-                  <div>
-                    <h4 className="font-black text-zinc-50 text-sm">{displayName}</h4>
-                    <p className="text-[11px] text-zinc-400 mt-1.5 leading-relaxed">{c.details}</p>
-                  </div>
-                  <div className="mt-6 pt-4 border-t border-zinc-800/60 flex justify-between items-center">
+                return (
+                  <div 
+                    key={c?.id ?? index} 
+                    className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 p-5 rounded-2xl flex flex-col justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300"
+                  >
                     <div>
-                      <span className="text-[10px] text-zinc-500 uppercase block font-bold">Đã bán</span>
-                      <span className="text-xs font-black text-amber-500">ĐÃ BÁN ({c.salesCount} phần)</span>
+                      <h4 className="font-black text-zinc-50 text-sm">{displayName}</h4>
+                      <p className="text-[11px] text-zinc-400 mt-1.5 leading-relaxed">{c?.details ?? ''}</p>
                     </div>
-                    <div className="text-right">
-                      <span className="text-[10px] text-zinc-500 uppercase block font-bold">Doanh thu</span>
-                      <span className="text-xs font-black text-emerald-400">DOANH THU ({totalIncome.toLocaleString('vi-VN')} đ)</span>
+                    <div className="mt-6 pt-4 border-t border-zinc-800/60 flex justify-between items-center">
+                      <div>
+                        <span className="text-[10px] text-zinc-500 uppercase block font-bold">Đã bán</span>
+                        <span className="text-xs font-black text-amber-500">ĐÃ BÁN ({salesCount} phần)</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[10px] text-zinc-500 uppercase block font-bold">Doanh thu</span>
+                        <span className="text-xs font-black text-emerald-400">DOANH THU ({totalIncome.toLocaleString('vi-VN')} đ)</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            ) : (
+              <div className="col-span-3 text-center p-8 text-zinc-500 font-medium bg-zinc-900/30 rounded-2xl border border-zinc-800/80">
+                Chưa ghi nhận dữ liệu bắp nước.
+              </div>
+            )}
           </div>
 
           {/* Baseline summary ribbon card */}
@@ -190,7 +200,7 @@ export default function AdminFinanceView({
               <span className="text-xs font-black text-zinc-50 uppercase tracking-wide">TỔNG DOANH THU KHU ẨM THỰC:</span>
             </div>
             <span className="text-xl font-black text-brand-coral">
-              {concessions.reduce((acc, c) => acc + (c.price * c.salesCount), 0).toLocaleString('vi-VN')} đ
+              {(concessions ?? []).reduce((acc, c) => acc + ((c?.price ?? 0) * (c?.salesCount ?? 0)), 0).toLocaleString('vi-VN')} đ
             </span>
           </div>
         </div>
@@ -232,19 +242,13 @@ export default function AdminFinanceView({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-900/60">
-                  {filteredCustomers.length === 0 ? (
-                    <tr>
-                      <td colSpan="6" className="py-12 text-center text-zinc-500 font-semibold">
-                        Không tìm thấy khách hàng nào phù hợp.
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredCustomers.map(c => {
-                      const isVIP = c.tier?.toUpperCase() === 'VIP';
+                  {filteredCustomers && filteredCustomers.length > 0 ? (
+                    filteredCustomers.map((c, index) => {
+                      const isVIP = c?.tier?.toUpperCase() === 'VIP';
                       return (
-                        <tr key={c.id} className="hover:bg-zinc-900/20 transition-colors">
-                          <td className="py-4 px-6 font-bold text-zinc-100">{c.name}</td>
-                          <td className="py-4 px-6 font-mono text-zinc-400">{c.email}</td>
+                        <tr key={c?.id ?? index} className="hover:bg-zinc-900/20 transition-colors">
+                          <td className="py-4 px-6 font-bold text-zinc-100">{c?.name ?? 'Không rõ khách'}</td>
+                          <td className="py-4 px-6 font-mono text-zinc-400">{c?.email ?? ''}</td>
                           <td className="py-4 px-6">
                             <span className={`px-2.5 py-0.5 rounded text-[10px] font-black uppercase border ${
                               isVIP
@@ -254,8 +258,8 @@ export default function AdminFinanceView({
                               {isVIP ? 'VIP' : 'STANDARD'}
                             </span>
                           </td>
-                          <td className="py-4 px-6 font-bold text-zinc-300">{c.points} điểm</td>
-                          <td className="py-4 px-6 text-zinc-300 font-medium">{c.ticketsBought} vé</td>
+                          <td className="py-4 px-6 font-bold text-zinc-300">{c?.points ?? 0} điểm</td>
+                          <td className="py-4 px-6 text-zinc-300 font-medium">{c?.ticketsBought ?? 0} vé</td>
                           <td className="py-4 px-6 text-center">
                             <button
                               onClick={() => handleToggleCustomerTier(c.id)}
@@ -267,6 +271,12 @@ export default function AdminFinanceView({
                         </tr>
                       );
                     })
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className="py-12 text-center text-zinc-500 font-semibold">
+                        Không tìm thấy khách hàng nào phù hợp.
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </table>
@@ -305,43 +315,54 @@ export default function AdminFinanceView({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-900/60">
-                  {employees.map(emp => {
-                    const finalSalary = emp.hoursWorked * emp.hourlyWage * emp.activeMultiplier;
-                    return (
-                      <tr key={emp.id} className="hover:bg-zinc-900/20 transition-colors">
-                        <td className="py-4 px-6 font-bold text-zinc-100">
-                          <div>{emp.name}</div>
-                          <div className="text-[10px] text-zinc-500 font-mono mt-0.5">{emp.email}</div>
-                        </td>
-                        <td className="py-4 px-6 font-bold text-zinc-300">
-                          {emp.role === 'Cashier' ? 'Thu Ngân' : emp.role === 'Supervisor' ? 'Giám Sát' : emp.role}
-                        </td>
-                        <td className="py-4 px-6 text-zinc-300 font-medium">{emp.hoursWorked} giờ</td>
-                        <td className="py-4 px-6">
-                          <input
-                            type="number"
-                            value={emp.hourlyWage}
-                            onChange={(e) => handleAdjustWage(emp.id, e.target.value)}
-                            className="w-28 bg-zinc-950 border border-zinc-900 rounded-xl py-1 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral"
-                          />
-                        </td>
-                        <td className="py-4 px-6">
-                          <input
-                            type="number"
-                            step="0.1"
-                            value={emp.activeMultiplier}
-                            onChange={(e) => handleAdjustMultiplier(emp.id, e.target.value)}
-                            className="w-20 bg-zinc-950 border border-zinc-900 rounded-xl py-1 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral"
-                          />
-                        </td>
-                        <td className="py-4 px-6 text-right">
-                          <span className="text-emerald-400 font-black text-sm">
-                            LƯƠNG THỰC NHẬN ({finalSalary.toLocaleString('vi-VN')} đ)
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {employees && employees.length > 0 ? (
+                    employees.map((emp, index) => {
+                      const hoursWorked = emp?.hoursWorked ?? 0;
+                      const hourlyWage = emp?.hourlyWage ?? 0;
+                      const activeMultiplier = emp?.activeMultiplier ?? 1.0;
+                      const finalSalary = hoursWorked * hourlyWage * activeMultiplier;
+                      return (
+                        <tr key={emp?.id ?? index} className="hover:bg-zinc-900/20 transition-colors">
+                          <td className="py-4 px-6 font-bold text-zinc-100">
+                            <div>{emp?.name ?? 'Chưa rõ nhân viên'}</div>
+                            <div className="text-[10px] text-zinc-500 font-mono mt-0.5">{emp?.email ?? ''}</div>
+                          </td>
+                          <td className="py-4 px-6 font-bold text-zinc-300">
+                            {emp?.role === 'Cashier' ? 'Thu Ngân' : emp?.role === 'Supervisor' ? 'Giám Sát' : (emp?.role ?? '')}
+                          </td>
+                          <td className="py-4 px-6 text-zinc-300 font-medium">{hoursWorked} giờ</td>
+                          <td className="py-4 px-6">
+                            <input
+                              type="number"
+                              value={hourlyWage}
+                              onChange={(e) => handleAdjustWage(emp.id, e.target.value)}
+                              className="w-28 bg-zinc-950 border border-zinc-900 rounded-xl py-1 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral"
+                            />
+                          </td>
+                          <td className="py-4 px-6">
+                            <input
+                              type="number"
+                              step="0.1"
+                              value={activeMultiplier}
+                              onChange={(e) => handleAdjustMultiplier(emp.id, e.target.value)}
+                              className="w-20 bg-zinc-950 border border-zinc-900 rounded-xl py-1 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral"
+                            />
+                          </td>
+                          <td className="py-4 px-6 text-right">
+                            <span className="text-emerald-400 font-black text-sm">
+                              LƯƠNG THỰC NHẬN ({finalSalary.toLocaleString('vi-VN')} đ)
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className="text-center p-8 text-zinc-500 font-medium">
+                        Chưa ghi nhận dữ liệu lương nhân sự.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
