@@ -49,7 +49,7 @@ export default function AdminSettingsView({ activeTab, triggerToast }) {
       </div>
 
       {/* 2. Card Grid Assembly Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         
         {/* CARD A: Cấu Hình Vận Hành Lịch Chiếu */}
         <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl shadow-xl flex flex-col gap-5">

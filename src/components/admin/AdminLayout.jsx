@@ -45,6 +45,7 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
     if (hash === '#/admin/payroll') return 'payroll';
     if (hash === '#/admin/delays') return 'delays';
     if (hash === '#/admin/pricing') return 'pricing';
+    if (hash === '#/admin/settings') return 'settings';
     return initialTab;
   });
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -66,6 +67,7 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
       else if (hash === '#/admin/payroll') setActiveTab('payroll');
       else if (hash === '#/admin/delays') setActiveTab('delays');
       else if (hash === '#/admin/pricing') setActiveTab('pricing');
+      else if (hash === '#/admin/settings') setActiveTab('settings');
     };
 
     window.addEventListener('hashchange', handleHashChange);
@@ -296,7 +298,7 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
           )}
 
           {/* TAB: SYSTEM SETTINGS */}
-          {['delays', 'pricing'].includes(activeTab) && (
+          {activeTab === 'settings' && (
             <AdminSettingsView 
               activeTab={activeTab}
               triggerToast={triggerToast} 
