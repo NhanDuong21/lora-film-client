@@ -13,6 +13,7 @@ export default function AdminFinanceView({
 }) {
   const [ticketSearch, setTicketSearch] = useState('');
   const [customerSearch, setCustomerSearch] = useState('');
+  const [isPayrollApproved, setIsPayrollApproved] = useState(false);
 
   // 1. Filter Tickets
   const filteredTickets = useMemo(() => {
@@ -51,6 +52,7 @@ export default function AdminFinanceView({
 
   // 4. Employee Payroll Handlers
   const handleAdjustWage = (id, newWage) => {
+    if (isPayrollApproved) return;
     const updated = employees.map(emp => 
       emp.id === id ? { ...emp, hourlyWage: parseInt(newWage) || 0 } : emp
     );
@@ -58,6 +60,7 @@ export default function AdminFinanceView({
   };
 
   const handleAdjustMultiplier = (id, newMultiplier) => {
+    if (isPayrollApproved) return;
     const updated = employees.map(emp => 
       emp.id === id ? { ...emp, activeMultiplier: parseFloat(newMultiplier) || 1.0 } : emp
     );
@@ -65,6 +68,7 @@ export default function AdminFinanceView({
   };
 
   const handlePayrollApprove = () => {
+    setIsPayrollApproved(true);
     triggerToast('Duyệt chi lương tháng này thành công! Hóa đơn kế toán đã được kết xuất.');
   };
 
@@ -290,15 +294,24 @@ export default function AdminFinanceView({
         <div className="space-y-6">
           <div className="flex justify-between items-center border-b border-zinc-900 pb-4">
             <div>
-              <h3 className="text-base font-bold text-zinc-100 uppercase tracking-wider">Sổ Kế Toán Nhân Sự</h3>
-              <p className="text-xs text-zinc-500 mt-1 uppercase tracking-wider">Xem giờ công, quản lý hệ số và duyệt chi tiền lương nhân sự</p>
+              <h3 className="text-base font-bold text-zinc-100 uppercase tracking-wider">BẢNG LƯƠNG NHÂN VIÊN</h3>
+              <p className="text-xs text-zinc-500 mt-1 uppercase tracking-wider">Xem giờ công thực tế, tùy chỉnh hệ số lương và duyệt chi lương nhân sự hệ thống LoraFilm</p>
             </div>
-            <button
-              onClick={handlePayrollApprove}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black py-2.5 px-4 rounded-xl uppercase tracking-wider transition-all"
-            >
-              DUYỆT CHI LƯƠNG
-            </button>
+            {isPayrollApproved ? (
+              <button
+                disabled
+                className="bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700/50 shadow-none px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2"
+              >
+                BẢNG LƯƠNG ĐÃ DUYỆT
+              </button>
+            ) : (
+              <button
+                onClick={handlePayrollApprove}
+                className="bg-emerald-500 hover:bg-emerald-600 text-black font-black px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg shadow-emerald-500/10 flex items-center gap-2"
+              >
+                CHỐT SỔ & DUYỆT CHI LƯƠNG
+              </button>
+            )}
           </div>
 
           <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-900 rounded-2xl shadow-xl overflow-hidden">
@@ -335,8 +348,9 @@ export default function AdminFinanceView({
                             <input
                               type="number"
                               value={hourlyWage}
+                              disabled={isPayrollApproved}
                               onChange={(e) => handleAdjustWage(emp.id, e.target.value)}
-                              className="w-28 bg-zinc-950 border border-zinc-900 rounded-xl py-1 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral"
+                              className="bg-zinc-950 border border-zinc-800 focus:border-amber-500 rounded-lg px-3 py-1.5 text-zinc-100 font-mono text-sm w-28 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             />
                           </td>
                           <td className="py-4 px-6">
@@ -344,14 +358,13 @@ export default function AdminFinanceView({
                               type="number"
                               step="0.1"
                               value={activeMultiplier}
+                              disabled={isPayrollApproved}
                               onChange={(e) => handleAdjustMultiplier(emp.id, e.target.value)}
-                              className="w-20 bg-zinc-950 border border-zinc-900 rounded-xl py-1 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral"
+                              className="bg-zinc-950 border border-zinc-800 focus:border-amber-500 rounded-lg px-3 py-1.5 text-zinc-100 font-mono text-sm w-20 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             />
                           </td>
-                          <td className="py-4 px-6 text-right">
-                            <span className="text-emerald-400 font-black text-sm">
-                              LƯƠNG THỰC NHẬN ({finalSalary.toLocaleString('vi-VN')} đ)
-                            </span>
+                          <td className="p-4 text-right text-emerald-400 font-mono font-bold text-sm">
+                            {finalSalary.toLocaleString('vi-VN')} đ
                           </td>
                         </tr>
                       );
