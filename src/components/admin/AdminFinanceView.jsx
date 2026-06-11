@@ -160,7 +160,6 @@ export default function AdminFinanceView({
           <div className="space-y-6 animate-fade-in">
             {/* Header Layer */}
             <div className="border-b border-zinc-900 pb-4">
-              <h3 className="text-base font-bold text-zinc-100 uppercase tracking-wider">DOANH THU BẮP NƯỚC & COMBO</h3>
               <p className="text-xs text-zinc-500 mt-1 uppercase tracking-wider">Hệ thống phân tích doanh thu ẩm thực chuyên sâu và quản lý sản lượng counter LoraFilm</p>
             </div>
 

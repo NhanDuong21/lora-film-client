@@ -82,7 +82,6 @@ export default function AdminMembersView({ customers, updateCustomersState, trig
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-zinc-900 pb-4">
         <div>
-          <h3 className="text-base font-bold text-zinc-100 uppercase tracking-wider">Danh Sách Hội Viên</h3>
           <p className="text-xs text-zinc-500 mt-1 uppercase tracking-wider">Quản lý cấp bậc, điểm tích lũy và thông tin cá nhân của hội viên LoraFilm</p>
         </div>
       </div>

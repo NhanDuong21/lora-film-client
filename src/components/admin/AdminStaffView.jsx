@@ -87,7 +87,6 @@ export default function AdminStaffView({ employees, updateEmployeesState, trigge
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-zinc-900 pb-4">
         <div>
-          <h3 className="text-base font-bold text-zinc-100 uppercase tracking-wider">Quản Lý Nhân Sự</h3>
           <p className="text-xs text-zinc-500 mt-1 uppercase tracking-wider">Danh sách nhân sự, phân quyền vai trò và thiết lập mức lương cơ bản toàn chuỗi</p>
         </div>
       </div>
