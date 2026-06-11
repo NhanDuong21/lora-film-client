@@ -152,8 +152,9 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
                     {activeTab === 'showtimes' && 'DANH SÁCH SUẤT CHIẾU'}
                     {activeTab === 'events-promo' && 'CHƯƠNG TRÌNH ƯU ĐÃI'}
                     {activeTab === 'clusters' && 'HỆ THỐNG CỤM RẠP'}
-                    {['tickets', 'concessions', 'customers', 'payroll'].includes(activeTab) && 'LỊCH SỬ GIAO DỊCH'}
-                    {['delays', 'pricing'].includes(activeTab) && 'CẤU HÌNH & BẢO MẬT'}
+                    {activeTab === 'concessions' && 'DOANH THU BẮP NƯỚC & COMBO'}
+                    {['tickets', 'customers', 'payroll'].includes(activeTab) && 'LỊCH SỬ GIAO DỊCH'}
+                    {['delays', 'pricing', 'settings'].includes(activeTab) && 'CẤU HÌNH & BẢO MẬT'}
                   </>
                 )}
               </h1>

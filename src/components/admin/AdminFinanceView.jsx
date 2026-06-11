@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Search, CircleDollarSign } from 'lucide-react';
+import { Search, CircleDollarSign, CupSoda, TrendingUp, DollarSign } from 'lucide-react';
 
 export default function AdminFinanceView({
   activeTab,
@@ -149,66 +149,118 @@ export default function AdminFinanceView({
       )}
 
       {/* Tab: Concessions (Doanh thu bắp nước - Concession Counter Stocks Tracker) */}
-      {activeTab === 'concessions' && (
-        <div className="space-y-6">
-          <div className="border-b border-zinc-800 pb-4">
-            <h3 className="text-base font-bold text-zinc-50 uppercase tracking-wide">DOANH THU DỊCH VỤ BẮP NƯỚC</h3>
-            <p className="text-xs text-zinc-400 mt-1 uppercase tracking-wide">Báo cáo sản lượng tiêu thụ các gói Combo thức ăn nhanh tại quầy</p>
-          </div>
+      {activeTab === 'concessions' && (() => {
+        const totalConcessionRevenue = (concessions ?? []).reduce((acc, c) => acc + ((c?.price ?? 0) * (c?.salesCount ?? 0)), 0);
+        const totalSalesCount = (concessions ?? []).reduce((acc, c) => acc + (c?.salesCount ?? 0), 0);
+        const bestSellerItem = [...(concessions ?? [])].sort((a, b) => (b.salesCount ?? 0) - (a.salesCount ?? 0))[0];
+        let bestSellerName = bestSellerItem?.name ?? 'Không rõ';
+        if (bestSellerName === 'Popcorn Ngot') bestSellerName = 'Popcorn Ngọt';
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {concessions && concessions.length > 0 ? (
-              concessions.map((c, index) => {
-                // Ensure we translate key names exactly:
-                // Combo Solo, Combo Couple, Combo Family, Popcorn Ngọt, Coca Cola
-                let displayName = c?.name ?? 'Sản phẩm dịch vụ';
-                if (c?.name === 'Popcorn Ngot') displayName = 'Popcorn Ngọt';
-                
-                const price = c?.price ?? 0;
-                const salesCount = c?.salesCount ?? 0;
-                const totalIncome = price * salesCount;
-
-                return (
-                  <div 
-                    key={c?.id ?? index} 
-                    className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 p-5 rounded-2xl flex flex-col justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300"
-                  >
-                    <div>
-                      <h4 className="font-black text-zinc-50 text-sm">{displayName}</h4>
-                      <p className="text-[11px] text-zinc-400 mt-1.5 leading-relaxed">{c?.details ?? ''}</p>
-                    </div>
-                    <div className="mt-6 pt-4 border-t border-zinc-800/60 flex justify-between items-center">
-                      <div>
-                        <span className="text-[10px] text-zinc-500 uppercase block font-bold">Đã bán</span>
-                        <span className="text-xs font-black text-amber-500">ĐÃ BÁN ({salesCount} phần)</span>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-[10px] text-zinc-500 uppercase block font-bold">Doanh thu</span>
-                        <span className="text-xs font-black text-emerald-400">DOANH THU ({totalIncome.toLocaleString('vi-VN')} đ)</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <div className="col-span-3 text-center p-8 text-zinc-500 font-medium bg-zinc-900/30 rounded-2xl border border-zinc-800/80">
-                Chưa ghi nhận dữ liệu bắp nước.
-              </div>
-            )}
-          </div>
-
-          {/* Baseline summary ribbon card */}
-          <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 p-6 rounded-2xl flex items-center justify-between shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300 mt-6">
-            <div className="flex items-center gap-3">
-              <CircleDollarSign className="w-5 h-5 text-brand-coral" />
-              <span className="text-xs font-black text-zinc-50 uppercase tracking-wide">TỔNG DOANH THU KHU ẨM THỰC:</span>
+        return (
+          <div className="space-y-6 animate-fade-in">
+            {/* Header Layer */}
+            <div className="border-b border-zinc-900 pb-4">
+              <h3 className="text-base font-bold text-zinc-100 uppercase tracking-wider">DOANH THU BẮP NƯỚC & COMBO</h3>
+              <p className="text-xs text-zinc-500 mt-1 uppercase tracking-wider">Hệ thống phân tích doanh thu ẩm thực chuyên sâu và quản lý sản lượng counter LoraFilm</p>
             </div>
-            <span className="text-xl font-black text-brand-coral">
-              {(concessions ?? []).reduce((acc, c) => acc + ((c?.price ?? 0) * (c?.salesCount ?? 0)), 0).toLocaleString('vi-VN')} đ
-            </span>
+
+            {/* Layer 1: High-Contrast KPI Summary Stream */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Card 1 */}
+              <div className="bg-zinc-900/60 border border-zinc-800 p-5 rounded-2xl flex items-center justify-between shadow-xl shadow-black/30">
+                <div className="space-y-1">
+                  <span className="text-[10px] font-mono font-black text-zinc-500 uppercase tracking-widest block">TỔNG DOANH SỐ KHU ẨM THỰC</span>
+                  <span className="text-xl font-mono font-bold text-amber-400 block">{totalConcessionRevenue.toLocaleString('vi-VN')} đ</span>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 border border-amber-500/20">
+                  <DollarSign className="w-5 h-5" />
+                </div>
+              </div>
+
+              {/* Card 2 */}
+              <div className="bg-zinc-900/60 border border-zinc-800 p-5 rounded-2xl flex items-center justify-between shadow-xl shadow-black/30">
+                <div className="space-y-1">
+                  <span className="text-[10px] font-mono font-black text-zinc-500 uppercase tracking-widest block">TỔNG SẢN LƯỢNG ĐÃ BÁN</span>
+                  <span className="text-xl font-mono font-bold text-zinc-100 block">{totalSalesCount} phần</span>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-brand-coral/10 flex items-center justify-center text-brand-coral border border-brand-coral/20">
+                  <CupSoda className="w-5 h-5" />
+                </div>
+              </div>
+
+              {/* Card 3 */}
+              <div className="bg-zinc-900/60 border border-zinc-800 p-5 rounded-2xl flex items-center justify-between shadow-xl shadow-black/30">
+                <div className="space-y-1">
+                  <span className="text-[10px] font-mono font-black text-zinc-500 uppercase tracking-widest block">SẢN PHẨM BEST-SELLER</span>
+                  <span className="text-xl font-bold text-emerald-400 block truncate">{bestSellerName}</span>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
+                  <TrendingUp className="w-5 h-5" />
+                </div>
+              </div>
+            </div>
+
+            {/* Layer 2: Visual Consumption Breakdown & Charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left Area (2/3 columns width) */}
+              <div className="lg:col-span-2 bg-zinc-900/60 border border-zinc-800 p-5 rounded-2xl flex flex-col gap-4 shadow-xl">
+                <div className="flex items-center justify-between pb-2 border-b border-zinc-800/60">
+                  <span className="text-[10px] font-mono font-black text-zinc-400 uppercase tracking-widest">BIỂU ĐỒ SẢN LƯỢNG TIÊU THỤ</span>
+                  <span className="text-[10px] text-zinc-500 font-mono">TỶ LỆ % ĐÓNG GÓP DOANH THU</span>
+                </div>
+                <div className="space-y-4">
+                  {(concessions ?? []).map((c, index) => {
+                    let displayName = c?.name ?? 'Sản phẩm dịch vụ';
+                    if (c?.name === 'Popcorn Ngot') displayName = 'Popcorn Ngọt';
+                    
+                    const price = c?.price ?? 0;
+                    const salesCount = c?.salesCount ?? 0;
+                    const totalIncome = price * salesCount;
+                    const percentage = totalConcessionRevenue > 0 ? ((totalIncome / totalConcessionRevenue) * 100).toFixed(1) : 0;
+
+                    return (
+                      <div key={c?.id ?? index} className="space-y-1">
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="text-zinc-200 font-medium">{displayName}</span>
+                          <span className="font-mono text-zinc-400 text-[11px]">{salesCount} phần ({percentage}%)</span>
+                        </div>
+                        <div className="w-full bg-zinc-950 h-2.5 rounded-full overflow-hidden border border-zinc-900">
+                          <div 
+                            className="bg-gradient-to-r from-amber-500 to-orange-500 h-full rounded-full transition-all duration-500" 
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Right Area (1/3 column width) */}
+              <div className="bg-zinc-900/60 border border-zinc-800 p-5 rounded-2xl flex flex-col gap-3 shadow-xl">
+                <span className="text-[10px] font-mono font-black text-zinc-500 uppercase tracking-widest pb-1 border-b border-zinc-800/60">DANH MỤC SẢN PHẨM</span>
+                <div className="flex flex-col gap-2 divide-y divide-zinc-800/50">
+                  {(concessions ?? []).map((c, index) => {
+                    let displayName = c?.name ?? 'Sản phẩm dịch vụ';
+                    if (c?.name === 'Popcorn Ngot') displayName = 'Popcorn Ngọt';
+
+                    const price = c?.price ?? 0;
+                    const salesCount = c?.salesCount ?? 0;
+                    const totalIncome = price * salesCount;
+
+                    return (
+                      <div key={c?.id ?? index} className="flex justify-between items-center text-xs text-zinc-300 py-2 border-b border-zinc-800/50 first:pt-0 last:border-b-0">
+                        <span>{displayName}</span>
+                        <span className="font-mono text-zinc-400 text-right">{salesCount} phần • <span className="text-emerald-400 font-semibold">{totalIncome.toLocaleString('vi-VN')} đ</span></span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Tab: Customers (Danh sách khách hàng - Member Registration Directory) */}
       {activeTab === 'customers' && (

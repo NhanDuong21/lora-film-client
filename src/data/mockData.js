@@ -421,11 +421,11 @@ export const INITIAL_EVENTS = [
 ];
 
 export const INITIAL_CONCESSIONS = [
-  { id: 1, name: "Combo Solo", details: "1 Bắp Ngọt Vừa + 1 Coke Vừa", price: 79000, salesCount: 42 },
-  { id: 2, name: "Combo Couple", details: "1 Bắp Ngọt Lớn + 2 Coke Vừa", price: 109000, salesCount: 68 },
-  { id: 3, name: "Combo Family", details: "2 Bắp Ngọt Lớn + 3 Coke Lớn", price: 189000, salesCount: 15 },
-  { id: 4, name: "Bắp Phô Mai", details: "1 Bắp vừa vị phô mai đặc biệt", price: 49000, salesCount: 110 },
-  { id: 5, name: "Coca Cola", details: "1 Lon Coca Cola mát lạnh", price: 29000, salesCount: 185 }
+  { id: 1, name: "Combo Solo", details: "1 Bắp Ngọt Vừa + 1 Coke Vừa", price: 79000, salesCount: 10 },
+  { id: 2, name: "Combo Couple", details: "1 Bắp Ngọt Lớn + 2 Coke Vừa", price: 109000, salesCount: 10 },
+  { id: 3, name: "Combo Family", details: "2 Bắp Ngọt Lớn + 3 Coke Lớn", price: 189000, salesCount: 5 },
+  { id: 4, name: "Bắp Phô Mai", details: "1 Bắp vừa vị phô mai đặc biệt", price: 49000, salesCount: 29 },
+  { id: 5, name: "Coca Cola", details: "1 Lon Coca Cola mát lạnh", price: 29000, salesCount: 106 }
 ];
 
 export const INITIAL_TICKETS = [
