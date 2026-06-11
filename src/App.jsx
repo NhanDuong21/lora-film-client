@@ -75,6 +75,8 @@ function AppInner() {
           setCurrentView({ name: 'admin-actors', data: null });
         } else if (hash === '#/admin/showtimes') {
           setCurrentView({ name: 'admin-showtimes', data: null });
+        } else if (hash === '#/admin/settings') {
+          setCurrentView({ name: 'admin-settings', data: null });
         } else {
           setCurrentView({ name: 'admin', data: null });
         }
@@ -175,6 +177,9 @@ function AppInner() {
         break;
       case 'admin-actors':
         targetHash = '#/admin/actors';
+        break;
+      case 'admin-settings':
+        targetHash = '#/admin/settings';
         break;
       case 'employee':
         targetHash = '#/employee';
@@ -381,13 +386,14 @@ function AppInner() {
           />
         )}
 
-        {(currentView.name === 'admin' || currentView.name === 'admin-events' || currentView.name === 'admin-movies' || currentView.name === 'admin-actors' || currentView.name === 'admin-showtimes') && (
+        {(currentView.name === 'admin' || currentView.name === 'admin-events' || currentView.name === 'admin-movies' || currentView.name === 'admin-actors' || currentView.name === 'admin-showtimes' || currentView.name === 'admin-settings') && (
           <AdminLayout 
             initialTab={
               currentView.name === 'admin-events' ? 'events-promo' : 
               (currentView.name === 'admin-movies' ? 'movies' : 
               (currentView.name === 'admin-actors' ? 'actors' : 
-              (currentView.name === 'admin-showtimes' ? 'showtimes' : 'dashboard')))
+              (currentView.name === 'admin-showtimes' ? 'showtimes' : 
+              (currentView.name === 'admin-settings' ? 'settings' : 'dashboard'))))
             }
             onBackHome={() => handleViewChange({ name: 'home', data: null })} 
           />

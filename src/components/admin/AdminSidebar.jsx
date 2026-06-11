@@ -16,7 +16,8 @@ import {
   TrendingUp,
   Building,
   Coins,
-  Shield
+  Shield,
+  Sliders
 } from 'lucide-react';
 
 export default function AdminSidebar({ 
@@ -265,18 +266,11 @@ export default function AdminSidebar({
             {!collapsedSections.cauHinh && (
               <div className="space-y-1">
                 <button
-                  onClick={() => handleTabClick('delays', '#/admin/delays')}
-                  className={getSubLinkClass('delays')}
+                  onClick={() => handleTabClick('settings', '#/admin/settings')}
+                  className={getSubLinkClass('settings')}
                 >
-                  <Clock className="w-4 h-4 shrink-0" />
-                  <span>Ngưỡng trễ lịch chiếu</span>
-                </button>
-                <button
-                  onClick={() => handleTabClick('pricing', '#/admin/pricing')}
-                  className={getSubLinkClass('pricing')}
-                >
-                  <Settings className="w-4 h-4 shrink-0" />
-                  <span>Hệ số giá vé</span>
+                  <Sliders className="w-4 h-4 shrink-0" />
+                  <span className="truncate">Cấu hình hệ thống</span>
                 </button>
               </div>
             )}
