@@ -485,3 +485,10 @@ export const SHOWTIMES = [
   "19:30",
   "22:15"
 ];
+
+export const SYSTEM_SETTINGS = {
+  maxDelay: 15,
+  autoClose: true,
+  imaxSurcharge: 50000,
+  weekendMultiplier: 1.2
+};

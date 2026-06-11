@@ -15,6 +15,7 @@ import AdminEventView from './AdminEventView';
 import AdminCinemaView from './AdminCinemaView';
 import AdminFinanceView from './AdminFinanceView';
 import AdminDashboardView from './AdminDashboardView';
+import AdminSettingsView from './AdminSettingsView';
 
 export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
   const { user, logout } = useAuth();
@@ -149,7 +150,8 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
                     {activeTab === 'showtimes' && 'DANH SÁCH SUẤT CHIẾU'}
                     {activeTab === 'events-promo' && 'CHƯƠNG TRÌNH ƯU ĐÃI'}
                     {activeTab === 'clusters' && 'HỆ THỐNG CỤM RẠP'}
-                    {['tickets', 'concessions', 'customers', 'payroll', 'delays', 'pricing'].includes(activeTab) && 'LỊCH SỬ GIAO DỊCH'}
+                    {['tickets', 'concessions', 'customers', 'payroll'].includes(activeTab) && 'LỊCH SỬ GIAO DỊCH'}
+                    {['delays', 'pricing'].includes(activeTab) && 'CẤU HÌNH & BẢO MẬT'}
                   </>
                 )}
               </h1>
@@ -280,7 +282,7 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
           )}
 
           {/* TAB: OPERATIONS / FINANCE VIEW MODULES */}
-          {['tickets', 'concessions', 'customers', 'payroll', 'delays', 'pricing'].includes(activeTab) && (
+          {['tickets', 'concessions', 'customers', 'payroll'].includes(activeTab) && (
             <AdminFinanceView 
               activeTab={activeTab} 
               tickets={tickets} 
@@ -289,6 +291,14 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
               employees={employees} 
               updateCustomersState={setCustomers} 
               updateEmployeesState={setEmployees} 
+              triggerToast={triggerToast} 
+            />
+          )}
+
+          {/* TAB: SYSTEM SETTINGS */}
+          {['delays', 'pricing'].includes(activeTab) && (
+            <AdminSettingsView 
+              activeTab={activeTab}
               triggerToast={triggerToast} 
             />
           )}
