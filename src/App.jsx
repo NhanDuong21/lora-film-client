@@ -33,6 +33,35 @@ function AppInner() {
     const handleHashChange = () => {
       const hash = window.location.hash || '#/';
 
+      // 1. Role-based Route Guard & Redirects (RBAC)
+      if (isAuthenticated) {
+        if (userRole === 'ROLE_STAFF') {
+          // Locked within employee POS
+          if (!hash.startsWith('#/employee')) {
+            window.location.hash = '#/employee/pos';
+            return;
+          }
+        } else if (userRole === 'ROLE_ADMIN' || userRole === 'ROLE_ACCOUNTANT') {
+          // Locked/routed to admin views
+          if (hash.startsWith('#/employee')) {
+            window.location.hash = '#/admin';
+            return;
+          }
+        } else {
+          // CUSTOMER cannot access admin or employee
+          if (hash.startsWith('#/admin') || hash.startsWith('#/employee')) {
+            window.location.hash = '#/';
+            return;
+          }
+        }
+      } else {
+        // GUEST cannot access admin or employee
+        if (hash.startsWith('#/admin') || hash.startsWith('#/employee')) {
+          window.location.hash = '#/login';
+          return;
+        }
+      }
+
       if (hash === '#/' || hash === '#/home' || hash === '') {
         setCurrentView({ name: 'home', data: null });
       } else if (hash.startsWith('#/discovery')) {
@@ -84,7 +113,7 @@ function AppInner() {
         setCurrentView({ name: 'employee-pos', data: null });
       } else if (hash === '#/employee/checkin') {
         setCurrentView({ name: 'employee-checkin', data: null });
-      } else if (hash === '#/employee/schedules') {
+      } else if (hash === '#/employee/schedules' || hash === '#/employee/schedule') {
         setCurrentView({ name: 'employee-schedules', data: null });
       } else if (hash === '#/login') {
         setCurrentView({ name: 'login', data: null });
@@ -114,7 +143,7 @@ function AppInner() {
 
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, [isAuthenticated]);
+  }, [isAuthenticated, userRole]);
 
   // Scroll to top on view changes
   const handleViewChange = (newView) => {
@@ -244,10 +273,11 @@ function AppInner() {
   };
 
   // Implicit Authorization Guard Checks
-  if (['admin', 'admin-events', 'admin-movies'].includes(currentView.name) && userRole !== 'ADMIN') {
+  const hasAdminRole = userRole === 'ROLE_ADMIN' || userRole === 'ROLE_ACCOUNTANT';
+  if ((currentView.name.startsWith('admin') || ['admin-events', 'admin-movies', 'admin-actors', 'admin-showtimes', 'admin-settings'].includes(currentView.name)) && !hasAdminRole) {
       return <div className="p-20 text-center text-red-500 font-bold">403 FORBIDDEN: Bạn không có quyền truy cập trang quản trị Admin!</div>;
   }
-  if (currentView.name.startsWith('employee') && userRole !== 'EMPLOYEE') {
+  if (currentView.name.startsWith('employee') && userRole !== 'ROLE_STAFF') {
       return <div className="p-20 text-center text-red-500 font-bold">403 FORBIDDEN: Bạn không có quyền truy cập trang Nhân Viên!</div>;
   }
 
@@ -286,9 +316,9 @@ function AppInner() {
       localStorage.removeItem('lora_pending_booking');
       setPendingBooking(null);
 
-      if (loggedInUser.role === 'ADMIN') {
+      if (loggedInUser.role === 'ROLE_ADMIN' || loggedInUser.role === 'ROLE_ACCOUNTANT') {
         handleViewChange({ name: 'admin', data: null });
-      } else if (loggedInUser.role === 'EMPLOYEE') {
+      } else if (loggedInUser.role === 'ROLE_STAFF') {
         handleViewChange({ name: 'employee-pos', data: null });
       } else {
         handleViewChange({ name: 'home', data: null });

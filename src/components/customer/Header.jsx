@@ -461,8 +461,8 @@ export default function Header({ onNavigate }) {
                     <button
                       onClick={() => {
                         setProfileDropdownOpen(false);
-                        if (userRole === 'ADMIN') onNavigate('admin', null);
-                        if (userRole === 'EMPLOYEE') onNavigate('employee', null);
+                        if (userRole === 'ADMIN' || userRole === 'ROLE_ADMIN' || userRole === 'ROLE_ACCOUNTANT') onNavigate('admin', null);
+                        if (userRole === 'EMPLOYEE' || userRole === 'ROLE_STAFF') onNavigate('employee', null);
                       }}
                       className="w-full text-left px-4 py-2.5 text-xs text-orange-500 hover:bg-zinc-800 font-bold flex items-center gap-2"
                     >

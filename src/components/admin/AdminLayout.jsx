@@ -36,7 +36,11 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
 
   const [activeTab, setActiveTab] = useState(() => {
     const hash = window.location.hash;
-    if (hash === '#/admin') return 'dashboard';
+    const permissions = user?.permissions || [];
+    const isAccountantOnly = permissions.includes('PERM_VIEW_FINANCE') && !permissions.includes('PERM_ROOT_ACCESS');
+    const defaultTab = isAccountantOnly ? 'tickets' : 'dashboard';
+
+    if (hash === '#/admin') return defaultTab;
     if (hash === '#/admin/movies') return 'movies';
     if (hash === '#/admin/actors') return 'actors';
     if (hash === '#/admin/showtimes') return 'showtimes';
@@ -60,7 +64,11 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      if (hash === '#/admin') setActiveTab('dashboard');
+      const permissions = user?.permissions || [];
+      const isAccountantOnly = permissions.includes('PERM_VIEW_FINANCE') && !permissions.includes('PERM_ROOT_ACCESS');
+      const defaultTab = isAccountantOnly ? 'tickets' : 'dashboard';
+
+      if (hash === '#/admin') setActiveTab(defaultTab);
       else if (hash === '#/admin/movies') setActiveTab('movies');
       else if (hash === '#/admin/actors') setActiveTab('actors');
       else if (hash === '#/admin/showtimes') setActiveTab('showtimes');
@@ -79,7 +87,7 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
 
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [user]);
 
   const handleLogout = () => {
     logout();

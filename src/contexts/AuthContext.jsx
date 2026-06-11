@@ -8,19 +8,29 @@ const PRE_SEEDED_USERS = [
     email: 'admin@lorafilm.com',
     password: '123456',
     fullName: 'Quản trị viên Lora',
-    role: 'ADMIN'
+    role: 'ROLE_ADMIN',
+    permissions: ['PERM_ROOT_ACCESS']
   },
   {
     email: 'staff@lorafilm.com',
     password: '123456',
     fullName: 'Nhân viên Lora',
-    role: 'EMPLOYEE'
+    role: 'ROLE_STAFF',
+    permissions: ['PERM_OPERATIONS']
+  },
+  {
+    email: 'finance@lorafilm.com',
+    password: '123456',
+    fullName: 'Kế toán Lora',
+    role: 'ROLE_ACCOUNTANT',
+    permissions: ['PERM_VIEW_FINANCE']
   },
   {
     email: 'member@gmail.com',
     password: '123456',
     fullName: 'Dương Thiện Nhân',
-    role: 'CUSTOMER'
+    role: 'CUSTOMER',
+    permissions: []
   }
 ];
 
@@ -78,6 +88,7 @@ export function AuthProvider({ children }) {
       email: matchedUser.email,
       fullName: matchedUser.fullName,
       role: matchedUser.role,
+      permissions: matchedUser.permissions || [],
       phone: matchedUser.phone || '',
       gender: matchedUser.gender || 'NAM',
       dateOfBirth: matchedUser.dateOfBirth || ''

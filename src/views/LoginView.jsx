@@ -43,7 +43,8 @@ export default function LoginView({ onBack, onRegisterLink, onSuccess }) {
     const fillPass = '123456';
 
     if (roleType === 'ADMIN') fillEmail = 'admin@lorafilm.com';
-    else if (roleType === 'EMPLOYEE') fillEmail = 'staff@lorafilm.com';
+    else if (roleType === 'EMPLOYEE' || roleType === 'STAFF') fillEmail = 'staff@lorafilm.com';
+    else if (roleType === 'ACCOUNTANT') fillEmail = 'finance@lorafilm.com';
     else fillEmail = 'member@gmail.com';
 
     setEmail(fillEmail);
@@ -125,7 +126,7 @@ export default function LoginView({ onBack, onRegisterLink, onSuccess }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500 rounded-xl pl-11 pr-10 py-3 text-sm text-zinc-100 transition-colors placeholder:text-zinc-600 outline-none"
+                className="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500 rounded-xl pl-11 pr-10 py-3 text-sm text-zinc-100 transition-colors placeholder:text-zinc-650 outline-none"
                 required
               />
               <button
@@ -187,7 +188,7 @@ export default function LoginView({ onBack, onRegisterLink, onSuccess }) {
           </button>
           
           <button
-            onClick={() => handleFastFill('EMPLOYEE')}
+            onClick={() => handleFastFill('STAFF')}
             className="w-full text-left border border-amber-950/40 bg-amber-950/10 hover:bg-amber-950/20 text-amber-400 py-2.5 px-4 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors duration-300"
           >
             <div className="flex items-center gap-2">
@@ -196,6 +197,19 @@ export default function LoginView({ onBack, onRegisterLink, onSuccess }) {
             </div>
             <span className="text-[10px] uppercase font-black text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">
               STAFF
+            </span>
+          </button>
+
+          <button
+            onClick={() => handleFastFill('ACCOUNTANT')}
+            className="w-full text-left border border-orange-950/40 bg-orange-950/10 hover:bg-orange-950/20 text-orange-400 py-2.5 px-4 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors duration-300"
+          >
+            <div className="flex items-center gap-2">
+              <Briefcase className="w-4.5 h-4.5 text-orange-400 shrink-0" />
+              <span>Đăng nhập nhanh Kế toán</span>
+            </div>
+            <span className="text-[10px] uppercase font-black text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded">
+              ACCOUNTANT
             </span>
           </button>
           
