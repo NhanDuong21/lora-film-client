@@ -9,7 +9,10 @@ import {
   Check, 
   ShoppingCart,
   Printer,
-  Trash2
+  Trash2,
+  Lock,
+  Unlock,
+  FileX
 } from 'lucide-react';
 
 export default function EmployeePOSView() {
@@ -42,6 +45,20 @@ export default function EmployeePOSView() {
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [createdTicket, setCreatedTicket] = useState(null);
 
+  // Active Sales History Ledger
+  const [recentTransactions, setRecentTransactions] = useState([]);
+  const [showtimeBookedSeats, setShowtimeBookedSeats] = useState({});
+
+  // Override Modal States
+  const [showOverrideModal, setShowOverrideModal] = useState(false);
+  const [transactionToVoid, setTransactionToVoid] = useState(null);
+  const [overrideEmail, setOverrideEmail] = useState('');
+  const [overridePassword, setOverridePassword] = useState('');
+  const [overrideError, setOverrideError] = useState('');
+  
+  // Toast notifications
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
   // Filter movies currently showing
   const filteredMovies = useMemo(() => {
     return movies.filter(m => 
@@ -69,8 +86,14 @@ export default function EmployeePOSView() {
 
   // Check if seat is booked (mock index rule or matches existing ticket)
   const isSeatBooked = (row, col) => {
-    // Generate static mock booked seats based on seat index
+    if (!selectedShowtime) return false;
     const seatId = `${row}${col}`;
+    
+    // Check dynamic booked list for current showtime
+    const currentShowtimeBooked = showtimeBookedSeats[selectedShowtime.id] || [];
+    if (currentShowtimeBooked.includes(seatId)) return true;
+
+    // Generate static mock booked seats based on seat index
     const hash = seatId.charCodeAt(0) + seatId.charCodeAt(1);
     return hash % 6 === 0;
   };
@@ -157,6 +180,27 @@ export default function EmployeePOSView() {
     setTickets(updatedTickets);
     localStorage.setItem('lora_tickets', JSON.stringify(updatedTickets));
 
+    // Update local shifts transaction log
+    const ledgerEntry = {
+      id: ticketId,
+      movieTitle: selectedMovie.title,
+      seats: [...selectedSeats],
+      showtimeId: selectedShowtime.id,
+      amount: grandTotal,
+      status: 'SUCCESS',
+      createdAt: new Date().toISOString()
+    };
+    setRecentTransactions(prev => [ledgerEntry, ...prev]);
+
+    // Also update dynamic booked seats
+    setShowtimeBookedSeats(prev => {
+      const current = prev[selectedShowtime.id] || [];
+      return {
+        ...prev,
+        [selectedShowtime.id]: [...current, ...selectedSeats]
+      };
+    });
+
     // Show success dialog
     setCreatedTicket(newTicket);
     setShowInvoiceModal(true);
@@ -169,6 +213,65 @@ export default function EmployeePOSView() {
     setSelectedSeats([]);
     setCart({});
     setShowUpsell(false);
+  };
+
+  const executeVoid = (txn) => {
+    // 1. Flip invoice status in recentTransactions
+    setRecentTransactions(prev => 
+      prev.map(t => t.id === txn.id ? { ...t, status: 'VOIDED' } : t)
+    );
+
+    // 2. Release the seats back to available in showtimeBookedSeats
+    setShowtimeBookedSeats(prev => {
+      const current = prev[txn.showtimeId] || [];
+      const updated = current.filter(seat => !txn.seats.includes(seat));
+      return {
+        ...prev,
+        [txn.showtimeId]: updated
+      };
+    });
+
+    // 3. Update global tickets list
+    const freshTicketsStr = localStorage.getItem('lora_tickets');
+    const freshTickets = freshTicketsStr ? JSON.parse(freshTicketsStr) : tickets;
+    const updatedTickets = freshTickets.map(t => 
+      t.id === txn.id ? { ...t, status: 'VOIDED', amount: 0 } : t
+    );
+    setTickets(updatedTickets);
+    localStorage.setItem('lora_tickets', JSON.stringify(updatedTickets));
+
+    // Show success toast
+    setToast({
+      show: true,
+      message: "Giám sát đã duyệt hủy hóa đơn thành công",
+      type: "success"
+    });
+    setTimeout(() => setToast(prev => ({ ...prev, show: false })), 4050);
+  };
+
+  const handleRequestVoid = (txn) => {
+    if (user?.role === 'ROLE_SUPERVISOR') {
+      // Direct Supervisor Behavior
+      executeVoid(txn);
+    } else {
+      // Standard Staff Behavior -> Show authentication override modal
+      setTransactionToVoid(txn);
+      setOverrideEmail('');
+      setOverridePassword('');
+      setOverrideError('');
+      setShowOverrideModal(true);
+    }
+  };
+
+  const handleConfirmOverride = (e) => {
+    e.preventDefault();
+    if (overrideEmail === 'supervisor@lorafilm.com' && overridePassword === 'password123') {
+      executeVoid(transactionToVoid);
+      setShowOverrideModal(false);
+      setTransactionToVoid(null);
+    } else {
+      setOverrideError("Sai tài khoản Giám sát. Từ chối cấp quyền truy cập.");
+    }
   };
 
   const handleVoid = () => {
@@ -265,6 +368,69 @@ export default function EmployeePOSView() {
             {filteredMovies.length === 0 && (
               <div className="col-span-full py-12 text-center text-zinc-600 text-xs italic">
                 Không tìm thấy phim nào đang chiếu.
+              </div>
+            )}
+          </div>
+
+          {/* Shift Transaction Ledger */}
+          <div className="border-t border-zinc-800 pt-8 mt-6 space-y-4">
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-6 bg-amber-500 rounded-full" />
+              <h3 className="text-sm font-black uppercase text-white tracking-wider">LỊCH SỬ GIAO DỊCH TRONG CA</h3>
+            </div>
+
+            {recentTransactions.length > 0 ? (
+              <div className="overflow-x-auto border border-zinc-800 rounded-2xl bg-zinc-900/40">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-zinc-800 bg-zinc-950 text-[10px] text-zinc-400 font-bold uppercase tracking-wider">
+                      <th className="py-3 px-4">Mã hóa đơn</th>
+                      <th className="py-3 px-4">Tên Phim</th>
+                      <th className="py-3 px-4 font-mono text-center">Ghế</th>
+                      <th className="py-3 px-4 text-center">Tổng tiền</th>
+                      <th className="py-3 px-4 text-center">Trạng thái</th>
+                      <th className="py-3 px-4 text-right">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-850 text-xs">
+                    {recentTransactions.map((txn) => (
+                      <tr key={txn.id} className="hover:bg-zinc-900/30 transition-colors">
+                        <td className="py-3 px-4 font-mono text-zinc-400 font-bold">{txn.id}</td>
+                        <td className="py-3 px-4 text-white font-bold max-w-[150px] truncate">{txn.movieTitle}</td>
+                        <td className="py-3 px-4 font-mono text-amber-500 font-bold text-center">{txn.seats.join(', ')}</td>
+                        <td className="py-3 px-4 font-mono text-emerald-400 font-bold text-center">{txn.amount.toLocaleString('vi-VN')} đ</td>
+                        <td className="py-3 px-4 text-center">
+                          {txn.status === 'SUCCESS' ? (
+                            <span className="inline-flex items-center gap-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[9px] font-bold px-2 py-0.5 rounded uppercase">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                              SUCCESS
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 bg-red-500/10 text-red-400 border border-red-500/20 text-[9px] font-bold px-2 py-0.5 rounded uppercase">
+                              <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                              VOIDED
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3 px-4 text-right">
+                          {txn.status === 'SUCCESS' && (
+                            <button
+                              onClick={() => handleRequestVoid(txn)}
+                              className="inline-flex items-center gap-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 hover:border-red-500/40 py-1.5 px-3 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all"
+                            >
+                              <FileX className="w-3 h-3" />
+                              <span>Hủy vé</span>
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="py-8 text-center text-zinc-650 text-xs italic border border-zinc-800 border-dashed rounded-2xl">
+                Chưa có giao dịch nào được thực hiện trong ca làm việc này.
               </div>
             )}
           </div>
@@ -618,6 +784,95 @@ export default function EmployeePOSView() {
                 <Printer className="w-3.5 h-3.5" />
                 <span>IN HOÁ ĐƠN</span>
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Toast Notification */}
+      {toast.show && (
+        <div className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl border shadow-2xl animate-slide-in ${
+          toast.type === 'success' 
+            ? 'bg-zinc-900 border-emerald-500/30 text-emerald-400' 
+            : 'bg-zinc-900 border-red-500/30 text-red-400'
+        }`}>
+          {toast.type === 'success' ? <Check className="w-5 h-5 shrink-0" /> : <X className="w-5 h-5 shrink-0" />}
+          <span className="text-xs font-bold uppercase tracking-wider">{toast.message}</span>
+        </div>
+      )}
+
+      {/* Supervisor Pin-Code Override Modal */}
+      {showOverrideModal && transactionToVoid && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl max-w-sm w-full shadow-2xl z-50 fixed inset-0 m-auto h-fit animate-zoom-in">
+            <div className="text-center space-y-4">
+              <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center mx-auto">
+                <Lock className="w-6 h-6" />
+              </div>
+              
+              <div>
+                <h3 className="text-sm font-black text-white uppercase tracking-wider">YÊU CẦU XÁC THỰC GIÁM SÁT</h3>
+                <p className="text-[11px] text-zinc-400 mt-2 leading-relaxed">
+                  Nhân viên không có quyền hủy hóa đơn. Vui lòng yêu cầu Giám sát ca duyệt phê duyệt giao dịch này.
+                </p>
+              </div>
+
+              {overrideError && (
+                <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-[10px] font-bold text-center">
+                  {overrideError}
+                </div>
+              )}
+
+              <form onSubmit={handleConfirmOverride} className="space-y-3.5 text-left">
+                <div>
+                  <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block mb-1">Tài khoản Giám sát</label>
+                  <div className="flex items-center gap-2 bg-zinc-950 border border-zinc-850 px-3 py-2 rounded-xl">
+                    <span className="text-zinc-500 text-xs">@</span>
+                    <input
+                      type="email"
+                      required
+                      placeholder="supervisor@lorafilm.com"
+                      value={overrideEmail}
+                      onChange={(e) => setOverrideEmail(e.target.value)}
+                      className="bg-transparent border-none outline-none text-xs w-full text-white placeholder-zinc-700"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block mb-1">Mật khẩu xác nhận</label>
+                  <div className="flex items-center gap-2 bg-zinc-950 border border-zinc-850 px-3 py-2 rounded-xl">
+                    <Lock className="w-3.5 h-3.5 text-zinc-650 shrink-0" />
+                    <input
+                      type="password"
+                      required
+                      placeholder="••••••••"
+                      value={overridePassword}
+                      onChange={(e) => setOverridePassword(e.target.value)}
+                      className="bg-transparent border-none outline-none text-xs w-full text-white placeholder-zinc-700"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-2.5 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowOverrideModal(false);
+                      setTransactionToVoid(null);
+                    }}
+                    className="flex-1 bg-zinc-950 hover:bg-zinc-850 border border-zinc-850 text-zinc-400 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-colors"
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 bg-amber-500 hover:bg-amber-600 text-black font-black py-2.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors shadow-lg shadow-amber-500/10"
+                  >
+                    <Unlock className="w-3.5 h-3.5" />
+                    <span>XÁC NHẬN HỦY VÉ</span>
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
