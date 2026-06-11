@@ -86,8 +86,14 @@ export default function EmployeeLayout({ initialTab = 'pos', onBackHome, onNavig
               <User className="w-4 h-4" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] text-zinc-500 font-black uppercase">Quầy Vé</p>
-              <p className="text-xs font-bold text-white truncate">{user?.fullName || 'Staff'}</p>
+              {user?.role === 'ROLE_SUPERVISOR' ? (
+                <span className="bg-amber-500/10 border border-amber-500/30 text-amber-400 font-mono text-[10px] font-bold px-2 py-0.5 rounded uppercase inline-block mb-1">
+                  GIÁM SÁT CA
+                </span>
+              ) : (
+                <p className="text-[10px] text-zinc-500 font-black uppercase">Quầy Vé</p>
+              )}
+              <p className="text-xs font-bold text-white truncate">{user?.fullName || user?.name || 'Staff'}</p>
             </div>
           </div>
 

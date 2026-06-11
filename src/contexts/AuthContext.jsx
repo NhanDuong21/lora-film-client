@@ -26,6 +26,14 @@ const PRE_SEEDED_USERS = [
     permissions: ['PERM_VIEW_FINANCE']
   },
   {
+    email: 'supervisor@lorafilm.com',
+    password: 'password123',
+    fullName: 'Trần Nguyễn Giám Sát',
+    name: 'Trần Nguyễn Giám Sát',
+    role: 'ROLE_SUPERVISOR',
+    permissions: ['PERM_OPERATIONS', 'PERM_SUPERVISOR_OVERRIDE']
+  },
+  {
     email: 'member@gmail.com',
     password: '123456',
     fullName: 'Dương Thiện Nhân',

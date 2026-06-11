@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import { useData } from '../../contexts/DataContext';
 import { 
   Search, 
@@ -7,10 +8,12 @@ import {
   X, 
   Check, 
   ShoppingCart,
-  Printer
+  Printer,
+  Trash2
 } from 'lucide-react';
 
 export default function EmployeePOSView() {
+  const { user } = useAuth();
   const { 
     movies, 
     showtimes, 
@@ -166,6 +169,16 @@ export default function EmployeePOSView() {
     setSelectedSeats([]);
     setCart({});
     setShowUpsell(false);
+  };
+
+  const handleVoid = () => {
+    setSelectedMovie(null);
+    setSelectedShowtime(null);
+    setSelectedTheater(null);
+    setSelectedHall(null);
+    setSelectedSeats([]);
+    setCart({});
+    alert("Giao dịch đã được hủy khẩn cấp bởi Giám sát ca!");
   };
 
   return (
@@ -324,6 +337,21 @@ export default function EmployeePOSView() {
                 {grandTotal.toLocaleString('vi-VN')} đ
               </span>
             </div>
+
+            {user?.role === 'ROLE_SUPERVISOR' ? (
+              <button
+                type="button"
+                onClick={handleVoid}
+                className="w-full border border-red-500/30 bg-red-500/10 text-red-400 font-bold py-2 rounded-xl text-xs uppercase tracking-wider mb-2 transition-colors hover:bg-red-500/20 flex items-center justify-center gap-2"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>HỦY VÉ KHẨN CẤP (VOID)</span>
+              </button>
+            ) : user?.role === 'ROLE_STAFF' ? (
+              <div className="text-[10px] text-zinc-500 italic text-center mb-2 font-medium">
+                Yêu cầu thẻ Giám sát để thực hiện hoàn/hủy vé
+              </div>
+            ) : null}
 
             <button
               onClick={handleCheckout}

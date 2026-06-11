@@ -40,12 +40,20 @@ export default function LoginView({ onBack, onRegisterLink, onSuccess }) {
 
   const handleFastFill = (roleType) => {
     let fillEmail = '';
-    const fillPass = '123456';
+    let fillPass = '123456';
 
-    if (roleType === 'ADMIN') fillEmail = 'admin@lorafilm.com';
-    else if (roleType === 'EMPLOYEE' || roleType === 'STAFF') fillEmail = 'staff@lorafilm.com';
-    else if (roleType === 'ACCOUNTANT') fillEmail = 'finance@lorafilm.com';
-    else fillEmail = 'member@gmail.com';
+    if (roleType === 'ADMIN') {
+      fillEmail = 'admin@lorafilm.com';
+    } else if (roleType === 'EMPLOYEE' || roleType === 'STAFF') {
+      fillEmail = 'staff@lorafilm.com';
+    } else if (roleType === 'ACCOUNTANT') {
+      fillEmail = 'finance@lorafilm.com';
+    } else if (roleType === 'SUPERVISOR') {
+      fillEmail = 'supervisor@lorafilm.com';
+      fillPass = 'password123';
+    } else {
+      fillEmail = 'member@gmail.com';
+    }
 
     setEmail(fillEmail);
     setPassword(fillPass);
@@ -197,6 +205,19 @@ export default function LoginView({ onBack, onRegisterLink, onSuccess }) {
             </div>
             <span className="text-[10px] uppercase font-black text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">
               STAFF
+            </span>
+          </button>
+
+          <button
+            onClick={() => handleFastFill('SUPERVISOR')}
+            className="w-full text-left border border-purple-950/40 bg-purple-950/10 hover:bg-purple-950/20 text-purple-400 py-2.5 px-4 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors duration-300"
+          >
+            <div className="flex items-center gap-2">
+              <Shield className="w-4.5 h-4.5 text-purple-400 shrink-0" />
+              <span>Đăng nhập nhanh Giám sát</span>
+            </div>
+            <span className="text-[10px] uppercase font-black text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">
+              SUPERVISOR
             </span>
           </button>
 

@@ -35,7 +35,7 @@ function AppInner() {
 
       // 1. Role-based Route Guard & Redirects (RBAC)
       if (isAuthenticated) {
-        if (userRole === 'ROLE_STAFF') {
+        if (userRole === 'ROLE_STAFF' || userRole === 'ROLE_SUPERVISOR') {
           // Locked within employee POS
           if (!hash.startsWith('#/employee')) {
             window.location.hash = '#/employee/pos';
@@ -277,7 +277,8 @@ function AppInner() {
   if ((currentView.name.startsWith('admin') || ['admin-events', 'admin-movies', 'admin-actors', 'admin-showtimes', 'admin-settings'].includes(currentView.name)) && !hasAdminRole) {
       return <div className="p-20 text-center text-red-500 font-bold">403 FORBIDDEN: Bạn không có quyền truy cập trang quản trị Admin!</div>;
   }
-  if (currentView.name.startsWith('employee') && userRole !== 'ROLE_STAFF') {
+  const isEmployeeRole = userRole === 'ROLE_STAFF' || userRole === 'ROLE_SUPERVISOR';
+  if (currentView.name.startsWith('employee') && !isEmployeeRole) {
       return <div className="p-20 text-center text-red-500 font-bold">403 FORBIDDEN: Bạn không có quyền truy cập trang Nhân Viên!</div>;
   }
 
@@ -318,7 +319,7 @@ function AppInner() {
 
       if (loggedInUser.role === 'ROLE_ADMIN' || loggedInUser.role === 'ROLE_ACCOUNTANT') {
         handleViewChange({ name: 'admin', data: null });
-      } else if (loggedInUser.role === 'ROLE_STAFF') {
+      } else if (loggedInUser.role === 'ROLE_STAFF' || loggedInUser.role === 'ROLE_SUPERVISOR') {
         handleViewChange({ name: 'employee-pos', data: null });
       } else {
         handleViewChange({ name: 'home', data: null });
