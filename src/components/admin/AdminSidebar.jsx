@@ -203,11 +203,18 @@ export default function AdminSidebar({
                   <span>Quản lý vé bán</span>
                 </button>
                 <button
-                  onClick={() => handleTabClick('concessions', '#/admin/concessions')}
-                  className={getSubLinkClass('concessions')}
+                  onClick={() => handleTabClick('concession-sales', '#/admin/concession-sales')}
+                  className={getSubLinkClass('concession-sales')}
                 >
                   <Coffee className="w-4 h-4 shrink-0" />
                   <span>Doanh thu bắp nước</span>
+                </button>
+                <button
+                  onClick={() => handleTabClick('concessions', '#/admin/concessions')}
+                  className={getSubLinkClass('concessions')}
+                >
+                  <Database className="w-4 h-4 shrink-0" />
+                  <span>Danh mục bắp nước</span>
                 </button>
               </div>
             )}
@@ -236,6 +243,13 @@ export default function AdminSidebar({
                 >
                   <Users className="w-4 h-4 shrink-0" />
                   <span>Danh sách khách hàng</span>
+                </button>
+                <button
+                  onClick={() => handleTabClick('staff', '#/admin/staff')}
+                  className={getSubLinkClass('staff')}
+                >
+                  <Users className="w-4 h-4 shrink-0" />
+                  <span>Quản lý nhân sự</span>
                 </button>
                 <button
                   onClick={() => handleTabClick('payroll', '#/admin/payroll')}

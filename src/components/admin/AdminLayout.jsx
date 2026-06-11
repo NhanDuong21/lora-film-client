@@ -16,6 +16,9 @@ import AdminCinemaView from './AdminCinemaView';
 import AdminFinanceView from './AdminFinanceView';
 import AdminDashboardView from './AdminDashboardView';
 import AdminSettingsView from './AdminSettingsView';
+import AdminMembersView from './AdminMembersView';
+import AdminStaffView from './AdminStaffView';
+import AdminConcessionInventory from './AdminConcessionInventory';
 
 export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
   const { user, logout } = useAuth();
@@ -25,7 +28,7 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
     theaters, setTheaters,
     showtimes, setShowtimes,
     tickets,
-    concessions,
+    concessions, setConcessions,
     customers, setCustomers,
     employees, setEmployees,
     events, setEvents
@@ -41,7 +44,9 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
     if (hash === '#/admin/clusters') return 'clusters';
     if (hash === '#/admin/tickets') return 'tickets';
     if (hash === '#/admin/concessions') return 'concessions';
+    if (hash === '#/admin/concession-sales') return 'concession-sales';
     if (hash === '#/admin/customers') return 'customers';
+    if (hash === '#/admin/staff') return 'staff';
     if (hash === '#/admin/payroll') return 'payroll';
     if (hash === '#/admin/delays') return 'delays';
     if (hash === '#/admin/pricing') return 'pricing';
@@ -63,7 +68,9 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
       else if (hash === '#/admin/clusters') setActiveTab('clusters');
       else if (hash === '#/admin/tickets') setActiveTab('tickets');
       else if (hash === '#/admin/concessions') setActiveTab('concessions');
+      else if (hash === '#/admin/concession-sales') setActiveTab('concession-sales');
       else if (hash === '#/admin/customers') setActiveTab('customers');
+      else if (hash === '#/admin/staff') setActiveTab('staff');
       else if (hash === '#/admin/payroll') setActiveTab('payroll');
       else if (hash === '#/admin/delays') setActiveTab('delays');
       else if (hash === '#/admin/pricing') setActiveTab('pricing');
@@ -152,8 +159,11 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
                     {activeTab === 'showtimes' && 'DANH SÁCH SUẤT CHIẾU'}
                     {activeTab === 'events-promo' && 'CHƯƠNG TRÌNH ƯU ĐÃI'}
                     {activeTab === 'clusters' && 'HỆ THỐNG CỤM RẠP'}
-                    {activeTab === 'concessions' && 'DOANH THU BẮP NƯỚC & COMBO'}
-                    {['tickets', 'customers', 'payroll'].includes(activeTab) && 'LỊCH SỬ GIAO DỊCH'}
+                    {activeTab === 'concessions' && 'DANH MỤC BẮP NƯỚC'}
+                    {activeTab === 'concession-sales' && 'DOANH THU BẮP NƯỚC & COMBO'}
+                    {activeTab === 'staff' && 'QUẢN LÝ NHÂN SỰ'}
+                    {activeTab === 'customers' && 'DANH SÁCH HỘI VIÊN'}
+                    {['tickets', 'payroll'].includes(activeTab) && 'LỊCH SỬ GIAO DỊCH'}
                     {['delays', 'pricing', 'settings'].includes(activeTab) && 'CẤU HÌNH & BẢO MẬT'}
                   </>
                 )}
@@ -284,10 +294,37 @@ export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
             />
           )}
 
+          {/* TAB: MEMBERS */}
+          {activeTab === 'customers' && (
+            <AdminMembersView 
+              customers={customers} 
+              updateCustomersState={setCustomers} 
+              triggerToast={triggerToast} 
+            />
+          )}
+
+          {/* TAB: STAFF */}
+          {activeTab === 'staff' && (
+            <AdminStaffView 
+              employees={employees} 
+              updateEmployeesState={setEmployees} 
+              triggerToast={triggerToast} 
+            />
+          )}
+
+          {/* TAB: CONCESSION INVENTORY */}
+          {activeTab === 'concessions' && (
+            <AdminConcessionInventory 
+              concessions={concessions} 
+              updateConcessionsState={setConcessions} 
+              triggerToast={triggerToast} 
+            />
+          )}
+
           {/* TAB: OPERATIONS / FINANCE VIEW MODULES */}
-          {['tickets', 'concessions', 'customers', 'payroll'].includes(activeTab) && (
+          {['tickets', 'concession-sales', 'payroll'].includes(activeTab) && (
             <AdminFinanceView 
-              activeTab={activeTab} 
+              activeTab={activeTab === 'concession-sales' ? 'concessions' : activeTab} 
               tickets={tickets} 
               concessions={concessions} 
               customers={customers} 
