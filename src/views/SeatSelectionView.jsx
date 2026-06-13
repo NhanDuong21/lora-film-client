@@ -101,7 +101,12 @@ export default function SeatSelectionView({ bookingData, onBack, onRequireLogin,
       const rowSelected = selectedSeats.filter(seat => seat.startsWith(row));
       if (rowSelected.length === 0) continue;
 
-      const seatCount = row === 'J' ? 6 : 12;
+      // 🟢 EXCLUSION GUARD: If the row contains couple seats (e.g., type === 'COUPLE' or row === 'J'), skip checking!
+      if (row === 'J') {
+        continue; // Safely bypass this row, couple seats cannot create invalid single seat gaps
+      }
+
+      const seatCount = 12; // Since row J is excluded, other rows always have 12 seats
       const rowSeats = [];
       for (let col = 1; col <= seatCount; col++) {
         const seatId = `${row}${col}`;
