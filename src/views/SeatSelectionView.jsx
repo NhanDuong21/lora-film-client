@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { ArrowLeft, CheckCircle, Info, ShoppingBag, Clock, CreditCard, Smartphone, AlertTriangle, Calendar } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Info, ShoppingBag, Clock, CreditCard, Smartphone, AlertTriangle, Calendar, ShieldAlert } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
 
@@ -49,6 +49,7 @@ export default function SeatSelectionView({ bookingData, onBack, onRequireLogin,
   const [timerActive, setTimerActive] = useState(false);
   const [showTimeoutModal, setShowTimeoutModal] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('domestic');
+  const [showGapModal, setShowGapModal] = useState(false);
 
   const { movieTitle, date, cinema, time, format, movieId } = bookingData;
 
@@ -95,8 +96,64 @@ export default function SeatSelectionView({ bookingData, onBack, onRequireLogin,
     onBack(); // route back to home
   };
 
+  const checkSingleSeatGap = () => {
+    for (const row of ROWS) {
+      const rowSelected = selectedSeats.filter(seat => seat.startsWith(row));
+      if (rowSelected.length === 0) continue;
+
+      const seatCount = row === 'J' ? 6 : 12;
+      const rowSeats = [];
+      for (let col = 1; col <= seatCount; col++) {
+        const seatId = `${row}${col}`;
+        let status = 'AVAILABLE';
+        if (selectedSeats.includes(seatId)) {
+          status = 'SELECTED';
+        } else if (occupiedSeats.has(seatId)) {
+          status = 'BOOKED';
+        }
+        rowSeats.push({ label: seatId, status });
+      }
+
+      for (let i = 0; i < rowSeats.length; i++) {
+        if (rowSeats[i].status === 'AVAILABLE') {
+          // Rule A: Check Left-Side Isolation
+          if (i + 1 < rowSeats.length && rowSeats[i + 1].status === 'SELECTED') {
+            const leftStatus = (i - 1 < 0) ? 'WALL' : rowSeats[i - 1].status;
+            if (leftStatus === 'WALL' || leftStatus === 'BOOKED') {
+              return true;
+            }
+          }
+
+          // Rule B: Check Right-Side Isolation
+          if (i - 1 >= 0 && rowSeats[i - 1].status === 'SELECTED') {
+            const rightStatus = (i + 1 >= rowSeats.length) ? 'WALL' : rowSeats[i + 1].status;
+            if (rightStatus === 'WALL' || rightStatus === 'BOOKED') {
+              return true;
+            }
+          }
+
+          // Rule C: Check Mid-Row Double Splitting
+          if (i - 1 >= 0 && i + 1 < rowSeats.length) {
+            const leftStatus = rowSeats[i - 1].status;
+            const rightStatus = rowSeats[i + 1].status;
+            if ((leftStatus === 'SELECTED' || leftStatus === 'BOOKED') &&
+                (rightStatus === 'SELECTED' || rightStatus === 'BOOKED') &&
+                (leftStatus === 'SELECTED' || rightStatus === 'SELECTED')) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
+  };
+
   const handleProceedToConcessions = () => {
     if (selectedSeats.length === 0) return;
+    if (checkSingleSeatGap()) {
+      setShowGapModal(true);
+      return;
+    }
     setTimerActive(true);
     setCurrentStep(2);
   };
@@ -249,6 +306,10 @@ export default function SeatSelectionView({ bookingData, onBack, onRequireLogin,
 
   const handleCheckoutSubmit = () => {
     if (selectedSeats.length === 0) return;
+    if (checkSingleSeatGap()) {
+      setShowGapModal(true);
+      return;
+    }
 
     if (!isAuthenticated) {
       if (onRequireLogin) {
@@ -893,6 +954,28 @@ export default function SeatSelectionView({ bookingData, onBack, onRequireLogin,
             >
               Đồng ý (OK)
             </button>
+          </div>
+        </div>
+      )}
+      {/* Anti-Single-Seat Gap Warning Modal */}
+      {showGapModal && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl max-w-sm w-full fixed inset-0 m-auto h-fit z-50 shadow-2xl animate-zoom-in">
+            <div className="text-center">
+              <h3 className="text-amber-500 font-black text-sm uppercase tracking-wider mb-2 flex items-center justify-center gap-2">
+                <ShieldAlert className="w-5 h-5 text-amber-500 shrink-0" />
+                <span>Thông báo vị trí ghế</span>
+              </h3>
+              <p className="text-xs text-zinc-300 font-medium leading-relaxed mt-3">
+                Việc chọn vị trí ghế của bạn không được để trống 1 ghế ở bên trái, giữa hoặc bên phải trên cùng hàng ghế mà bạn vừa chọn. Vui lòng chọn lại vị trí khác.
+              </p>
+              <button
+                onClick={() => setShowGapModal(false)}
+                className="w-full bg-gradient-to-r from-orange-400 to-amber-500 text-zinc-950 font-black py-2.5 rounded-xl text-xs uppercase tracking-widest mt-4 cursor-pointer text-center block"
+              >
+                ĐÃ HIỂU &amp; CHỌN LẠI
+              </button>
+            </div>
           </div>
         </div>
       )}
