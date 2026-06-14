@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Search, PlusCircle, Edit3, Trash2, X, Upload, ArrowLeft, Check } from 'lucide-react';
+import { useState, useMemo, useCallback } from 'react';
+import { Search, Edit3, Trash2, X, Upload, ArrowLeft, Check, Clock, Plus } from 'lucide-react';
 
 const GENRE_LIST = [
   'Anime', 'Bí ẩn', 'Cao bồi', 'Chiến tranh', 'Chính kịch', 'Gia đình', 'Giả tưởng', 'Giật gân',
@@ -10,6 +10,7 @@ const GENRE_LIST = [
 
 export default function AdminMovieView({ movies, updateMoviesState, triggerToast }) {
   const [movieSearch, setMovieSearch] = useState('');
+  const [movieStatusFilter, setMovieStatusFilter] = useState('ALL');
   const [movieModalOpen, setMovieModalOpen] = useState(false);
   const [editingMovie, setEditingMovie] = useState(null);
   
@@ -32,11 +33,28 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
 
   const [selectedGenres, setSelectedGenres] = useState([]);
 
+  // Memoized Filtered Movies Matrix to prevent redundant recalculation
   const filteredMovies = useMemo(() => {
-    return movies.filter(m => m.title.toLowerCase().includes(movieSearch.toLowerCase()));
-  }, [movies, movieSearch]);
+    return movies.filter(m => {
+      const title = m.title || '';
+      const matchesSearch = title.toLowerCase().includes(movieSearch.toLowerCase());
+      
+      let matchesStatus = true;
+      if (movieStatusFilter !== 'ALL') {
+        const normalizedStatus = m.status === 'DANG_CHIEU' || m.status === 'NOW_SHOWING' || m.status === 'SHOWING'
+          ? 'SHOWING'
+          : m.status === 'SAP_CHIEU' || m.status === 'COMING_SOON' || m.status === 'UPCOMING'
+            ? 'UPCOMING'
+            : 'ENDED';
+        matchesStatus = normalizedStatus === movieStatusFilter;
+      }
+      
+      return matchesSearch && matchesStatus;
+    });
+  }, [movies, movieSearch, movieStatusFilter]);
 
-  const handleOpenAddMovie = () => {
+  // useCallback Optimization for Modal & Form Triggers
+  const handleOpenAddMovie = useCallback(() => {
     setEditingMovie(null);
     setMovieForm({
       title: '',
@@ -56,9 +74,9 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
     });
     setSelectedGenres([]);
     setMovieModalOpen(true);
-  };
+  }, []);
 
-  const handleOpenEditMovie = (movie) => {
+  const handleOpenEditMovie = useCallback((movie) => {
     setEditingMovie(movie);
     setMovieForm({
       title: movie.title || '',
@@ -78,9 +96,9 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
     });
     setSelectedGenres(movie.genres || (movie.genre ? movie.genre.split(',').map(g => g.trim()) : []));
     setMovieModalOpen(true);
-  };
+  }, []);
 
-  const handleGenreToggle = (genreName) => {
+  const handleGenreToggle = useCallback((genreName) => {
     setSelectedGenres(prev => {
       if (prev.includes(genreName)) {
         return prev.filter(g => g !== genreName);
@@ -88,9 +106,9 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
         return [...prev, genreName];
       }
     });
-  };
+  }, []);
 
-  const handleSaveMovie = (e) => {
+  const handleSaveMovie = useCallback((e) => {
     e.preventDefault();
     if (!movieForm.title || !movieForm.duration) {
       triggerToast('Vui lòng điền đầy đủ thông tin!', 'error');
@@ -136,26 +154,26 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
       triggerToast('Thêm phim mới thành công!');
     }
     setMovieModalOpen(false);
-  };
+  }, [movieForm, selectedGenres, editingMovie, movies, updateMoviesState, triggerToast]);
 
-  const handleDeleteMovie = (id) => {
+  const handleDeleteMovie = useCallback((id) => {
     if (confirm('Bạn có chắc chắn muốn xóa phim này?')) {
       const updated = movies.filter(m => m.id !== id);
       updateMoviesState(updated);
       triggerToast('Đã xóa phim khỏi danh sách!');
     }
-  };
+  }, [movies, updateMoviesState, triggerToast]);
 
   if (movieModalOpen) {
     return (
-      <div className="w-full bg-zinc-950 p-6 flex flex-col gap-6 animate-fade-in">
+      <div className="w-full bg-brand-dark p-6 flex flex-col gap-6 animate-fade-in text-zinc-100">
         {/* Header Bar */}
-        <div className="flex justify-between items-center border-b border-zinc-900 pb-4">
+        <div className="flex justify-between items-center border-b border-zinc-800/80 pb-4">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setMovieModalOpen(false)}
-              className="p-2 text-zinc-400 hover:text-white bg-zinc-900 border border-zinc-800 rounded-xl transition-all"
+              className="p-2 text-zinc-400 hover:text-white bg-brand-gray border border-zinc-800/80 rounded-xl transition-all cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
@@ -170,7 +188,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
             
             {/* LEFT COLUMN: CORE DATABASE FIELDS MATRIX (2/3 width) */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 space-y-4">
+              <div className="bg-brand-gray/60 border border-zinc-800/50 rounded-2xl p-6 space-y-4">
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-zinc-800 pb-2">
                   Thông Tin Cơ Bản
                 </h3>
@@ -183,7 +201,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                     value={movieForm.title}
                     onChange={(e) => setMovieForm({ ...movieForm, title: e.target.value })}
                     placeholder="Nhập tên phim..."
-                    className="w-full bg-zinc-950 border border-zinc-900 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-amber-500/40 transition-colors"
+                    className="w-full bg-brand-dark border border-zinc-800 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral/40 focus:ring-0 transition-colors"
                     required
                   />
                 </div>
@@ -196,7 +214,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                     onChange={(e) => setMovieForm({ ...movieForm, synopsis: e.target.value })}
                     rows={4}
                     placeholder="Tóm tắt nội dung..."
-                    className="w-full bg-zinc-950 border border-zinc-900 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-amber-500/40 transition-colors resize-none"
+                    className="w-full bg-brand-dark border border-zinc-800 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral/40 focus:ring-0 transition-colors resize-none"
                   />
                 </div>
 
@@ -207,7 +225,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                     <select
                       value={movieForm.type}
                       onChange={(e) => setMovieForm({ ...movieForm, type: e.target.value })}
-                      className="w-full bg-zinc-950 border border-zinc-900 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-amber-500/40 transition-colors"
+                      className="w-full bg-brand-dark border border-zinc-800 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral/40 focus:ring-0 transition-colors cursor-pointer"
                     >
                       <option value="Single">Phim Lẻ (Single)</option>
                       <option value="Series">Phim Bộ (Series)</option>
@@ -218,7 +236,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                     <select
                       value={movieForm.status}
                       onChange={(e) => setMovieForm({ ...movieForm, status: e.target.value })}
-                      className="w-full bg-zinc-950 border border-zinc-900 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-amber-500/40 transition-colors"
+                      className="w-full bg-brand-dark border border-zinc-800 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral/40 focus:ring-0 transition-colors cursor-pointer"
                     >
                       <option value="UPCOMING">Sắp chiếu (UPCOMING)</option>
                       <option value="SHOWING">Đang chiếu (SHOWING)</option>
@@ -236,7 +254,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                       min="0"
                       value={movieForm.duration}
                       onChange={(e) => setMovieForm({ ...movieForm, duration: e.target.value })}
-                      className="w-full bg-zinc-950 border border-zinc-900 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-amber-500/40 transition-colors"
+                      className="w-full bg-brand-dark border border-zinc-800 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral/40 focus:ring-0 transition-colors"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -246,7 +264,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                       min="1"
                       value={movieForm.episodesCount}
                       onChange={(e) => setMovieForm({ ...movieForm, episodesCount: e.target.value })}
-                      className="w-full bg-zinc-950 border border-zinc-900 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-amber-500/40 transition-colors"
+                      className="w-full bg-brand-dark border border-zinc-800 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral/40 focus:ring-0 transition-colors"
                     />
                   </div>
                 </div>
@@ -260,7 +278,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                       value={movieForm.language}
                       onChange={(e) => setMovieForm({ ...movieForm, language: e.target.value })}
                       placeholder="Tiếng Anh, Vietsub..."
-                      className="w-full bg-zinc-950 border border-zinc-900 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-amber-500/40 transition-colors"
+                      className="w-full bg-brand-dark border border-zinc-800 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral/40 focus:ring-0 transition-colors"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -270,7 +288,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                       value={movieForm.directorName}
                       onChange={(e) => setMovieForm({ ...movieForm, directorName: e.target.value })}
                       placeholder="Tên đạo diễn..."
-                      className="w-full bg-zinc-950 border border-zinc-900 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-amber-500/40 transition-colors"
+                      className="w-full bg-brand-dark border border-zinc-800 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral/40 focus:ring-0 transition-colors"
                     />
                   </div>
                 </div>
@@ -284,7 +302,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                       value={movieForm.actors}
                       onChange={(e) => setMovieForm({ ...movieForm, actors: e.target.value })}
                       placeholder="Diễn viên 1, Diễn viên 2..."
-                      className="w-full bg-zinc-950 border border-zinc-900 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-amber-500/40 transition-colors"
+                      className="w-full bg-brand-dark border border-zinc-800 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral/40 focus:ring-0 transition-colors"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -292,7 +310,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                     <select
                       value={movieForm.ageRating}
                       onChange={(e) => setMovieForm({ ...movieForm, ageRating: e.target.value })}
-                      className="w-full bg-zinc-950 border border-zinc-900 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-amber-500/40 transition-colors"
+                      className="w-full bg-brand-dark border border-zinc-800 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral/40 focus:ring-0 transition-colors cursor-pointer"
                     >
                       <option value="P">P (Mọi lứa tuổi)</option>
                       <option value="T13">T13 (Từ 13 tuổi trở lên)</option>
@@ -304,7 +322,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
               </div>
 
               {/* Thể loại Pill Matrix */}
-              <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6">
+              <div className="bg-brand-gray/60 border border-zinc-800/50 rounded-2xl p-6">
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-zinc-800 pb-2">
                   Thể loại (Chọn nhiều)
                 </h3>
@@ -316,10 +334,10 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                         key={genreName}
                         type="button"
                         onClick={() => handleGenreToggle(genreName)}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-300 ${
+                        className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-300 cursor-pointer ${
                           isSelected
-                            ? 'bg-amber-500 text-zinc-950 font-bold border-amber-500 shadow-md shadow-amber-500/10'
-                            : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700'
+                            ? 'bg-brand-coral text-zinc-950 font-bold border-brand-coral shadow-md shadow-brand-coral/10'
+                            : 'bg-brand-dark border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700'
                         }`}
                       >
                         {genreName}
@@ -334,7 +352,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
             <div className="lg:col-span-1 space-y-6">
               
               {/* Poster Asset Upload Card */}
-              <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 space-y-4">
+              <div className="bg-brand-gray/60 border border-zinc-800/50 rounded-2xl p-6 space-y-4">
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-zinc-800 pb-2">
                   Poster phim
                 </h3>
@@ -347,14 +365,14 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                         <button
                           type="button"
                           onClick={() => setMovieForm({ ...movieForm, posterUrl: '' })}
-                          className="bg-red-650 text-white font-bold text-xs py-1.5 px-3 rounded-lg hover:bg-red-700 transition-colors"
+                          className="bg-brand-coral hover:bg-opacity-90 text-zinc-950 font-bold text-xs py-1.5 px-3 rounded-lg transition-colors cursor-pointer"
                         >
                           Xóa ảnh
                         </button>
                       </div>
                     </div>
                   ) : (
-                    <div className="aspect-[2/3] w-full rounded-2xl bg-zinc-900/60 border-2 border-dashed border-zinc-800 flex flex-col items-center justify-center gap-2 hover:border-amber-500/40 transition-colors p-4 text-center">
+                    <div className="aspect-[2/3] w-full rounded-2xl bg-brand-dark border-2 border-dashed border-zinc-800 flex flex-col items-center justify-center gap-2 hover:border-brand-coral/40 transition-colors p-4 text-center">
                       <Upload className="w-8 h-8 text-zinc-500" />
                       <span className="text-[10px] text-zinc-400 font-bold">Kéo thả hoặc click để upload ảnh poster</span>
                       <span className="text-[9px] text-zinc-650">Tỷ lệ khuyên dùng 2:3 (Dạng ảnh đứng)</span>
@@ -366,33 +384,33 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                     value={movieForm.posterUrl}
                     onChange={(e) => setMovieForm({ ...movieForm, posterUrl: e.target.value })}
                     placeholder="Đường dẫn ảnh poster (URL)..."
-                    className="w-full bg-zinc-950 border border-zinc-900 rounded-xl py-2 px-3 text-xs text-zinc-100 focus:outline-none focus:border-amber-500/40 transition-colors"
+                    className="w-full bg-brand-dark border border-zinc-805 rounded-xl py-2 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral/40 transition-colors"
                   />
                 </div>
               </div>
 
               {/* Backdrop Asset Card */}
-              <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 space-y-4">
+              <div className="bg-brand-gray/60 border border-zinc-800/50 rounded-2xl p-6 space-y-4">
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-zinc-800 pb-2">
                   Ảnh bìa / Backdrop
                 </h3>
                 
                 <div className="space-y-3">
                   {movieForm.trailerUrl ? (
-                    <div className="aspect-[16/9] w-full rounded-2xl overflow-hidden border border-zinc-800 relative group">
+                    <div className="aspect-[16/9] w-full rounded-2xl overflow-hidden border border-zinc-805 relative group">
                       <img src={movieForm.trailerUrl} alt="Backdrop Preview" className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                         <button
                           type="button"
                           onClick={() => setMovieForm({ ...movieForm, trailerUrl: '' })}
-                          className="bg-red-650 text-white font-bold text-xs py-1.5 px-3 rounded-lg hover:bg-red-700 transition-colors"
+                          className="bg-brand-coral hover:bg-opacity-90 text-zinc-950 font-bold text-xs py-1.5 px-3 rounded-lg transition-colors cursor-pointer"
                         >
                           Xóa ảnh
                         </button>
                       </div>
                     </div>
                   ) : (
-                    <div className="aspect-[16/9] w-full rounded-2xl bg-zinc-900/60 border-2 border-dashed border-zinc-800 flex flex-col items-center justify-center gap-2 hover:border-amber-500/40 transition-colors p-4 text-center">
+                    <div className="aspect-[16/9] w-full rounded-2xl bg-brand-dark border-2 border-dashed border-zinc-800 flex flex-col items-center justify-center gap-2 hover:border-brand-coral/40 transition-colors p-4 text-center">
                       <Upload className="w-8 h-8 text-zinc-500" />
                       <span className="text-[10px] text-zinc-400 font-bold">Kéo thả hoặc click để upload ảnh bìa</span>
                       <span className="text-[9px] text-zinc-650">Tỷ lệ khuyên dùng 16:9 (Dạng ảnh ngang)</span>
@@ -404,13 +422,13 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                     value={movieForm.trailerUrl}
                     onChange={(e) => setMovieForm({ ...movieForm, trailerUrl: e.target.value })}
                     placeholder="Đường dẫn ảnh bìa / Video trailer URL..."
-                    className="w-full bg-zinc-950 border border-zinc-900 rounded-xl py-2 px-3 text-xs text-zinc-100 focus:outline-none focus:border-amber-500/40 transition-colors"
+                    className="w-full bg-brand-dark border border-zinc-805 rounded-xl py-2 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral/40 transition-colors"
                   />
                 </div>
               </div>
 
-              {/* Relational Selectors Layout Grid */}
-              <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 space-y-4">
+              {/* Relational Selectors Grid */}
+              <div className="bg-brand-gray/60 border border-zinc-800/50 rounded-2xl p-6 space-y-4">
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-zinc-800 pb-2">
                   Dữ Liệu Quốc Gia & Ngày Phát Hành
                 </h3>
@@ -422,7 +440,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                     <select
                       value={movieForm.country}
                       onChange={(e) => setMovieForm({ ...movieForm, country: e.target.value })}
-                      className="w-full bg-zinc-950 border border-zinc-900 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-amber-500/40 transition-colors"
+                      className="w-full bg-brand-dark border border-zinc-850 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral/40 transition-colors cursor-pointer"
                     >
                       <option value="Việt Nam">Việt Nam</option>
                       <option value="Mỹ">Mỹ</option>
@@ -441,7 +459,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                       type="date"
                       value={movieForm.releaseDate}
                       onChange={(e) => setMovieForm({ ...movieForm, releaseDate: e.target.value })}
-                      className="w-full bg-zinc-950 border border-zinc-900 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-amber-500/40 transition-colors"
+                      className="w-full bg-brand-dark border border-zinc-850 rounded-xl py-2.5 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral/40 transition-colors"
                     />
                   </div>
                 </div>
@@ -452,11 +470,11 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
           </div>
 
           {/* Action Trigger button bar at the bottom */}
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between border-t border-zinc-900 pt-6">
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between border-t border-zinc-800/80 pt-6">
             <button
               type="button"
               onClick={() => setMovieModalOpen(false)}
-              className="flex items-center justify-center gap-2 border border-zinc-800 hover:border-zinc-700 bg-zinc-900 text-zinc-300 font-bold px-6 py-3 rounded-2xl text-xs transition-colors cursor-pointer w-full sm:w-auto"
+              className="flex items-center justify-center gap-2 border border-zinc-800/80 hover:border-zinc-700 bg-brand-gray text-zinc-300 font-bold px-6 py-3 rounded-2xl text-xs transition-colors cursor-pointer w-full sm:w-auto"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Quay lại danh sách</span>
@@ -464,7 +482,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
 
             <button
               type="submit"
-              className="bg-red-600 hover:bg-red-700 text-white font-black px-8 py-3.5 rounded-2xl text-xs transition-all shadow-xl tracking-wider uppercase flex items-center justify-center gap-2 w-full sm:w-auto cursor-pointer"
+              className="bg-brand-coral hover:bg-opacity-90 text-zinc-950 font-black px-8 py-3.5 rounded-2xl text-xs transition-all shadow-xl tracking-wider uppercase flex items-center justify-center gap-2 w-full sm:w-auto cursor-pointer"
             >
               <Check className="w-4 h-4" />
               <span>{editingMovie ? 'CẬP NHẬT THÔNG TIN' : 'TẠO PHIM MỚI'}</span>
@@ -476,105 +494,168 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-brand-dark min-h-screen text-zinc-100">
       {/* Search & Actions bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="relative w-full sm:w-80">
-          <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-zinc-500">
-            <Search className="w-4 h-4" />
-          </span>
-          <input
-            type="text"
-            value={movieSearch}
-            onChange={(e) => setMovieSearch(e.target.value)}
-            placeholder="Tìm kiếm phim..."
-            className="w-full bg-zinc-950 border border-zinc-900 rounded-xl py-2.5 pl-9 pr-4 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral transition-colors"
-          />
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-brand-gray/60 border border-zinc-800/50 p-4 rounded-2xl backdrop-blur-md mb-6">
+        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-stretch sm:items-center">
+          {/* Search Input */}
+          <div className="relative w-full sm:w-80">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-zinc-500">
+              <Search className="w-4 h-4" />
+            </span>
+            <input
+              type="text"
+              value={movieSearch}
+              onChange={(e) => setMovieSearch(e.target.value)}
+              placeholder="Tìm kiếm phim..."
+              className="w-full bg-brand-dark border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:border-brand-coral/40 focus:ring-0 rounded-xl py-2.5 pl-9 pr-4 text-xs transition-colors"
+            />
+          </div>
+
+          {/* Status Filter */}
+          <select
+            value={movieStatusFilter}
+            onChange={(e) => setMovieStatusFilter(e.target.value)}
+            className="bg-brand-dark border border-zinc-800 text-zinc-350 focus:outline-none focus:border-brand-coral/40 rounded-xl py-2.5 px-4 text-xs transition-colors cursor-pointer"
+          >
+            <option value="ALL">Tất cả trạng thái</option>
+            <option value="SHOWING">Đang chiếu (SHOWING)</option>
+            <option value="UPCOMING">Sắp chiếu (UPCOMING)</option>
+            <option value="ENDED">Đã đóng (ENDED)</option>
+          </select>
         </div>
+
         <button
           onClick={handleOpenAddMovie}
-          className="flex items-center gap-2 bg-brand-coral hover:bg-opacity-90 text-white text-xs font-black py-2.5 px-4 rounded-xl transition-all w-full sm:w-auto justify-center cursor-pointer"
+          className="bg-brand-coral hover:bg-opacity-90 text-zinc-950 font-black px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all duration-300 shadow-lg shadow-brand-coral/10 flex items-center gap-2 cursor-pointer w-full sm:w-auto justify-center"
         >
-          <PlusCircle className="w-4 h-4" />
+          <Plus className="w-4 h-4" />
           <span>THÊM PHIM MỚI</span>
         </button>
       </div>
 
-      {/* Main Grid Data Sheet Table */}
-      <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl shadow-xl shadow-black/40 hover:border-zinc-700/60 transition-all duration-300 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-zinc-400">
-            <thead className="bg-zinc-950/80 text-zinc-400 font-black uppercase tracking-wider border-b border-zinc-800">
-              <tr>
-                <th className="py-4 px-6">Tên Phim</th>
-                <th className="py-4 px-6">Độ Dài</th>
-                <th className="py-4 px-6">Giới Hạn Tuổi</th>
-                <th className="py-4 px-6">Năm Phát Hành</th>
-                <th className="py-4 px-6">Trạng Thái</th>
-                <th className="py-4 px-6 text-center w-32">Thao Tác</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-800/60">
-              {filteredMovies.length === 0 ? (
-                <tr>
-                  <td colSpan="6" className="py-12 text-center text-zinc-500 font-semibold">
-                    Không tìm thấy phim nào phù hợp.
-                  </td>
-                </tr>
-              ) : (
-                filteredMovies.map((movie) => (
-                  <tr key={movie.id} className="hover:bg-zinc-900/20 transition-colors border-b border-zinc-800/40">
-                    <td className="py-4 px-6 font-bold text-zinc-200 text-sm">{movie.title}</td>
-                    <td className="py-4 px-6 text-zinc-300 font-medium">
-                      {movie.duration ? `${movie.duration} phút` : 'N/A'}
-                    </td>
-                    <td className="py-4 px-6">
-                      <span className="px-3 py-1 text-[10px] font-black rounded-full bg-red-950/40 text-red-400 border border-red-900/40">
-                        {movie.ageRating}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 text-zinc-300 font-medium">{movie.releaseYear}</td>
-                    <td className="py-4 px-6">
-                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase border ${
-                        movie.status === 'DANG_CHIEU' || movie.status === 'NOW_SHOWING' || movie.status === 'SHOWING'
-                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
-                          : movie.status === 'SAP_CHIEU' || movie.status === 'COMING_SOON' || movie.status === 'UPCOMING'
-                            ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                            : 'bg-zinc-800 text-zinc-550 border-zinc-700'
-                      }`}>
-                        {movie.status === 'DANG_CHIEU' || movie.status === 'NOW_SHOWING' || movie.status === 'SHOWING'
-                          ? 'ĐANG CHIẾU'
-                          : movie.status === 'SAP_CHIEU' || movie.status === 'COMING_SOON' || movie.status === 'UPCOMING'
-                            ? 'SẮP CHIẾU'
-                            : 'ĐÃ ĐÓNG'}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6">
-                      <div className="flex justify-center gap-2">
-                        <button
-                          onClick={() => handleOpenEditMovie(movie)}
-                          className="p-2 text-zinc-400 hover:text-white bg-zinc-950 border border-zinc-800 rounded-xl transition-all cursor-pointer"
-                          title="Sửa phim"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteMovie(movie.id)}
-                          className="p-2 text-red-400 hover:text-red-300 bg-red-950/20 border border-red-900/40 rounded-xl transition-all cursor-pointer"
-                          title="Xóa phim"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+      {/* Cinematic Movie Grid */}
+      {filteredMovies.length === 0 ? (
+        <div className="bg-brand-gray/40 border border-zinc-800/40 rounded-2xl p-12 text-center text-zinc-500 font-semibold">
+          Không tìm thấy phim nào phù hợp với bộ lọc hiện tại.
         </div>
-      </div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
+          {filteredMovies.map((movie) => {
+            // Normalize status for dynamic badge
+            const normStatus = movie.status === 'DANG_CHIEU' || movie.status === 'NOW_SHOWING' || movie.status === 'SHOWING'
+              ? 'SHOWING'
+              : movie.status === 'SAP_CHIEU' || movie.status === 'COMING_SOON' || movie.status === 'UPCOMING'
+                ? 'UPCOMING'
+                : 'ENDED';
+
+            const ageRating = movie.ageRating || movie.age_rating || 'P';
+
+            // Get first 2 genres
+            const genresToShow = Array.isArray(movie.genres) 
+              ? movie.genres.slice(0, 2) 
+              : (movie.genre ? movie.genre.split(',').map(g => g.trim()).slice(0, 2) : []);
+
+            return (
+              <div 
+                key={movie.id} 
+                className="bg-brand-gray/40 border border-zinc-800/40 rounded-2xl overflow-hidden flex flex-col group hover:border-brand-coral/30 transition-all duration-300 hover:-translate-y-1 transform-gpu shadow-xl relative"
+              >
+                {/* The Interactive Poster Wrapper */}
+                <div className="relative aspect-[2/3] w-full overflow-hidden bg-brand-dark">
+                  <img 
+                    src={movie.posterUrl || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80'} 
+                    alt={movie.title} 
+                    loading="lazy"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 linear transform-gpu" 
+                  />
+
+                  {/* Absolute Age Badge Layer */}
+                  <div className="absolute top-3 left-3 z-10">
+                    {ageRating === 'T18' ? (
+                      <span className="px-2 py-0.5 text-[9px] font-black rounded-md bg-red-500/10 border border-red-500/20 text-red-400 uppercase">
+                        {ageRating}
+                      </span>
+                    ) : ageRating === 'P' ? (
+                      <span className="px-2 py-0.5 text-[9px] font-black rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 uppercase">
+                        {ageRating}
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 text-[9px] font-black rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-400 uppercase">
+                        {ageRating}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* The Status Chip Overlay */}
+                  <div className="absolute top-3 right-3 z-10">
+                    {normStatus === 'SHOWING' && (
+                      <span className="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase bg-brand-coral/10 border border-brand-coral/20 text-brand-coral">
+                        Đang chiếu
+                      </span>
+                    )}
+                    {normStatus === 'UPCOMING' && (
+                      <span className="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase bg-brand-yellow/10 border border-brand-yellow/20 text-brand-yellow">
+                        Sắp chiếu
+                      </span>
+                    )}
+                    {normStatus === 'ENDED' && (
+                      <span className="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase bg-zinc-800/60 text-zinc-400 border border-zinc-700">
+                        Đã đóng
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Invisible-to-Visible Action Overlay (Thao tác nhanh trên Card) */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4 z-20">
+                    <div className="flex gap-3 bg-brand-dark/95 backdrop-blur-md border border-zinc-800 px-4 py-2 rounded-xl shadow-2xl">
+                      <button
+                        onClick={() => handleOpenEditMovie(movie)}
+                        className="p-1.5 text-zinc-400 hover:text-white bg-brand-gray hover:bg-brand-dark border border-zinc-800/80 rounded-lg transition-colors cursor-pointer"
+                        title="Sửa phim"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteMovie(movie.id)}
+                        className="p-1.5 text-brand-coral hover:text-brand-coral bg-brand-coral/10 border border-brand-coral/20 rounded-lg transition-colors cursor-pointer"
+                        title="Xóa phim"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* The Metadata Detail Block */}
+                <div className="p-3.5 flex flex-col flex-1 gap-1.5 justify-between">
+                  <div>
+                    <h4 className="text-xs font-bold text-zinc-100 group-hover:text-brand-coral transition-colors line-clamp-1 mb-1">
+                      {movie.title}
+                    </h4>
+                    
+                    <div className="text-[11px] text-zinc-400 flex items-center gap-1 font-mono mb-2">
+                      <Clock className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                      <span>{movie.duration} phút</span>
+                    </div>
+                  </div>
+
+                  {/* Genres Row */}
+                  {genresToShow.length > 0 && (
+                    <div className="flex flex-wrap gap-1 text-[10px] text-zinc-500 font-medium">
+                      {genresToShow.map((g, idx) => (
+                        <span key={idx} className="bg-brand-dark border border-zinc-800/50 px-1.5 py-0.5 rounded-md">
+                          {g}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
-
