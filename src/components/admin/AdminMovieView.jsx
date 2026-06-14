@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { Search, Edit3, Trash2, X, Upload, ArrowLeft, Check, Clock, Plus } from 'lucide-react';
+import { Search, Edit3, Trash2, X, Upload, ArrowLeft, Check, Clock, Plus, Youtube } from 'lucide-react';
 
 const GENRE_LIST = [
   'Anime', 'Bí ẩn', 'Cao bồi', 'Chiến tranh', 'Chính kịch', 'Gia đình', 'Giả tưởng', 'Giật gân',
@@ -7,6 +7,13 @@ const GENRE_LIST = [
   'Phiêu lưu', 'Shounen', 'Siêu nhiên', 'Thể thao', 'Tài liệu', 'Tâm lý', 'Tình cảm', 'Tội phạm',
   'Viễn Tưởng', 'Võ thuật', 'Âm nhạc'
 ];
+
+const getYouTubeEmbedId = (url) => {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?\s*v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+};
 
 export default function AdminMovieView({ movies, updateMoviesState, triggerToast }) {
   const [movieSearch, setMovieSearch] = useState('');
@@ -27,6 +34,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
     ageRating: 'P',
     posterUrl: '',
     trailerUrl: '',
+    trailer_url: '',
     country: 'Việt Nam',
     releaseDate: '2026-06-14'
   });
@@ -69,6 +77,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
       ageRating: 'P',
       posterUrl: '',
       trailerUrl: '',
+      trailer_url: '',
       country: 'Việt Nam',
       releaseDate: new Date().toISOString().split('T')[0]
     });
@@ -96,6 +105,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
       ageRating: movie.ageRating || 'P',
       posterUrl: movie.posterUrl || '',
       trailerUrl: movie.trailerUrl || movie.trailerEmbedUrl || '',
+      trailer_url: movie.trailer_url || movie.trailerUrl || movie.trailerEmbedUrl || '',
       country: movie.country || 'Việt Nam',
       releaseDate: movie.releaseDate || (movie.releaseYear ? `${movie.releaseYear}-01-01` : new Date().toISOString().split('T')[0])
     });
@@ -121,6 +131,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
     }
 
     const year = parseInt(movieForm.releaseDate.split('-')[0]) || 2026;
+    const embedId = getYouTubeEmbedId(movieForm.trailer_url);
 
     if (editingMovie) {
       // On Edit: retain all properties via spread operator as specified
@@ -142,8 +153,10 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
         ageRating: movieForm.ageRating,
         posterUrl: movieForm.posterUrl || editingMovie.posterUrl || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
         image: movieForm.posterUrl || editingMovie.image || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
-        trailerUrl: movieForm.trailerUrl,
-        trailerEmbedUrl: movieForm.trailerUrl || editingMovie.trailerEmbedUrl || 'https://www.youtube.com/embed/eHp3MbsQgzk',
+        trailer_url: movieForm.trailer_url,
+        trailerUrl: movieForm.trailer_url,
+        trailerId: embedId || editingMovie.trailerId || '',
+        trailerEmbedUrl: embedId ? `https://www.youtube.com/embed/${embedId}` : (editingMovie.trailerEmbedUrl || ''),
         country: movieForm.country,
         releaseDate: movieForm.releaseDate,
         releaseYear: year,
@@ -174,8 +187,10 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
         ageRating: movieForm.ageRating,
         posterUrl: movieForm.posterUrl || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
         image: movieForm.posterUrl || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
-        trailerUrl: movieForm.trailerUrl,
-        trailerEmbedUrl: movieForm.trailerUrl || 'https://www.youtube.com/embed/eHp3MbsQgzk',
+        trailer_url: movieForm.trailer_url,
+        trailerUrl: movieForm.trailer_url,
+        trailerId: embedId || '',
+        trailerEmbedUrl: embedId ? `https://www.youtube.com/embed/${embedId}` : '',
         country: movieForm.country,
         releaseDate: movieForm.releaseDate,
         releaseYear: year,
@@ -353,6 +368,36 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                       <option value="T18">T18 (Từ 18 tuổi trở lên)</option>
                     </select>
                   </div>
+                </div>
+
+                {/* YouTube Trailer Field Row */}
+                <div className="space-y-1.5 mt-4">
+                  <label className="text-zinc-500 text-[10px] font-black uppercase tracking-wider block">ĐƯỜNG DẪN TRAILER (YOUTUBE)</label>
+                  <div className="relative flex items-center">
+                    <Youtube className="absolute left-4 w-4 h-4 text-zinc-500 pointer-events-none" />
+                    <input
+                      type="text"
+                      placeholder="Dán link YouTube (Ví dụ: https://www.youtube.com/watch?v=...) "
+                      value={movieForm.trailer_url}
+                      onChange={(e) => setMovieForm({ ...movieForm, trailer_url: e.target.value })}
+                      className="w-full bg-brand-dark border border-zinc-800 focus:border-brand-coral/50 rounded-xl pl-11 pr-4 py-3 text-sm text-zinc-100 transition-colors placeholder-zinc-600 outline-none mt-1.5"
+                    />
+                  </div>
+                  
+                  {getYouTubeEmbedId(movieForm.trailer_url) ? (
+                    <div className="mt-3 aspect-video w-full max-w-xl rounded-xl overflow-hidden border border-brand-coral/20 shadow-2xl shadow-brand-coral/5 bg-brand-dark animate-fade-in relative group">
+                      <iframe
+                        src={`https://www.youtube.com/embed/${getYouTubeEmbedId(movieForm.trailer_url)}`}
+                        title="YouTube Video Trailer Preview"
+                        className="w-full h-full object-cover"
+                        allowFullScreen
+                      />
+                    </div>
+                  ) : (
+                    <p className="text-[11px] text-zinc-500 font-medium italic mt-2">
+                      * Dán link share hoặc thanh địa chỉ YouTube để hiển thị khung xem thử video tự động.
+                    </p>
+                  )}
                 </div>
               </div>
 
