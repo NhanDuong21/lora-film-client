@@ -105,83 +105,87 @@ export default function MovieDetailView({ movieId, onSelectShowtime, onBack }) {
   };
 
   return (
-    <div className="bg-zinc-950 text-zinc-100 min-h-screen pb-16">
-      {/* Background Banner Backdrop */}
-      <div className="relative h-[40vh] md:h-[50vh] overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-25 filter blur-md"
-          style={{ backgroundImage: `url(${movie.posterUrl || movie.image})` }}
-        ></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent"></div>
-        
-        {/* Back Button */}
+    <div className="bg-brand-dark text-zinc-100 min-h-screen pb-16 relative overflow-hidden">
+      {/* Background Banner Backdrop Chassis */}
+      <div className="absolute inset-0 w-full h-[550px] md:h-[600px] overflow-hidden z-0">
+        <img 
+          src={movie?.backdrop_url || movie?.posterUrl || movie?.image} 
+          alt="Movie Backdrop Wallpaper" 
+          className="w-full h-full object-cover filter blur-xl scale-105 opacity-25 transform-gpu"
+        />
+        {/* Layer 2: The Cinema Darkness Mask Gradients */}
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/80 to-brand-dark/40" />
+        <div className="absolute inset-0 bg-black/50" />
+      </div>
+
+      {/* Back Button */}
+      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 pt-6">
         <button
           onClick={onBack}
-          className="absolute top-6 left-6 md:left-12 z-20 flex items-center gap-2 bg-black/40 hover:bg-brand-coral/25 text-white border border-white/10 hover:border-brand-coral font-bold px-4 py-2 rounded-full transition-all duration-300"
+          className="flex items-center gap-2 bg-black/40 hover:bg-brand-coral/25 text-white border border-white/10 hover:border-brand-coral font-bold px-4 py-2 rounded-full transition-all duration-300 cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Quay lại</span>
         </button>
       </div>
 
-      {/* Main Details Container */}
-      <div className="max-w-6xl mx-auto px-6 md:px-12 -mt-32 md:-mt-48 relative z-10">
-        <div className="flex flex-col md:flex-row gap-8">
-          {/* Left Column: Poster */}
-          <div className="w-48 md:w-64 shrink-0 mx-auto md:mx-0">
-            <div className="relative aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border border-zinc-800 bg-zinc-900 group">
-              <img
-                src={movie.posterUrl || movie.image}
-                alt={movie.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=600&auto=format&fit=crop&q=80';
-                }}
-              />
-              <span className={`absolute top-3 left-3 z-10 text-xs font-black px-2.5 py-1 rounded shadow-lg ${ageRatingColor(movie.ageRating)}`}>
-                {movie.ageRating}
-              </span>
-            </div>
-          </div>
-
-          {/* Right Column: Info */}
-          <div className="flex-grow flex flex-col justify-end text-center md:text-left mt-4 md:mt-0">
-            <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
-              <div className="flex items-center gap-1 bg-brand-yellow text-black text-xs font-black px-2 py-0.5 rounded shadow">
-                <Star className="w-3 h-3 fill-current" />
-                {(movie.rating || 0).toFixed(1)}
-              </div>
-              <span className="text-zinc-400 text-sm">| {movie.genre || movie.genres?.join(', ')}</span>
-            </div>
-            
-            <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight mb-4">
-              {movie.title}
-            </h1>
-
-            <div className="flex items-center justify-center md:justify-start gap-2 text-zinc-400 text-sm mb-6">
-              <Clock className="w-4 h-4 text-brand-coral" />
-              <span>{movie.duration} phút</span>
-            </div>
-
-            <p className="text-zinc-300 text-sm md:text-base leading-relaxed mb-6 max-w-3xl">
-              {movie.synopsis}
-            </p>
-
-            <div className="flex justify-center md:justify-start">
-              <button
-                onClick={() => setIsTrailerOpen(true)}
-                className="flex items-center gap-2 bg-brand-coral hover:bg-opacity-90 text-white font-bold px-6 py-3 rounded-full shadow-lg shadow-brand-coral/25 transform hover:scale-105 transition-all duration-300"
-              >
-                <Play className="w-4 h-4 fill-current" />
-                Xem Trailer
-              </button>
-            </div>
-          </div>
+      {/* Foreground Content Alignment Grid */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-24 pb-12 flex flex-col md:flex-row gap-8 items-center md:items-end">
+        {/* Left Column: Poster */}
+        <div className="w-52 md:w-64 aspect-[2/3] rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)] border border-zinc-800 shrink-0 transform-gpu relative overflow-hidden bg-zinc-900 group">
+          <img
+            src={movie.posterUrl || movie.image}
+            alt={movie.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=600&auto=format&fit=crop&q=80';
+            }}
+          />
+          <span className={`absolute top-3 left-3 z-10 text-xs font-black px-2.5 py-1 rounded shadow-lg ${ageRatingColor(movie.ageRating)}`}>
+            {movie.ageRating}
+          </span>
         </div>
 
+        {/* Right Column: Info */}
+        <div className="flex-grow flex flex-col justify-end text-center md:text-left mt-4 md:mt-0">
+          <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+            <div className="flex items-center gap-1 bg-brand-yellow text-black text-xs font-black px-2 py-0.5 rounded shadow">
+              <Star className="w-3 h-3 fill-current" />
+              {(movie.rating || 0).toFixed(1)}
+            </div>
+            <span className="text-zinc-400 text-sm">| {movie.genre || movie.genres?.join(', ')}</span>
+          </div>
+          
+          <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight mb-4 font-sans drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]">
+            {movie.title}
+          </h1>
+
+          <div className="flex items-center justify-center md:justify-start gap-2 text-zinc-400 text-sm mb-6">
+            <Clock className="w-4 h-4 text-brand-coral" />
+            <span>{movie.duration} phút</span>
+          </div>
+
+          <p className="text-zinc-300 text-sm md:text-base leading-relaxed mb-6 max-w-3xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+            {movie.synopsis}
+          </p>
+
+          <div className="flex justify-center md:justify-start">
+            <button
+              onClick={() => setIsTrailerOpen(true)}
+              className="bg-brand-coral/10 border border-brand-coral hover:bg-brand-coral hover:text-brand-dark text-brand-coral font-black px-6 py-3 rounded-xl text-xs uppercase tracking-widest transition-all duration-300 shadow-lg shadow-brand-coral/5 flex items-center gap-2 mt-6 cursor-pointer"
+            >
+              <Play className="w-4 h-4 fill-current" />
+              Xem Trailer
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Details Container */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 mt-8">
         {/* Dynamic Showtime Scheduler Accordion & System */}
-        <div className="mt-16 bg-zinc-900/50 border border-zinc-800/80 rounded-3xl p-6 md:p-8 backdrop-blur-sm">
+        <div className="mt-8 bg-zinc-900/50 border border-zinc-800/80 rounded-3xl p-6 md:p-8 backdrop-blur-sm">
           <h2 className="text-xl md:text-2xl font-black text-white uppercase tracking-wide mb-6">
             Lịch Chiếu & Đặt Vé
           </h2>
