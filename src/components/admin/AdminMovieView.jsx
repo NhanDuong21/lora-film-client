@@ -33,6 +33,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
     actors: '',
     ageRating: 'P',
     posterUrl: '',
+    backdrop_url: '',
     trailerUrl: '',
     trailer_url: '',
     country: 'Việt Nam',
@@ -76,6 +77,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
       actors: '',
       ageRating: 'P',
       posterUrl: '',
+      backdrop_url: '',
       trailerUrl: '',
       trailer_url: '',
       country: 'Việt Nam',
@@ -104,6 +106,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
       actors: movie.actor || '',
       ageRating: movie.ageRating || 'P',
       posterUrl: movie.posterUrl || '',
+      backdrop_url: movie.backdrop_url || movie.backdropUrl || '',
       trailerUrl: movie.trailerUrl || movie.trailerEmbedUrl || '',
       trailer_url: movie.trailer_url || movie.trailerUrl || movie.trailerEmbedUrl || '',
       country: movie.country || 'Việt Nam',
@@ -153,6 +156,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
         ageRating: movieForm.ageRating,
         posterUrl: movieForm.posterUrl || editingMovie.posterUrl || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
         image: movieForm.posterUrl || editingMovie.image || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
+        backdrop_url: movieForm.backdrop_url,
         trailer_url: movieForm.trailer_url,
         trailerUrl: movieForm.trailer_url,
         trailerId: embedId || editingMovie.trailerId || '',
@@ -187,6 +191,7 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
         ageRating: movieForm.ageRating,
         posterUrl: movieForm.posterUrl || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
         image: movieForm.posterUrl || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
+        backdrop_url: movieForm.backdrop_url,
         trailer_url: movieForm.trailer_url,
         trailerUrl: movieForm.trailer_url,
         trailerId: embedId || '',
@@ -372,32 +377,37 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
 
                 {/* YouTube Trailer Field Row */}
                 <div className="space-y-1.5 mt-4">
-                  <label className="text-zinc-500 text-[10px] font-black uppercase tracking-wider block">ĐƯỜNG DẪN TRAILER (YOUTUBE)</label>
+                  <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">
+                    ĐƯỜNG DẪN TRAILER (YOUTUBE)
+                  </label>
                   <div className="relative flex items-center">
                     <Youtube className="absolute left-4 w-4 h-4 text-zinc-500 pointer-events-none" />
                     <input
                       type="text"
-                      placeholder="Dán link YouTube (Ví dụ: https://www.youtube.com/watch?v=...) "
-                      value={movieForm.trailer_url}
+                      placeholder="Dán link video YouTube (Ví dụ: https://www.youtube.com/watch?v=...)"
+                      value={movieForm.trailer_url || ''}
                       onChange={(e) => setMovieForm({ ...movieForm, trailer_url: e.target.value })}
-                      className="w-full bg-brand-dark border border-zinc-800 focus:border-brand-coral/50 rounded-xl pl-11 pr-4 py-3 text-sm text-zinc-100 transition-colors placeholder-zinc-600 outline-none mt-1.5"
+                      className="w-full bg-brand-dark border border-zinc-800 focus:border-brand-coral/50 rounded-xl pl-11 pr-4 py-3 text-sm text-zinc-100 transition-colors placeholder-zinc-600 outline-none"
                     />
                   </div>
                   
-                  {getYouTubeEmbedId(movieForm.trailer_url) ? (
-                    <div className="mt-3 aspect-video w-full max-w-xl rounded-xl overflow-hidden border border-brand-coral/20 shadow-2xl shadow-brand-coral/5 bg-brand-dark animate-fade-in relative group">
-                      <iframe
-                        src={`https://www.youtube.com/embed/${getYouTubeEmbedId(movieForm.trailer_url)}`}
-                        title="YouTube Video Trailer Preview"
-                        className="w-full h-full object-cover"
-                        allowFullScreen
-                      />
-                    </div>
-                  ) : (
-                    <p className="text-[11px] text-zinc-500 font-medium italic mt-2">
-                      * Dán link share hoặc thanh địa chỉ YouTube để hiển thị khung xem thử video tự động.
-                    </p>
-                  )}
+                  {(() => {
+                    const embedId = getYouTubeEmbedId(movieForm.trailer_url);
+                    return embedId ? (
+                      <div className="mt-3 aspect-video w-full max-w-xl rounded-xl overflow-hidden border border-brand-coral/20 bg-brand-dark">
+                        <iframe 
+                          src={`https://www.youtube.com/embed/${embedId}`} 
+                          title="Live Trailer Preview" 
+                          className="w-full h-full" 
+                          allowFullScreen 
+                        />
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-zinc-500 italic mt-1.5">
+                        * Nhập đường dẫn YouTube để kích hoạt tính năng xem thử video tự động.
+                      </p>
+                    );
+                  })()}
                 </div>
               </div>
 
@@ -472,17 +482,17 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
               {/* Backdrop Asset Card */}
               <div className="bg-brand-gray/60 border border-zinc-800/50 rounded-2xl p-6 space-y-4">
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-zinc-800 pb-2">
-                  Ảnh bìa / Backdrop
+                  ẢNH BÌA / BACKDROP
                 </h3>
                 
                 <div className="space-y-3">
-                  {movieForm.trailerUrl ? (
+                  {movieForm.backdrop_url ? (
                     <div className="aspect-[16/9] w-full rounded-2xl overflow-hidden border border-zinc-805 relative group">
-                      <img src={movieForm.trailerUrl} alt="Backdrop Preview" className="w-full h-full object-cover" />
+                      <img src={movieForm.backdrop_url} alt="Backdrop Preview" className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                         <button
                           type="button"
-                          onClick={() => setMovieForm({ ...movieForm, trailerUrl: '' })}
+                          onClick={() => setMovieForm({ ...movieForm, backdrop_url: '' })}
                           className="bg-brand-coral hover:bg-opacity-90 text-zinc-950 font-bold text-xs py-1.5 px-3 rounded-lg transition-colors cursor-pointer"
                         >
                           Xóa ảnh
@@ -497,12 +507,12 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
                     </div>
                   )}
 
-                  <input
-                    type="text"
-                    value={movieForm.trailerUrl}
-                    onChange={(e) => setMovieForm({ ...movieForm, trailerUrl: e.target.value })}
-                    placeholder="Đường dẫn ảnh bìa / Video trailer URL..."
-                    className="w-full bg-brand-dark border border-zinc-805 rounded-xl py-2 px-3 text-xs text-zinc-100 focus:outline-none focus:border-brand-coral/40 transition-colors"
+                  <input 
+                    type="text" 
+                    placeholder="Đường dẫn ảnh bìa (Backdrop URL)..." 
+                    value={movieForm.backdrop_url || ''} 
+                    onChange={(e) => setMovieForm({ ...movieForm, backdrop_url: e.target.value })}
+                    className="w-full bg-brand-dark border border-zinc-800 focus:border-brand-coral/50 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder-zinc-600 outline-none"
                   />
                 </div>
               </div>
