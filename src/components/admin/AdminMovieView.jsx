@@ -78,11 +78,16 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
 
   const handleOpenEditMovie = useCallback((movie) => {
     setEditingMovie(movie);
+    // Make sure we resolve different status mappings correctly:
+    const resolvedStatus = movie.status === 'NOW_SHOWING' || movie.status === 'DANG_CHIEU' || movie.status === 'SHOWING' 
+      ? 'SHOWING' 
+      : (movie.status === 'COMING_SOON' || movie.status === 'SAP_CHIEU' || movie.status === 'UPCOMING' ? 'UPCOMING' : movie.status || 'SHOWING');
+
     setMovieForm({
       title: movie.title || '',
       synopsis: movie.synopsis || '',
       type: movie.type || 'Single',
-      status: movie.status === 'NOW_SHOWING' || movie.status === 'DANG_CHIEU' ? 'SHOWING' : (movie.status === 'COMING_SOON' || movie.status === 'SAP_CHIEU' ? 'UPCOMING' : movie.status || 'SHOWING'),
+      status: resolvedStatus,
       duration: String(movie.duration || 120),
       episodesCount: movie.episodesCount || 1,
       language: movie.language || 'Tiếng Việt',
@@ -117,40 +122,70 @@ export default function AdminMovieView({ movies, updateMoviesState, triggerToast
 
     const year = parseInt(movieForm.releaseDate.split('-')[0]) || 2026;
 
-    const processedMovie = {
-      title: movieForm.title,
-      synopsis: movieForm.synopsis,
-      type: movieForm.type,
-      status: movieForm.status,
-      duration: parseInt(movieForm.duration) || 120,
-      episodesCount: parseInt(movieForm.episodesCount) || 1,
-      language: movieForm.language,
-      director: {
-        name: movieForm.directorName,
-        avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80'
-      },
-      actor: movieForm.actors,
-      ageRating: movieForm.ageRating,
-      posterUrl: movieForm.posterUrl || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
-      image: movieForm.posterUrl || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
-      trailerUrl: movieForm.trailerUrl,
-      trailerEmbedUrl: movieForm.trailerUrl || 'https://www.youtube.com/embed/eHp3MbsQgzk',
-      country: movieForm.country,
-      releaseDate: movieForm.releaseDate,
-      releaseYear: year,
-      genres: selectedGenres,
-      genre: selectedGenres.join(', '),
-      rating: editingMovie ? editingMovie.rating : 4.5,
-      actorIds: editingMovie ? editingMovie.actorIds : []
-    };
-
     if (editingMovie) {
-      const updated = movies.map(m => m.id === editingMovie.id ? { ...processedMovie, id: m.id } : m);
+      // On Edit: retain all properties via spread operator as specified
+      const updatedMoviePayload = {
+        ...editingMovie,
+        title: movieForm.title,
+        synopsis: movieForm.synopsis,
+        type: movieForm.type,
+        status: movieForm.status || editingMovie.status,
+        duration: parseInt(movieForm.duration) || 120,
+        episodesCount: parseInt(movieForm.episodesCount) || 1,
+        language: movieForm.language,
+        director: {
+          ...(editingMovie.director || {}),
+          name: movieForm.directorName,
+          avatarUrl: editingMovie.director?.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80'
+        },
+        actor: movieForm.actors,
+        ageRating: movieForm.ageRating,
+        posterUrl: movieForm.posterUrl || editingMovie.posterUrl || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
+        image: movieForm.posterUrl || editingMovie.image || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
+        trailerUrl: movieForm.trailerUrl,
+        trailerEmbedUrl: movieForm.trailerUrl || editingMovie.trailerEmbedUrl || 'https://www.youtube.com/embed/eHp3MbsQgzk',
+        country: movieForm.country,
+        releaseDate: movieForm.releaseDate,
+        releaseYear: year,
+        genres: selectedGenres,
+        genre: selectedGenres.join(', '),
+        id: editingMovie.id // 🚨 CRITICAL: Never lose or change the primary key entity ID
+      };
+
+      const updated = movies.map(m => m.id === editingMovie.id ? updatedMoviePayload : m);
       updateMoviesState(updated);
       triggerToast('Cập nhật thông tin phim thành công!');
     } else {
-      const newMovie = { ...processedMovie, id: 'm_' + Date.now() };
-      updateMoviesState([...movies, newMovie]);
+      // On Create: construct a new movie object
+      const newMoviePayload = {
+        id: 'm_' + Date.now(),
+        title: movieForm.title,
+        synopsis: movieForm.synopsis,
+        type: movieForm.type,
+        status: movieForm.status || 'SHOWING',
+        duration: parseInt(movieForm.duration) || 120,
+        episodesCount: parseInt(movieForm.episodesCount) || 1,
+        language: movieForm.language,
+        director: {
+          name: movieForm.directorName,
+          avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80'
+        },
+        actor: movieForm.actors,
+        ageRating: movieForm.ageRating,
+        posterUrl: movieForm.posterUrl || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
+        image: movieForm.posterUrl || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
+        trailerUrl: movieForm.trailerUrl,
+        trailerEmbedUrl: movieForm.trailerUrl || 'https://www.youtube.com/embed/eHp3MbsQgzk',
+        country: movieForm.country,
+        releaseDate: movieForm.releaseDate,
+        releaseYear: year,
+        genres: selectedGenres,
+        genre: selectedGenres.join(', '),
+        rating: 4.5,
+        actorIds: []
+      };
+
+      updateMoviesState([...movies, newMoviePayload]);
       triggerToast('Thêm phim mới thành công!');
     }
     setMovieModalOpen(false);

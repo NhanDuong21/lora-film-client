@@ -13,10 +13,10 @@ export default function MovieGrid({ onSelectMovie, onNavigate, activeTab: propAc
   const filteredMovies = useMemo(() => {
     return movies.filter((movie) => {
       if (activeTab === 'NOW_SHOWING') {
-        return movie.status === 'NOW_SHOWING' || movie.status === 'DANG_CHIEU';
+        return movie.status === 'NOW_SHOWING' || movie.status === 'DANG_CHIEU' || movie.status === 'SHOWING';
       }
       if (activeTab === 'COMING_SOON') {
-        return movie.status === 'COMING_SOON' || movie.status === 'SAP_CHIEU';
+        return movie.status === 'COMING_SOON' || movie.status === 'SAP_CHIEU' || movie.status === 'UPCOMING';
       }
       return movie.status === activeTab;
     });

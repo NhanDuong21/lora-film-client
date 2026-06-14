@@ -136,10 +136,10 @@ export default function MovieDiscoveryView({ onBackHome, onBuyTicket, initialTab
     if (selectedStatus !== 'ALL') {
       result = result.filter(m => {
         if (selectedStatus === 'NOW_SHOWING') {
-          return m.status === 'NOW_SHOWING' || m.status === 'DANG_CHIEU';
+          return m.status === 'NOW_SHOWING' || m.status === 'DANG_CHIEU' || m.status === 'SHOWING';
         }
         if (selectedStatus === 'COMING_SOON') {
-          return m.status === 'COMING_SOON' || m.status === 'SAP_CHIEU';
+          return m.status === 'COMING_SOON' || m.status === 'SAP_CHIEU' || m.status === 'UPCOMING';
         }
         return m.status === selectedStatus;
       });
@@ -496,7 +496,7 @@ export default function MovieDiscoveryView({ onBackHome, onBuyTicket, initialTab
                     className="w-full bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs font-semibold rounded-xl py-3 px-3.5 focus:border-blue-600 focus:outline-none transition-colors"
                   >
                     <option value="">-- Chọn Phim --</option>
-                    {movies.filter(m => m.status === 'NOW_SHOWING' || m.status === 'DANG_CHIEU').map(m => (
+                    {movies.filter(m => m.status === 'NOW_SHOWING' || m.status === 'DANG_CHIEU' || m.status === 'SHOWING').map(m => (
                       <option key={m.id} value={m.id}>{m.title}</option>
                     ))}
                   </select>
