@@ -105,21 +105,22 @@ export default function MovieDetailView({ movieId, onSelectShowtime, onBack }) {
   };
 
   return (
-    <div className="bg-brand-dark text-zinc-100 min-h-screen pb-16 relative overflow-hidden">
-      {/* Background Banner Backdrop Chassis */}
-      <div className="absolute inset-0 w-full h-[550px] md:h-[600px] overflow-hidden z-0">
+    <div className="relative w-full min-h-screen bg-brand-dark text-zinc-100 overflow-x-hidden pb-16">
+      {/* 🟢 CINEMATIC BACKDROP AMBIENT CANVAS */}
+      <div className="absolute top-0 left-0 w-full h-[500px] md:h-[580px] overflow-hidden z-0 pointer-events-none select-none">
         <img 
-          src={movie?.backdrop_url || movie?.posterUrl || movie?.image} 
-          alt="Movie Backdrop Wallpaper" 
-          className="w-full h-full object-cover filter blur-xl scale-105 opacity-25 transform-gpu"
+          src={movie?.backdrop_url || movie?.poster_url || movie?.posterUrl || movie?.image} 
+          alt="" 
+          className="w-full h-full object-cover filter blur-2xl scale-110 opacity-20 transform-gpu will-change-transform"
+          loading="eager"
         />
-        {/* Layer 2: The Cinema Darkness Mask Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/80 to-brand-dark/40" />
-        <div className="absolute inset-0 bg-black/50" />
+        {/* Infinite Depth Cinema Shroud Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/75 to-transparent" />
+        <div className="absolute inset-0 bg-brand-dark/40" />
       </div>
 
       {/* Back Button */}
-      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 pt-6">
+      <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 pt-6">
         <button
           onClick={onBack}
           className="flex items-center gap-2 bg-black/40 hover:bg-brand-coral/25 text-white border border-white/10 hover:border-brand-coral font-bold px-4 py-2 rounded-full transition-all duration-300 cursor-pointer"
@@ -130,7 +131,7 @@ export default function MovieDetailView({ movieId, onSelectShowtime, onBack }) {
       </div>
 
       {/* Foreground Content Alignment Grid */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-24 pb-12 flex flex-col md:flex-row gap-8 items-center md:items-end">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-12 flex flex-col md:flex-row gap-8 items-center md:items-end">
         {/* Left Column: Poster */}
         <div className="w-52 md:w-64 aspect-[2/3] rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)] border border-zinc-800 shrink-0 transform-gpu relative overflow-hidden bg-zinc-900 group">
           <img
@@ -183,7 +184,7 @@ export default function MovieDetailView({ movieId, onSelectShowtime, onBack }) {
       </div>
 
       {/* Main Details Container */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 mt-8">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 mt-8">
         {/* Dynamic Showtime Scheduler Accordion & System */}
         <div className="mt-8 bg-zinc-900/50 border border-zinc-800/80 rounded-3xl p-6 md:p-8 backdrop-blur-sm">
           <h2 className="text-xl md:text-2xl font-black text-white uppercase tracking-wide mb-6">
