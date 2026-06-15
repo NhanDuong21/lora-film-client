@@ -10,7 +10,15 @@ export default function MovieDetailView({ movieId, onSelectShowtime, onBack }) {
 
   // Find the current movie
   const movie = useMemo(() => {
-    return movies.find((m) => String(m.id) === String(movieId)) || movies[0];
+    const found = movies.find((m) => String(m.id) === String(movieId)) || movies[0];
+    if (found) {
+      return {
+        ...found,
+        backdrop_url: found.backdrop_url || found.backdropUrl || found.posterUrl || found.image,
+        poster_url: found.poster_url || found.posterUrl || found.image
+      };
+    }
+    return found;
   }, [movies, movieId]);
 
   // Generate the next 5 dates starting from today
@@ -106,17 +114,17 @@ export default function MovieDetailView({ movieId, onSelectShowtime, onBack }) {
 
   return (
     <div className="relative w-full min-h-screen bg-brand-dark text-zinc-100 overflow-x-hidden pb-16">
-      {/* 🟢 CINEMATIC BACKDROP AMBIENT CANVAS */}
-      <div className="absolute top-0 left-0 w-full h-[500px] md:h-[580px] overflow-hidden z-0 pointer-events-none select-none">
+      {/* 🟢 AMBIENT CINEMATIC BACKDROP LAYER */}
+      <div className="absolute top-0 left-0 w-full h-[520px] md:h-[600px] overflow-hidden z-0 pointer-events-none select-none">
         <img 
-          src={movie?.backdrop_url || movie?.poster_url || movie?.posterUrl || movie?.image} 
+          src={movie?.backdrop_url || movie?.poster_url} 
           alt="" 
           className="w-full h-full object-cover filter blur-2xl scale-110 opacity-20 transform-gpu will-change-transform"
           loading="eager"
         />
         {/* Infinite Depth Cinema Shroud Overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/75 to-transparent" />
-        <div className="absolute inset-0 bg-brand-dark/40" />
+        <div className="absolute inset-0 bg-brand-dark/50" />
       </div>
 
       {/* Back Button */}
