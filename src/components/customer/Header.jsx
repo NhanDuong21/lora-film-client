@@ -300,15 +300,15 @@ export default function Header({ onNavigate }) {
       <div className="flex items-center gap-4">
         {/* Expanded Omni-Search Input Field UI */}
         <div className="relative">
-          <div className="w-48 md:w-64 lg:w-72 h-10 relative flex items-center bg-zinc-900/80 border border-zinc-800 rounded-full pl-4 pr-10 focus-within:border-amber-500 focus-within:w-80 transition-all duration-300">
+          <div className="relative w-64 md:w-72 bg-zinc-900/90 border border-zinc-800 focus-within:border-brand-coral/60 rounded-full px-4 h-10 flex items-center text-xs text-zinc-100 transition-colors duration-200 outline-none">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Tìm phim, diễn viên, đạo diễn..."
-              className="bg-transparent text-white text-xs w-full h-full focus:outline-none placeholder-zinc-500"
+              className="bg-transparent text-white text-xs w-full h-full focus:outline-none placeholder-zinc-600"
             />
-            <Search className="w-4 h-4 text-zinc-450 absolute right-3 pointer-events-none" />
+            <Search className="w-4 h-4 text-zinc-500 absolute right-3 pointer-events-none" />
           </div>
 
           {/* Quick-Result Floating Dropdown Portal */}
