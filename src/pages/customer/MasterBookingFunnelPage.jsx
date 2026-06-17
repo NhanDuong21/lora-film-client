@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Film, Star, ChevronDown, Check, MapPin, AlertCircle } from 'lucide-react';
-import { useData } from '../contexts/DataContext';
+import { useData } from '../../contexts/DataContext';
 
 export default function MasterBookingFunnel({ onBackHome, onBookTicket }) {
   const { movies, cinemas, showtimes } = useData();

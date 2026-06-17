@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
 import { Search, Film, Award, Star, Heart, Calendar, MapPin, Ruler } from 'lucide-react';
-import { useData } from '../contexts/DataContext';
+import { useData } from '../../contexts/DataContext';
 
-export default function ActorRegistryView({ actorName, onBackHome, onBookTicket, onNavigate }) {
+export default function DirectorRegistryView({ directorName, onBackHome, onBookTicket, onNavigate }) {
   const { movies, cinemas } = useData();
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -17,98 +17,94 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
 
   // 1. Like/View engagement state (Session reactive store)
   const [engagement, setEngagement] = useState({
-    "Kaity Nguyễn": { likes: 1420, views: 24500, liked: false },
-    "Trấn Thành": { likes: 3105, views: 56200, liked: false },
-    "Kiều Minh Tuấn": { likes: 2540, views: 42100, liked: false },
-    "Ana de Armas": { likes: 1980, views: 38400, liked: false },
-    "Keanu Reeves": { likes: 5400, views: 98000, liked: false },
-    "Florence Pugh": { likes: 1890, views: 35200, liked: false },
-    "Sebastian Stan": { likes: 2200, views: 42100, liked: false },
-    "Anthony Mackie": { likes: 1750, views: 31900, liked: false },
-    "Jack Black": { likes: 2650, views: 49800, liked: false },
-    "Jason Momoa": { likes: 2980, views: 54100, liked: false },
-    "David Corenswet": { likes: 1450, views: 27800, liked: false },
-    "Rachel Brosnahan": { likes: 1520, views: 28900, liked: false }
+    "Trấn Thành": { likes: 3500, views: 62000, liked: false },
+    "Chad Stahelski": { likes: 2900, views: 51200, liked: false },
+    "Jake Schreier": { likes: 1800, views: 32100, liked: false },
+    "Phùng Đình Dũng": { likes: 1200, views: 21800, liked: false },
+    "Charlie Nguyễn": { likes: 2700, views: 48900, liked: false },
+    "Nguyễn Hữu Hoàng": { likes: 1450, views: 25400, liked: false },
+    "Victor Vũ": { likes: 3100, views: 56900, liked: false },
+    "Lý Hải": { likes: 3800, views: 71000, liked: false },
+    "Julius Onah": { likes: 1100, views: 19800, liked: false },
+    "Jared Hess": { likes: 1500, views: 27200, liked: false },
+    "James Gunn": { likes: 3400, views: 61800, liked: false },
+    "Yuzuru Tachikawa": { likes: 1900, views: 34500, liked: false }
   });
 
   // Country mapping mapping helper
-  const getActorCountry = (name) => {
-    const vnActors = ["Kaity Nguyễn", "Trấn Thành", "Kiều Minh Tuấn"];
-    return vnActors.includes(name) ? "Việt Nam" : "Mỹ";
+  const getDirectorCountry = (name) => {
+    const vnDirectors = ["Trấn Thành", "Phùng Đình Dũng", "Charlie Nguyễn", "Nguyễn Hữu Hoàng", "Victor Vũ", "Lý Hải"];
+    return vnDirectors.includes(name) ? "Việt Nam" : "Mỹ";
   };
 
   // Structured metrics database for deep dossier
-  const actorMetrics = {
-    "Kaity Nguyễn": { birth: "05/03/1999", height: "1m50", nationality: "Việt Nam", tags: ["Ngọc Nữ", "Phòng Vé", "Thực Lực"] },
-    "Trấn Thành": { birth: "05/02/1987", height: "1m70", nationality: "Việt Nam", tags: ["Đa Tài", "Đạo Diễn", "Kỷ Lục"] },
-    "Kiều Minh Tuấn": { birth: "26/02/1988", height: "1m74", nationality: "Việt Nam", tags: ["Biến Hóa", "Kịch Tính", "Thực Lực"] },
-    "Ana de Armas": { birth: "30/04/1988", height: "1m68", nationality: "Cuba", tags: ["Hành Động", "Quyến Rũ", "Oscar Nominated"] },
-    "Keanu Reeves": { birth: "02/09/1964", height: "1m86", nationality: "Canada", tags: ["Bất Tử", "Hành Động", "Nhân Hậu"] },
-    "Florence Pugh": { birth: "03/01/1996", height: "1m62", nationality: "Anh Quốc", tags: ["Cá Tính", "Gai Góc", "Thế Hệ Mới"] },
-    "Sebastian Stan": { birth: "13/08/1982", height: "1m83", nationality: "Romania / Mỹ", tags: ["Marvel", "Chiến Binh", "Chính Kịch"] },
-    "Anthony Mackie": { birth: "23/09/1978", height: "1m78", nationality: "Mỹ", tags: ["Marvel", "Captain America", "Năng Lượng"] },
-    "Jack Black": { birth: "28/08/1969", height: "1m68", nationality: "Mỹ", tags: ["Hài Kịch", "Huyền Thoại", "Bùng Nổ"] },
-    "Jason Momoa": { birth: "01/08/1979", height: "1m93", nationality: "Mỹ", tags: ["Cơ Bắp", "Hoang Dã", "Phiêu Lưu"] },
-    "David Corenswet": { birth: "08/07/1993", height: "1m93", nationality: "Mỹ", tags: ["Superman", "Cổ Điển", "Tài Năng Trẻ"] },
-    "Rachel Brosnahan": { birth: "12/07/1990", height: "1m61", nationality: "Mỹ", tags: ["Emmy Winner", "Lôi Cuốn", "Tài Sắc"] }
+  const directorMetrics = {
+    "Trấn Thành": { birth: "05/02/1987", height: "1m70", nationality: "Việt Nam", tags: ["Trăm Tỷ", "Tài Năng", "Kỷ Lục"] },
+    "Chad Stahelski": { birth: "20/09/1968", height: "1m85", nationality: "Mỹ", tags: ["John Wick", "Hành Động", "Võ Thuật"] },
+    "Jake Schreier": { birth: "29/09/1981", height: "1m80", nationality: "Mỹ", tags: ["Marvel", "Hiện Đại", "Cảm Xúc"] },
+    "Phùng Đình Dũng": { birth: "12/03/1980", height: "1m72", nationality: "Việt Nam", tags: ["Hoạt Hinh", "Dân Gian", "Mỹ Thuật"] },
+    "Charlie Nguyễn": { birth: "25/09/1968", height: "1m73", nationality: "Mỹ / Việt Nam", tags: ["Hành Động", "Hài Hước", "Kinh Nghiệm"] },
+    "Nguyễn Hữu Hoàng": { birth: "08/11/1991", height: "1m76", nationality: "Việt Nam", tags: ["Trinh Thám", "Học Đường", "Góc Quay Đẹp"] },
+    "Victor Vũ": { birth: "25/11/1975", height: "1m75", nationality: "Việt Nam / Mỹ", tags: ["Kinh Dị", "Giật Gân", "Chuyển Thể"] },
+    "Lý Hải": { birth: "28/09/1968", height: "1m69", nationality: "Việt Nam", tags: ["Lật Mặt", "Gia Đình", "Mộc Mạc"] },
+    "Julius Onah": { birth: "10/02/1983", height: "1m78", nationality: "Mỹ / Nigeria", tags: ["Sci-Fi", "Marvel", "Chính Trị"] },
+    "Jared Hess": { birth: "20/06/1979", height: "1m82", nationality: "Mỹ", tags: ["Minecraft", "Hài Hước", "Độc Đáo"] },
+    "James Gunn": { birth: "05/08/1966", height: "1m83", nationality: "Mỹ", tags: ["Superman", "Sáng Tạo", "Vũ Trụ"] },
+    "Yuzuru Tachikawa": { birth: "02/12/1981", height: "1m70", nationality: "Nhật Bản", tags: ["Anime", "Conan", "Kịch Tính"] }
   };
 
-  // Fictional narrative details database
-  const getActorBiography = (name) => {
+  // Fictional biography details database
+  const getDirectorBiography = (name) => {
     const bios = {
-      "Kaity Nguyễn": "Sinh năm 1999, Kaity Nguyễn nhanh chóng vươn lên thành một trong những ngọc nữ đắt giá nhất màn ảnh Việt. Sở hữu đôi mắt to tròn biết nói và khả năng diễn xuất bản năng thiên bẩm, cô liên tục khẳng định mình qua các tác phẩm phòng vé trăm tỷ và đạt nhiều giải thưởng danh giá trong nước.\n\nTại LoraFilm, cô không chỉ góp mặt trong những bộ phim tâm lý lãng mạn mà còn thử thách bản thân với các dự án hoạt hình lồng tiếng đầy màu sắc, chứng minh năng lực sáng tạo đa dạng và sức hút đại chúng bền bỉ.",
-      "Trấn Thành": "Nghệ sĩ đa tài hàng đầu Việt Nam hoạt động năng nổ ở nhiều vai trò diễn viên kịch, MC, diễn viên điện ảnh và đạo diễn. Anh sở hữu tư duy làm phim thực tế sắc bén kết hợp cùng kỹ năng thấu hiểu tâm lý nhân vật tinh tế sâu sắc.\n\nTrấn Thành liên tục thiết lập các kỷ lục phòng vé lịch sử tại LoraFilm nhờ các tựa phim gia đình đầy cảm xúc mang tính hiện thực xã hội cao, tạo nên những cuộc thảo luận tích cực trên mọi diễn đàn.",
-      "Kiều Minh Tuấn": "Là gương mặt gạo cội đại diện cho thế hệ diễn viên thực lực đỉnh cao. Anh ghi điểm sâu sắc trong lòng khán giả nhờ phong cách diễn xuất tự nhiên như hơi thở, biến hóa khôn lường từ hình tượng hài hước, bụi bặm phong trần cho đến những vai diễn phản diện độc đoán hoặc tâm lý phức tạp.\n\nSự hiện diện của anh trong bất kỳ dự án nào tại hệ thống rạp LoraFilm luôn là lời bảo chứng vững chắc nhất cho chất lượng nghệ thuật lẫn doanh thu thương mại của tác phẩm đó.",
-      "Ana de Armas": "Nữ minh tinh người gốc Cuba nổi tiếng thế giới với vẻ ngoài quyến rũ chết người cùng ý chí bền bỉ vươn lên đỉnh cao Hollywood. Cô gây sốt toàn cầu qua các vai diễn hành động bắn súng giật gân kịch tính vô cùng điêu luyện.\n\nTại LoraFilm, cô mang đến làn gió mới rực lửa thông qua dự án hành động sát thủ Ballerina tầm cỡ thế giới ngầm, cống hiến những cảnh đấu tay đôi mãn nhãn vô tiền khoáng hậu.",
-      "Keanu Reeves": "Biểu tượng hành động huyền thoại gắn liền với các thương hiệu điện ảnh lớn nhất thế kỷ 21. Anh nổi tiếng toàn cầu không chỉ vì tài năng trên phim trường mà còn vì tấm lòng nhân ái, hào phóng và lối sống giản dị bình dị giữa đời thường.\n\nMọi suất chiếu của nam tài tử tại LoraFilm đều chật kín phòng vé, chứng minh sức nóng chưa bao giờ giảm sút của người hùng cô độc đi tìm công lý.",
-      "Florence Pugh": "Nữ diễn viên tài năng xuất chúng người Anh sở hữu hàng loạt vai diễn chính kịch nặng đô gai góc. Florence Pugh nổi bật với thần thái mạnh mẽ độc lập, giọng nói khàn cuốn hút đặc trưng và khả năng làm chủ khung hình xuất sắc.\n\nCô đại diện cho thế hệ diễn viên tiên phong mới, luôn mang đến những màn hóa thân đầy chiều sâu nội tâm dữ dội trên hệ thống rạp toàn quốc.",
-      "Sebastian Stan": "Nam diễn viên thực lực người Romania khẳng định tên tuổi vững chắc qua cả dòng phim bom tấn giải trí lẫn nghệ thuật độc lập đầy thách thức. Anh ghi dấu ấn đậm nét nhất qua hình tượng người hùng cô độc sở hữu cánh tay kim loại.\n\nSebastian Stan mang đến khả năng biến hóa tâm lý phức tạp đầy ấn tượng, chinh phục những khán giả khó tính nhất tại LoraFilm.",
-      "Anthony Mackie": "Tài tử da màu tràn đầy năng lượng tích cực với khả năng làm chủ sân khấu cực đỉnh. Anh hiện đảm nhận chiếc khiên đại diện cho công lý thế giới mới trong kỷ nguyên tiếp theo.\n\nSức hút nam tính, mạnh mẽ cùng các pha hành động không trung đẳng cấp của Anthony Mackie luôn mang lại cảm xúc bùng nổ tột độ cho người xem.",
-      "Jack Black": "Ngôi sao hài kịch kiêm ca sĩ nhạc Rock huyền thoại sở hữu lối diễn bùng nổ, vui nhộn ngập tràn tiếng cười sảng khoái. Bất kỳ tác phẩm nào có sự góp mặt của anh đều mang đậm tính giải trí chất lượng cao.\n\nJack Black mang đến thế giới khối vuông Minecraft đầy sáng tạo và ngộ nghĩnh, thu hút hàng ngàn khán giả gia đình đến rạp.",
-      "Jason Momoa": "Người hùng cơ bắp với mái tóc dài hoang dã bụi bặm đặc trưng của biển cả. Anh ghi dấu ấn qua hình tượng lực sĩ phóng khoáng cùng nụ cười ngạo nghễ cuốn hút.\n\nSự góp mặt của anh trong các dự án hành động phiêu lưu kỳ vĩ tại LoraFilm luôn mang lại sự phấn khích tột độ nhờ kỹ xảo và thể hình ấn tượng.",
-      "David Corenswet": "Tài năng trẻ sáng giá mang vẻ đẹp cổ điển lịch lãm tựa như các tài tử thời hoàng kim Hollywood. Anh được tin tưởng giao phó trọng trách tái sinh hình tượng anh hùng mang tính biểu tượng toàn cầu.\n\nDavid Corenswet hứa hẹn sẽ mang đến những màn trình diễn tràn đầy hy vọng và công lý mãn nhãn nhất trong năm nay.",
-      "Rachel Brosnahan": "Nữ diễn viên tài sắc vẹn toàn từng giành vô số giải thưởng truyền hình danh giá. Cô chinh phục người xem bởi nét thông minh hóm hỉnh rạng ngời và khả năng biểu cảm khuôn mặt đỉnh cao.\n\nSự đồng hành của cô trong các bom tấn tương lai hứa hẹn mang lại câu chuyện tình yêu và công lý tuyệt vời nhất tại LoraFilm."
+      "Trấn Thành": "Là một trong những nhà làm phim thương mại thành công nhất lịch sử điện ảnh Việt Nam. Anh nắm giữ nhiều bộ phim có doanh thu phòng vé phá kỷ lục và tư duy nghệ thuật hiện đại thấu cảm người xem.\n\nTại LoraFilm, các tác phẩm của anh luôn thu hút đông đảo mọi gia đình Việt và thúc đẩy các cuộc thảo luận văn hóa xã hội sâu sắc.",
+      "Chad Stahelski": "Đạo diễn và cựu võ sư đóng thế huyền thoại của Hollywood, người tạo nên cuộc cách mạng trong dòng phim hành động đấu súng qua loạt tác phẩm John Wick.\n\nSự chỉ đạo nghệ thuật võ thuật và thiết kế ánh sáng Neon độc đáo của anh mang đến các màn hành động tuyệt đỉnh chất lượng cao nhất cho rạp chiếu LoraFilm.",
+      "Jake Schreier": "Đạo diễn tài năng Mỹ nổi bật với phong cách kể chuyện tập trung vào tâm lý nhân vật đương đại và hình ảnh sắc sảo. Anh được Marvel tin tưởng giao trọng trách thực hiện các bom tấn thế hệ mới.\n\nCác suất chiếu phim anh làm đạo diễn luôn để lại ấn tượng mạnh mẽ cho khán giả trẻ năng động tại hệ thống rạp.",
+      "Phùng Đình Dũng": "Đạo diễn và nhà hoạt họa tâm huyết đã dành nhiều năm nghiên cứu mang truyện cổ dân gian lên màn ảnh rộng 3D hoành tráng.\n\nTác phẩm dế mèn phiêu lưu ký của anh mang màu sắc kỳ ảo kết hợp kỹ thuật hàng đầu thế giới cống hiến giá trị nghệ thuật đích thực.",
+      "Charlie Nguyễn": "Nhà làm phim tiên phong mở đường cho kỷ nguyên phim hài hành động bom tấn chiếu rạp của điện ảnh nước nhà từ những năm 2010.\n\nKinh nghiệm làm việc chuyên nghiệp chuẩn Hollywood cùng các tình huống hài thông minh tạo dựng vị thế không thể lay chuyển của anh.",
+      "Nguyễn Hữu Hoàng": "Đạo diễn đại diện cho làn sóng trẻ tiên phong dám thử thách các đề tài tâm lý giật gân, bí ẩn học đường phá án.\n\nCác tác phẩm của anh có nhịp phim nhanh kết hợp âm hưởng ma mị độc đáo chiếm trọn cảm tình của giới học sinh sinh viên.",
+      "Victor Vũ": "Bậc thầy điện ảnh chuyên trị các dòng phim kinh dị, giật gân ly kỳ kết hợp các yếu tố văn hóa tâm linh truyền thống Việt Nam.\n\nSự duy mỹ trong từng khung hình và cốt truyện lắt léo bất ngờ luôn biến các buổi chiếu phim của anh thành trải nghiệm giật gân đỉnh cao.",
+      "Lý Hải": "Hiện tượng đặc biệt của điện ảnh nước nhà khi đi từ ca sĩ chuyển hướng làm đạo diễn thành công chuỗi bom tấn Lật Mặt vang danh.\n\nAnh chinh phục hàng triệu con tim nhờ lối kể chuyện mộc mạc, bình dị chứa chan tình mẫu tử gia đình chân thành nhất.",
+      "Julius Onah": "Đạo diễn người Mỹ gốc Phi sở hữu tư duy khoa học viễn tưởng sắc sảo kết hợp các vấn đề xã hội thời đại vào trong dòng phim siêu anh hùng.\n\nAnh mang lại các trận giao đấu kịch tính cùng thế giới chính trị đầy bí ẩn hứa hẹn bùng nổ màn ảnh rộng.",
+      "Jared Hess": "Đạo diễn kỳ cựu chuyên trị những bộ phim hài độc lạ xoay quanh những nhân vật phản anh hùng cá tính đáng yêu.\n\nSự nhào nặn tài tình thế giới trò chơi khối vuông Minecraft của anh thành phim live-action mang lại tiếng cười giòn giã cho trẻ em.",
+      "James Gunn": "Vị đạo diễn tài ba bậc nhất Hollywood hiện tại, người có công tái sinh cả một vũ trụ siêu anh hùng vĩ đại.\n\nTư duy hài hước độc đáo kết hợp âm nhạc thập niên kinh niên biến mỗi bộ phim của anh thành lễ hội điện ảnh rực rỡ sắc màu.",
+      "Yuzuru Tachikawa": "Đạo diễn Anime thiên tài người Nhật Bản nổi tiếng với việc chỉ đạo các pha rượt đuổi, phá án kỹ xảo hành động vô cùng hoành tráng.\n\nTác phẩm trinh thám Conan dưới sự nhào nặn của anh luôn đạt doanh thu phòng vé khổng lồ trên toàn thế giới."
     };
 
-    return bios[name] || `Là ngôi sao điện ảnh tài năng sở hữu nhiều cống hiến nổi bật và các vai diễn để lại dấu ấn sâu sắc trong lòng khán giả yêu thích các dự án phim chiếu rạp tại LoraFilm. Tác phẩm của nghệ sĩ luôn truyền tải những thông điệp nghệ thuật tích cực và ý nghĩa.`;
+    return bios[name] || `Là nhà làm phim tài năng sở hữu nhiều cống hiến nổi bật và các tác phẩm điện ảnh xuất sắc mang tầm ảnh hưởng lớn tại hệ thống phòng vé LoraFilm.`;
   };
 
-  // Unsplash gallery portraits for each actor
-  const getActorGallery = (name, avatar) => {
+  const getDirectorGallery = (name, avatar) => {
     const base = [
       avatar,
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&auto=format&fit=crop&q=80"
+      "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=400&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=400&auto=format&fit=crop&q=80"
     ];
     return base;
   };
 
-  // 1. The Reverse-Graph Casting Algorithm (Client-Side)
-  // Extracts unique actor profiles across all movies and consolidates their filmographies.
-  const consolidatedActors = useMemo(() => {
+  // 1. The Reverse-Graph Casting Algorithm (Client-Side) - Extracts unique director profiles from movies
+  const consolidatedDirectors = useMemo(() => {
     const registry = {};
 
     movies.forEach(movie => {
-      if (movie.cast && Array.isArray(movie.cast)) {
-        movie.cast.forEach(actor => {
-          const name = actor.name;
-          if (!registry[name]) {
-            registry[name] = {
-              name,
-              avatarUrl: actor.avatarUrl,
-              filmography: []
-            };
-          }
-          // Push this movie's metadata into the star's portfolio
-          registry[name].filmography.push({
-            id: movie.id,
-            title: movie.title,
-            role: actor.role,
-            posterUrl: movie.posterUrl || movie.image,
-            status: movie.status,
-            rating: movie.rating
-          });
+      if (movie.director && movie.director.name) {
+        const name = movie.director.name;
+        if (!registry[name]) {
+          registry[name] = {
+            name,
+            avatarUrl: movie.director.avatarUrl,
+            bioSummary: movie.director.bioSummary,
+            metrics: movie.director.metrics,
+            filmography: []
+          };
+        }
+        registry[name].filmography.push({
+          id: movie.id,
+          title: movie.title,
+          posterUrl: movie.posterUrl || movie.image,
+          status: movie.status,
+          rating: movie.rating
         });
       }
     });
@@ -116,21 +112,21 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
     return Object.values(registry);
   }, [movies]);
 
-  // 2. Filter & Sort actors for the List view
-  const processedActorsList = useMemo(() => {
-    let result = consolidatedActors;
+  // 2. Filter & Sort directors for the List view
+  const processedDirectorsList = useMemo(() => {
+    let result = consolidatedDirectors;
 
     // A. Apply Search Query
     if (searchQuery.trim()) {
-      result = result.filter(actor =>
-        actor.name.toLowerCase().includes(searchQuery.toLowerCase())
+      result = result.filter(dir =>
+        dir.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     // B. Apply Country Filter
     if (countryFilter !== 'ALL') {
-      result = result.filter(actor => {
-        const country = getActorCountry(actor.name);
+      result = result.filter(dir => {
+        const country = getDirectorCountry(dir.name);
         return countryFilter === 'VN' ? country === 'Việt Nam' : country !== 'Việt Nam';
       });
     }
@@ -147,13 +143,13 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
     });
 
     return result;
-  }, [consolidatedActors, searchQuery, countryFilter, sortFilter, engagement]);
+  }, [consolidatedDirectors, searchQuery, countryFilter, sortFilter, engagement]);
 
-  // Find targeted actor if detail view is active
-  const targetActorData = useMemo(() => {
-    if (!actorName) return null;
-    return consolidatedActors.find(actor => actor.name === actorName) || null;
-  }, [consolidatedActors, actorName]);
+  // Find targeted director if detail view is active
+  const targetDirectorData = useMemo(() => {
+    if (!directorName) return null;
+    return consolidatedDirectors.find(dir => dir.name === directorName) || null;
+  }, [consolidatedDirectors, directorName]);
 
   // Click on like pill toggle
   const handleLikeClick = (e, name) => {
@@ -172,7 +168,7 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
     });
   };
 
-  // Launch direct booking payload from actor portfolio timeline or mini promos
+  // Launch direct booking payload from director filmography timeline
   const handleDirectBook = (movie) => {
     const bookingPayload = {
       movieId: movie.id,
@@ -223,9 +219,9 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
         {/* Global Page Title Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-zinc-900">
           <div>
-            <h1 className="text-xl md:text-2xl font-black uppercase tracking-wider text-white">Ngôi Sao Điện Ảnh</h1>
+            <h1 className="text-xl md:text-2xl font-black uppercase tracking-wider text-white">Đạo Diễn Điện Ảnh</h1>
             <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-1">
-              Gặp gỡ dàn diễn viên gạo cội và khám phá các vai diễn của họ tại LoraFilm
+              Khám phá chân dung các nhà làm phim thiên tài đứng sau những tác phẩm kiệt tác
             </p>
           </div>
           <button
@@ -242,9 +238,9 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
           {/* LEFT PANEL (2/3 Width) */}
           <div className="lg:col-span-2 space-y-8">
 
-            {!actorName ? (
+            {!directorName ? (
               // ============================================
-              // 1. THE ACTOR LIST SUB-VIEW (Màn Hình Danh Sách)
+              // 1. THE DIRECTOR LIST SUB-VIEW (Màn Hình Danh Sách)
               // ============================================
               <div className="space-y-6">
                 
@@ -256,7 +252,7 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Tìm diễn viên..."
+                      placeholder="Tìm đạo diễn..."
                       className="bg-zinc-950 border border-zinc-800 focus:border-amber-500 text-white rounded-xl pl-10 pr-4 py-2.5 w-full text-xs font-semibold focus:outline-none transition-colors"
                     />
                   </div>
@@ -286,36 +282,36 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
                 </div>
 
                 {/* Vertical Row List container */}
-                {processedActorsList.length === 0 ? (
+                {processedDirectorsList.length === 0 ? (
                   <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-12 text-center space-y-3">
                     <Film className="w-12 h-18 text-zinc-700 mx-auto animate-pulse" />
-                    <h3 className="text-sm font-black uppercase tracking-wider text-white">Không tìm thấy ngôi sao điện ảnh</h3>
+                    <h3 className="text-sm font-black uppercase tracking-wider text-white">Không tìm thấy đạo diễn điện ảnh</h3>
                     <p className="text-zinc-500 text-xs max-w-sm mx-auto">
                       Vui lòng thử lại với các lựa chọn lọc hoặc từ khóa tìm kiếm khác.
                     </p>
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {processedActorsList.map((actor, idx) => {
-                      const eng = engagement[actor.name] || { likes: 0, views: 0, liked: false };
-                      const bioText = getActorBiography(actor.name).split('\n\n')[0];
-                      const country = getActorCountry(actor.name);
+                    {processedDirectorsList.map((director, idx) => {
+                      const eng = engagement[director.name] || { likes: 0, views: 0, liked: false };
+                      const bioText = getDirectorBiography(director.name).split('\n\n')[0];
+                      const country = getDirectorCountry(director.name);
 
                       return (
                         <div
                           key={idx}
-                          onClick={() => onNavigate('actor-detail', { actorName: actor.name })}
+                          onClick={() => onNavigate('director-detail', { directorName: director.name })}
                           className="w-full bg-zinc-900 hover:bg-zinc-900/60 border border-zinc-800/80 hover:border-zinc-700/80 rounded-2xl p-4 flex flex-col sm:flex-row gap-6 cursor-pointer transition-all duration-300 shadow-lg group relative overflow-hidden"
                         >
                           {/* Left Thumbnail picture slot */}
                           <div className="w-full sm:w-40 aspect-[3/4] rounded-xl border border-zinc-800 shrink-0 overflow-hidden bg-zinc-950 relative">
                             <img
-                              src={actor.avatarUrl}
-                              alt={actor.name}
+                              src={director.avatarUrl}
+                              alt={director.name}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                               onError={(e) => {
                                 e.target.onerror = null;
-                                e.target.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80';
+                                e.target.src = 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=300&auto=format&fit=crop&q=80';
                               }}
                             />
                             {/* Country badge overlay */}
@@ -331,7 +327,7 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
                               {/* Header block with Likes Toggle */}
                               <div className="flex justify-between items-start gap-4">
                                 <h3 className="text-base md:text-lg font-black text-white hover:text-orange-500 transition-colors group-hover:text-amber-500">
-                                  {actor.name}
+                                  {director.name}
                                 </h3>
 
                                 <div className="flex items-center gap-3">
@@ -342,11 +338,11 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
 
                                   {/* Thích action pill trigger */}
                                   <button
-                                    onClick={(e) => handleLikeClick(e, actor.name)}
+                                    onClick={(e) => handleLikeClick(e, director.name)}
                                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider transition-all duration-200 border focus:outline-none ${
                                       eng.liked 
                                         ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/15'
-                                        : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800'
+                                        : 'bg-zinc-950 border-zinc-800 text-zinc-450 hover:text-white hover:bg-zinc-800'
                                     }`}
                                   >
                                     <Heart className={`w-3 h-3 ${eng.liked ? 'fill-current' : ''}`} />
@@ -378,7 +374,7 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
               </div>
             ) : (
               // ============================================
-              // 2. THE DEEP ACTOR PORTFOLIO DETAIL SUB-VIEW
+              // 2. THE DEEP DIRECTOR PORTFOLIO DETAIL SUB-VIEW
               // ============================================
               <div className="space-y-8 animate-in fade-in duration-300">
                 
@@ -386,12 +382,12 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
                 <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider flex items-center gap-1.5 bg-zinc-900/40 p-3 rounded-xl border border-zinc-900/50">
                   <button onClick={onBackHome} className="hover:text-white transition-colors focus:outline-none">Trang chủ</button>
                   <span>/</span>
-                  <button onClick={() => onNavigate('actors', null)} className="hover:text-white transition-colors focus:outline-none">Diễn viên</button>
+                  <button onClick={() => onNavigate('directors', null)} className="hover:text-white transition-colors focus:outline-none">Đạo diễn</button>
                   <span>/</span>
-                  <span className="text-amber-500">{actorName}</span>
+                  <span className="text-amber-500">{directorName}</span>
                 </div>
 
-                {targetActorData ? (
+                {targetDirectorData ? (
                   <div className="space-y-8">
                     
                     {/* Upper Identity Row Block */}
@@ -400,23 +396,23 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
 
                       {/* Left Column Snapshot */}
                       <img
-                        src={targetActorData.avatarUrl}
-                        alt={targetActorData.name}
+                        src={targetDirectorData.avatarUrl}
+                        alt={targetDirectorData.name}
                         className="w-full md:w-56 aspect-[3/4] rounded-2xl object-cover border border-zinc-800 shadow-2xl shrink-0"
                         onError={(e) => {
                           e.target.onerror = null;
-                          e.target.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80';
+                          e.target.src = 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=300&auto=format&fit=crop&q=80';
                         }}
                       />
 
                       {/* Right Column Identity parameters */}
                       <div className="space-y-4 flex-1">
                         <div className="space-y-2">
-                          <h2 className="text-2xl font-black text-white uppercase tracking-wider">{targetActorData.name}</h2>
+                          <h2 className="text-2xl font-black text-white uppercase tracking-wider">{targetDirectorData.name}</h2>
                           
                           {/* Tags row */}
                           <div className="flex flex-wrap gap-2.5">
-                            {actorMetrics[targetActorData.name]?.tags.map((tag, tIdx) => (
+                            {directorMetrics[targetDirectorData.name]?.tags.map((tag, tIdx) => (
                               <span
                                 key={tIdx}
                                 className="bg-blue-950/80 border border-blue-500/10 text-blue-400 text-[8px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full"
@@ -429,22 +425,22 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
 
                         {/* Brief summary paragraph */}
                         <p className="text-xs text-zinc-300 leading-relaxed">
-                          {getActorBiography(targetActorData.name).split('\n\n')[0]}
+                          {getDirectorBiography(targetDirectorData.name).split('\n\n')[0]}
                         </p>
 
                         {/* Bio metrics bullets */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-zinc-800 text-xs font-semibold text-zinc-400">
                           <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4 text-zinc-500 shrink-0" />
-                            <span>Ngày sinh: <strong className="text-zinc-200">{actorMetrics[targetActorData.name]?.birth || "01/01/1990"}</strong></span>
+                            <span>Ngày sinh: <strong className="text-zinc-200">{directorMetrics[targetDirectorData.name]?.birth || "01/01/1980"}</strong></span>
                           </div>
                           <div className="flex items-center gap-2">
                             <Ruler className="w-4 h-4 text-zinc-500 shrink-0" />
-                            <span>Chiều cao: <strong className="text-zinc-200">{actorMetrics[targetActorData.name]?.height || "1m75"}</strong></span>
+                            <span>Chiều cao: <strong className="text-zinc-200">{directorMetrics[targetDirectorData.name]?.height || "1m75"}</strong></span>
                           </div>
                           <div className="flex items-center gap-2">
                             <MapPin className="w-4 h-4 text-zinc-500 shrink-0" />
-                            <span>Quốc tịch: <strong className="text-zinc-200">{actorMetrics[targetActorData.name]?.nationality || "Mỹ"}</strong></span>
+                            <span>Quốc tịch: <strong className="text-zinc-200">{directorMetrics[targetDirectorData.name]?.nationality || "Mỹ"}</strong></span>
                           </div>
                         </div>
                       </div>
@@ -454,19 +450,19 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
                     <div className="space-y-3">
                       <div className="flex items-center gap-2 border-b border-zinc-800 pb-2.5">
                         <Film className="w-4 h-4 text-amber-500 shrink-0" />
-                        <h3 className="text-xs font-black text-white uppercase tracking-wider">HÌNH ẢNH NGHỆ THUẬT</h3>
+                        <h3 className="text-xs font-black text-white uppercase tracking-wider">HÌNH ẢNH HOẠT ĐỘNG</h3>
                       </div>
                       
                       {/* 4 Photo thumbnails */}
                       <div className="grid grid-cols-4 gap-4 py-2">
-                        {getActorGallery(targetActorData.name, targetActorData.avatarUrl).map((imgUrl, imgIdx) => (
+                        {getDirectorGallery(targetDirectorData.name, targetDirectorData.avatarUrl).map((imgUrl, imgIdx) => (
                           <div
                             key={imgIdx}
                             className="aspect-square rounded-xl overflow-hidden border border-zinc-800/80 bg-zinc-900 group cursor-zoom-in relative"
                           >
                             <img
                               src={imgUrl}
-                              alt={`${targetActorData.name} still ${imgIdx}`}
+                              alt={`${targetDirectorData.name} still ${imgIdx}`}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -481,12 +477,12 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
                     <div className="space-y-4">
                       <div className="flex items-center gap-2 border-b border-zinc-800 pb-2.5">
                         <Award className="w-4 h-4 text-amber-500 shrink-0" />
-                        <h3 className="text-xs font-black text-white uppercase tracking-wider">Tác phẩm điện ảnh hợp tác</h3>
+                        <h3 className="text-xs font-black text-white uppercase tracking-wider">Tác phẩm đã đạo diễn</h3>
                       </div>
 
                       {/* 2-column list layout */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {targetActorData.filmography.map((work, wIdx) => (
+                        {targetDirectorData.filmography.map((work, wIdx) => (
                           <div
                             key={wIdx}
                             className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3.5 flex items-center justify-between gap-4 hover:border-zinc-700 transition-colors"
@@ -500,7 +496,7 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
                                   {work.title}
                                 </h4>
                                 <p className="text-[10px] text-zinc-400 font-semibold line-clamp-1">
-                                  Vai diễn: <span className="text-amber-500">{work.role}</span>
+                                  Vai trò: <span className="text-amber-500">Đạo diễn</span>
                                 </p>
                                 <div className="flex items-center gap-1.5">
                                   <span className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${
@@ -537,13 +533,13 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
                     </div>
 
                     {/* "TIỂU SỬ" Block (Bottom Layout Section) */}
-                    <div className="space-y-3 bg-zinc-900 border border-zinc-850 rounded-3xl p-6 shadow-xl">
+                    <div className="space-y-3 bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl">
                       <div className="flex items-center gap-2 border-b border-zinc-800 pb-2.5">
                         <Award className="w-4 h-4 text-amber-500 shrink-0" />
                         <h3 className="text-xs font-black text-white uppercase tracking-wider">Tiểu sử chi tiết</h3>
                       </div>
                       <div className="space-y-4 pt-2">
-                        {getActorBiography(targetActorData.name).split('\n\n').map((paragraph, pIdx) => (
+                        {getDirectorBiography(targetDirectorData.name).split('\n\n').map((paragraph, pIdx) => (
                           <p key={pIdx} className="text-[11px] text-zinc-400 leading-relaxed">
                             {paragraph}
                           </p>
@@ -554,7 +550,7 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
                   </div>
                 ) : (
                   <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-12 text-center">
-                    <h3 className="text-sm font-black uppercase tracking-wider text-white">Không tìm thấy hồ sơ diễn viên</h3>
+                    <h3 className="text-sm font-black uppercase tracking-wider text-white">Không tìm thấy hồ sơ đạo diễn</h3>
                   </div>
                 )}
 
@@ -610,7 +606,7 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
                     className={`w-full bg-zinc-950 border text-xs font-semibold rounded-xl py-3 px-3.5 focus:outline-none transition-colors ${
                       quickMovieId 
                         ? 'border-zinc-800 text-zinc-200 focus:border-blue-600 cursor-default' 
-                        : 'border-zinc-900 text-zinc-650 cursor-not-allowed select-none'
+                        : 'border-zinc-900 text-zinc-655 cursor-not-allowed select-none'
                     }`}
                   >
                     <option value="">-- Chọn Rạp --</option>
@@ -630,7 +626,7 @@ export default function ActorRegistryView({ actorName, onBackHome, onBookTicket,
                     className={`w-full bg-zinc-950 border text-xs font-semibold rounded-xl py-3 px-3.5 focus:outline-none transition-colors ${
                       quickCinema 
                         ? 'border-zinc-800 text-zinc-200 focus:border-blue-600 cursor-default' 
-                        : 'border-zinc-900 text-zinc-650 cursor-not-allowed select-none'
+                        : 'border-zinc-900 text-zinc-655 cursor-not-allowed select-none'
                     }`}
                   >
                     <option value="">-- Chọn Ngày --</option>

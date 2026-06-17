@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { 
   User, Calendar, Mail, Phone, Lock, Eye, EyeOff, Camera, ChevronRight, 
   PhoneCall, HelpCircle, History, Bell, Gift, FileText, CheckCircle, AlertCircle 

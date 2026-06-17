@@ -2,8 +2,8 @@ import { useState, useMemo } from 'react';
 import { 
   Star, Eye, ThumbsUp, Play, RefreshCw, AlertCircle, Film 
 } from 'lucide-react';
-import { useData } from '../contexts/DataContext';
-import TrailerModal from '../components/common/TrailerModal';
+import { useData } from '../../contexts/DataContext';
+import TrailerModal from '../../components/common/TrailerModal';
 
 // Map country dynamically based on movie title/ID
 const getMovieCountry = (movie) => {

@@ -8,17 +8,17 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { useData } from '../../contexts/DataContext';
 import AdminSidebar from './AdminSidebar';
-import AdminMovieView from './AdminMovieView';
-import AdminActorView from './AdminActorView';
-import AdminShowtimeView from './AdminShowtimeView';
-import AdminEventView from './AdminEventView';
-import AdminCinemaView from './AdminCinemaView';
-import AdminFinanceView from './AdminFinanceView';
-import AdminDashboardView from './AdminDashboardView';
-import AdminSettingsView from './AdminSettingsView';
-import AdminMembersView from './AdminMembersView';
-import AdminStaffView from './AdminStaffView';
-import AdminConcessionInventory from './AdminConcessionInventory';
+import AdminMovieView from '../../pages/admin/AdminMoviePage';
+import AdminActorView from '../../pages/admin/AdminActorPage';
+import AdminShowtimeView from '../../pages/admin/AdminShowtimePage';
+import AdminEventView from '../../pages/admin/AdminEventPage';
+import AdminCinemaView from '../../pages/admin/AdminCinemaPage';
+import AdminFinanceView from '../../pages/admin/AdminFinancePage';
+import AdminDashboardView from '../../pages/admin/AdminDashboardPage';
+import AdminSettingsView from '../../pages/admin/AdminSettingsPage';
+import AdminMembersView from '../../pages/admin/AdminMembersPage';
+import AdminStaffView from '../../pages/admin/AdminStaffPage';
+import AdminConcessionInventory from '../../pages/admin/AdminConcessionInventoryPage';
 
 export default function AdminLayout({ initialTab = 'dashboard', onBackHome }) {
   const { user, logout } = useAuth();

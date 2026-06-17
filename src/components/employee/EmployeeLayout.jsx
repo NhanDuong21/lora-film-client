@@ -7,9 +7,9 @@ import {
   Home,
   User
 } from 'lucide-react';
-import EmployeePOSView from './EmployeePOSView';
-import EmployeeCheckInView from './EmployeeCheckInView';
-import EmployeeScheduleView from './EmployeeScheduleView';
+import EmployeePOSView from '../../pages/employee/EmployeePOSPage';
+import EmployeeCheckInView from '../../pages/employee/EmployeeCheckInPage';
+import EmployeeScheduleView from '../../pages/employee/EmployeeSchedulePage';
 
 export default function EmployeeLayout({ initialTab = 'pos', onBackHome, onNavigate }) {
   const { user, logout } = useAuth();

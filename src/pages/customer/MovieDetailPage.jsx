@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Play, Clock, ArrowLeft, Star } from 'lucide-react';
-import { useData } from '../contexts/DataContext';
-import TrailerModal from '../components/common/TrailerModal';
+import { useData } from '../../contexts/DataContext';
+import TrailerModal from '../../components/common/TrailerModal';
 
 export default function MovieDetailView({ movieId, onSelectShowtime, onBack }) {
   const { movies, showtimes, cinemas } = useData();

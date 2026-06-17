@@ -9,7 +9,7 @@ import {
   INITIAL_TICKETS,
   INITIAL_CUSTOMERS,
   INITIAL_EMPLOYEES
-} from '../data/mockData';
+} from '../mocks/mockData';
 
 const DataContext = createContext(null);
 

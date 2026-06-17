@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { Mail, Lock, User, ShieldAlert, ArrowLeft, Loader2, CheckCircle2, Phone, Calendar, Eye, EyeOff } from 'lucide-react';
 
 export default function RegisterView({ onBack, onLoginLink, onSuccessRedirect }) {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { MapPin, Phone, Clock, Star, Film, ChevronLeft, ChevronRight, HelpCircle } from 'lucide-react';
-import { useData } from '../contexts/DataContext';
+import { useData } from '../../contexts/DataContext';
 
 const THEATER_DATA = {
   1: {

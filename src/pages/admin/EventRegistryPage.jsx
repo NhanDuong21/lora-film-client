@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Film, Star, Tag, Clock, ArrowRight } from 'lucide-react';
-import { useData } from '../contexts/DataContext';
+import { useData } from '../../contexts/DataContext';
 
 export default function EventRegistryView({ eventId, onBackHome, onBookTicket, onNavigate }) {
   const { movies, cinemas, events } = useData();

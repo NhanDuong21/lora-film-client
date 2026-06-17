@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Save, Clock, Settings, ShieldAlert } from 'lucide-react';
-import { SYSTEM_SETTINGS } from '../../data/mockData';
+import { SYSTEM_SETTINGS } from '../../mocks/mockData';
 
 export default function AdminSettingsView({ activeTab, triggerToast }) {
   // Load initial configurations from localStorage or mockData SYSTEM_SETTINGS fallback
