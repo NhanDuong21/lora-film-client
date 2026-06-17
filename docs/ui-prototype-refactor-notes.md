@@ -175,8 +175,10 @@ All mock data files are housed in the `src/mocks/` directory:
   - Do not call the Authentication Service directly (`localhost:8081`).
   - Do not call the User Identity Management Service directly (`localhost:8086`).
 - Direct invocation of backend validation routes (`/internal/users`) from the client runtime layer is strictly forbidden.
-- To protect Personal Identifiable Information (PII), raw citizen identifiers (`CCCD`) must never be dropped into unencrypted local cache layers (`localStorage`).
+- **🚨 SECURITY WARNING (PII Protection):** The client-side storage of sensitive cryptographic strings like `VITE_CCCD_API_KEY` directly inside frontend `.env` vectors creates a critical security vulnerability. This token must be refactored to execute entirely Server-to-Server via Backend Spring Boot handlers, keeping keys hidden from the client browser.
+- Raw citizen identifiers (`CCCD`) must never be dropped into unencrypted local cache layers (`localStorage`).
 - Ensure the user profile interface securely processes identity metrics by running masks, outputting `cccdMasked` tokens only.
+
 
 ## 7. Refactoring Migration Manifest
 
