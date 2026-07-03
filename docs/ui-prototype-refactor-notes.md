@@ -52,7 +52,7 @@ src/
 ┃ ┃ ┣ AdminCinemaPage.jsx
 ┃ ┃ ┣ AdminShowtimePage.jsx
 ┃ ┃ ┣ AdminStaffPage.jsx
-┃ ┃ ┣ AdminActorPage.jsx
+┃ ┃ ┣ AdminActorPage.jsx  
 ┃ ┃ ┣ AdminEventPage.jsx
 ┃ ┃ ┣ AdminFinancePage.jsx
 ┃ ┃ ┣ AdminMembersPage.jsx
